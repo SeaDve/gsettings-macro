@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
     <schema path="/io/github/seadve/test/" id="io.github.seadve.test">
-        <key name="window-width" type="i">
-            <default>600</default>
-            <summary>Default window width</summary>
-            <description>Default window width</description>
-        </key>
-        <key name="window-height" type="i">
-            <default>400</default>
-            <summary>Default window height</summary>
-            <description>Default window height</description>
-        </key>
         <key name="is-maximized" type="b">
             <default>false</default>
-            <summary>Default window maximized behaviour</summary>
+            <summary>Window maximized behaviour</summary>
             <description></description>
         </key>
         <key name="history" type="s">
@@ -21,8 +11,35 @@
             <summary>Contains recently recognized songs</summary>
             <description></description>
         </key>
-        <key name="delay" type="u">
+        <key name="invalid-words" type="as">
+            <default>[]</default>
+            <summary>Contains invalid words</summary>
+            <description></description>
+        </key>
+        <key name="window-width" type="i">
             <default>600</default>
+            <summary>Window width</summary>
+            <description>Window width</description>
+        </key>
+        <key name="window-height" type="u">
+            <default>400</default>
+            <summary>Window height</summary>
+            <description>Window height</description>
+        </key>
+        <key name="window-width-64" type="x">
+            <default>600</default>
+            <summary>Window width</summary>
+            <description>Window width</description>
+        </key>
+        <key name="window-height-64" type="t">
+            <default>400</default>
+            <summary>Window height</summary>
+            <description>Window height</description>
+        </key>
+        <key name="volume" type="d">
+            <default>6.3</default>
+            <summary>Volume</summary>
+            <description>Volume</description>
         </key>
         <key name="preferred-audio-source" type="s">
             <choices>
