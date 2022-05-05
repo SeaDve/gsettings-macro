@@ -20,7 +20,11 @@ fn main() -> anyhow::Result<()> {
     let schema_file = File::open(&schema_file_path)?;
     let schema_list: SchemaList = serde_xml::from_reader(schema_file)?;
 
-    anyhow::ensure!(schema_list.len() == 1, "only one schema is supported");
+    anyhow::ensure!(
+        schema_list.len() == 1,
+        "only one schema is supported; found {}",
+        schema_list.len()
+    );
 
     let schema = schema_list
         .get(0)
