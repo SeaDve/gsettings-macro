@@ -6,7 +6,7 @@ use heck::ToSnakeCase;
 use std::{env, fs::File};
 
 use self::{
-    function::{Arg as FunctionArg, DelagateMethod, Function},
+    function::{Arg as FunctionArg, DelegateMethod, Function},
     types::{Key, Schema, SchemaList},
 };
 
@@ -106,7 +106,7 @@ fn generate_schema_code(schema: &Schema) -> String {
             .content(&format!(r#"Self(gio::Settings::new("{}"))"#, schema.id))
             .generate(),
         String::new(),
-        DelagateMethod::new_with_args(
+        DelegateMethod::new_with_args(
             "create_action",
             vec![FunctionArg::Other {
                 name: "key".into(),

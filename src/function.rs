@@ -110,9 +110,9 @@ impl Function {
 }
 
 /// Assumes that inner can be accessed with `self.0`
-pub struct DelagateMethod(Function);
+pub struct DelegateMethod(Function);
 
-impl DelagateMethod {
+impl DelegateMethod {
     pub fn new_with_args(name: &str, args: Vec<Arg>) -> Self {
         Self(Function::new_method_with_args(name, args))
     }
