@@ -45,7 +45,7 @@ pub trait Key: std::fmt::Debug {
 /// - call_name: What method to call in [`gio::Settings`] (`int`, `boolean`, etc.)
 /// - variant_type: [`glib::Variant`] type string (`i`, `b`, etc.)
 #[macro_export]
-macro_rules! impl_default_key {
+macro_rules! impl_basic_key {
     ($name:ident, $arg_type:expr, $ret_type:expr, $call_name:expr, $variant_type:expr) => {
         #[derive(Debug, serde::Deserialize, serde::Serialize)]
         pub struct $name {
