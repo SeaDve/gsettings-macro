@@ -114,22 +114,12 @@ pub struct DelegateMethod(Function);
 
 impl DelegateMethod {
     pub fn new_with_args(name: &str, args: Vec<Arg>) -> Self {
-        Self(Function::new_method_with_args(name, args))
-    }
-
-    /// Rust return type
-    pub fn ret_type(&mut self, value: impl Into<String>) -> &mut Self {
-        self.0.ret_type(value);
-        self
-    }
-
-    /// Generate rust code
-    pub fn generate(&mut self) -> String {
-        self.0.public(true);
-        self.0.content(format!(
+        let mut this = Self(Function::new_method_with_args(name, args));
+        this.0.public(true);
+        this.0.content(format!(
             "self.0.{}({})",
-            self.0.name,
-            self.0
+            this.0.name,
+            this.0
                 .args
                 .iter()
                 .filter_map(|arg| match arg {
@@ -141,6 +131,17 @@ impl DelegateMethod {
                 .collect::<Vec<_>>()
                 .join(",")
         ));
+        this
+    }
+
+    /// Rust return type
+    pub fn ret_type(&mut self, value: impl Into<String>) -> &mut Self {
+        self.0.ret_type(value);
+        self
+    }
+
+    /// Generate rust code
+    pub fn generate(&mut self) -> String {
         self.0.generate()
     }
 }

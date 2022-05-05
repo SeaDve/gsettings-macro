@@ -1,4 +1,5 @@
 mod function;
+mod settings;
 mod types;
 
 use heck::ToSnakeCase;
@@ -7,6 +8,7 @@ use std::{env, fs::File};
 
 use self::{
     function::{Arg as FunctionArg, DelegateMethod, Function},
+    settings::Settings,
     types::{Key, Schema, SchemaList},
 };
 
@@ -27,7 +29,16 @@ fn main() -> anyhow::Result<()> {
         .get(0)
         .ok_or_else(|| anyhow::anyhow!("found no schema in the file"))?;
 
-    println!("{}", generate_schema_code(schema));
+    let mut buf = String::new();
+    buf.push_str(&format!(
+        "// Generated with gsettings-codegen v{}",
+        env!("CARGO_PKG_VERSION")
+    ));
+    buf.push('\n');
+    buf.push('\n');
+    buf.push_str(&generate_schema_code(schema));
+
+    println!("{}", buf);
 
     eprintln!("Successfully generated code at `{}`", schema_file_path);
 
@@ -90,22 +101,9 @@ fn generate_key_code(key: &Key) -> anyhow::Result<String> {
 }
 
 fn generate_schema_code(schema: &Schema) -> String {
-    let mut buff = vec![
-        format!(
-            "// Generated with gsettings-codegen v{}",
-            env!("CARGO_PKG_VERSION")
-        ),
-        String::new(),
-        "#[derive(Debug, Clone)]".into(),
-        "pub struct Settings(gio::Settings);".into(),
-        String::new(),
-        "impl Settings {".into(),
-        Function::new("new")
-            .public(true)
-            .ret_type("Self")
-            .content(&format!(r#"Self(gio::Settings::new("{}"))"#, schema.id))
-            .generate(),
-        String::new(),
+    let mut settings = Settings::new(&schema.id);
+
+    settings.push_impl(
         DelegateMethod::new_with_args(
             "create_action",
             vec![FunctionArg::Other {
@@ -115,14 +113,12 @@ fn generate_schema_code(schema: &Schema) -> String {
         )
         .ret_type("gio::Action")
         .generate(),
-        String::new(),
-    ];
+    );
 
     for key in schema.keys.iter() {
         match generate_key_code(key) {
             Ok(code) => {
-                buff.push(code);
-                buff.push(String::new())
+                settings.push_impl(code);
             }
             Err(err) => {
                 log::info!("Skipped generating functions for `{}`: {}", key.name, err);
@@ -131,14 +127,5 @@ fn generate_schema_code(schema: &Schema) -> String {
         }
     }
 
-    buff.push("}".into());
-    buff.push(String::new());
-
-    buff.push("impl Default for Settings {".into());
-    buff.push("fn default() -> Self {".into());
-    buff.push("Self::new()".into());
-    buff.push("}".into());
-    buff.push("}".into());
-
-    buff.join("\n")
+    settings.generate()
 }
