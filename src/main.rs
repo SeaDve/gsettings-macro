@@ -3,7 +3,7 @@ mod key;
 mod schema;
 mod settings;
 
-use std::{env, fs::File};
+use std::{env, fs::File, io::BufReader};
 
 use self::{
     function::{Arg as FunctionArg, DelegateMethod, Function},
@@ -18,7 +18,7 @@ fn main() -> anyhow::Result<()> {
     args.next();
     let schema_file_path = args.next().ok_or_else(|| anyhow::anyhow!(USAGE_MESSAGE))?;
     let schema_file = File::open(&schema_file_path)?;
-    let schema_list: SchemaList = serde_xml::from_reader(schema_file)?;
+    let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))?;
 
     anyhow::ensure!(
         schema_list.len() == 1,

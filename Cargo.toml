@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.57"
 heck = "0.4.0"
+quick-xml = { version = "0.22.0", features = ["serialize"] }
 serde = { version = "1.0.137", features = ["derive"] }
-serde_xml = { package = "serde-xml-rs", version = "0.5.1" }
 typetag = "0.1.8"
