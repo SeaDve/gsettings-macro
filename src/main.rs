@@ -1,10 +1,14 @@
+mod function;
 mod types;
 
 use heck::ToSnakeCase;
 
 use std::{env, fs::File};
 
-use self::types::{Key, Schema, SchemaList};
+use self::{
+    function::{Arg as FunctionArg, Function},
+    types::{Key, Schema, SchemaList},
+};
 
 const USAGE_MESSAGE: &str = "usage: gsettings-codegen [FILE_PATH]";
 
@@ -28,37 +32,6 @@ fn main() -> anyhow::Result<()> {
     eprintln!("Successfully generated code at `{}`", schema_file_path);
 
     Ok(())
-}
-
-struct FunctionArg {
-    name: String,
-    type_: String,
-}
-
-fn generate_function_code(
-    is_pub: bool,
-    has_self_arg: bool,
-    name: &str,
-    args: Vec<FunctionArg>,
-    ret_type: &str,
-    content: &str,
-) -> String {
-    let func_prefix = if is_pub { "pub " } else { "" };
-
-    let arg_prefix = if has_self_arg { "&self," } else { "" };
-
-    let args = args
-        .iter()
-        .map(|FunctionArg { name, type_ }| format!("{name}: {type_}"))
-        .collect::<String>();
-
-    let buff = vec![
-        format!("{func_prefix}fn {name}({arg_prefix}{args}) -> {ret_type} {{"),
-        content.into(),
-        "}".into(),
-    ];
-
-    buff.join("\n")
 }
 
 fn generate_key_code(key: &Key) -> anyhow::Result<String> {
@@ -89,32 +62,31 @@ fn generate_key_code(key: &Key) -> anyhow::Result<String> {
 
     let snake_case_key_name = key.name.to_snake_case();
 
-    let buff = vec![
-        generate_function_code(
-            true,
-            true,
+    let mut buf = String::new();
+    buf.push_str(
+        &Function::new_method(&snake_case_key_name)
+            .public(true)
+            .ret_type(&context.ret_rust_type)
+            .content(&format!(r#"self.0.{}("{}")"#, context.call_name, key.name))
+            .generate(),
+    );
+    buf.push_str(
+        &Function::new_method_with_args(
             &snake_case_key_name,
-            Vec::new(),
-            &context.ret_rust_type,
-            &format!(r#"self.0.{}("{}")"#, context.call_name, key.name),
-        ),
-        generate_function_code(
-            true,
-            true,
-            &format!("set_{}", &snake_case_key_name),
-            vec![FunctionArg {
+            vec![FunctionArg::Other {
                 name: "value".into(),
                 type_: context.arg_rust_type.clone(),
             }],
-            "Result<(), glib::BoolError>",
-            &format!(
-                r#"self.0.set_{}("{}", {})"#,
-                context.call_name, key.name, "value"
-            ),
-        ),
-    ];
-
-    Ok(buff.join("\n"))
+        )
+        .public(true)
+        .ret_type("Result<(), glib::BoolError>")
+        .content(&format!(
+            r#"self.0.set_{}("{}", {})"#,
+            context.call_name, key.name, "value"
+        ))
+        .generate(),
+    );
+    Ok(buf)
 }
 
 fn generate_schema_code(schema: &Schema) -> String {
@@ -123,14 +95,11 @@ fn generate_schema_code(schema: &Schema) -> String {
         "pub struct Settings(gio::Settings);".into(),
         String::new(),
         "impl Settings {".into(),
-        generate_function_code(
-            true,
-            false,
-            "new",
-            Vec::new(),
-            "Self",
-            &format!(r#"Self(gio::Settings::new("{}"))"#, schema.id),
-        ),
+        Function::new("new")
+            .public(true)
+            .ret_type("Self")
+            .content(&format!(r#"Self(gio::Settings::new("{}"))"#, schema.id))
+            .generate(),
         String::new(),
     ];
 
