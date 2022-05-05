@@ -38,6 +38,12 @@ pub trait Key: std::fmt::Debug {
     }
 }
 
+/// Needs the following paramters:
+/// - name: Name of Struct
+/// - arg_type: Argument type used in setter (`&str`, `i64`, etc.)
+/// - ret_type: Argument type used in getter (`glib::GString`, `i64`, etc.)
+/// - call_name: What method to call in [`gio::Settings`] (`int`, `boolean`, etc.)
+/// - variant_type: [`glib::Variant`] type string (`i`, `b`, etc.)
 #[macro_export]
 macro_rules! impl_default_key {
     ($name:ident, $arg_type:expr, $ret_type:expr, $call_name:expr, $variant_type:expr) => {
