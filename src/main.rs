@@ -72,7 +72,7 @@ fn generate_key_code(key: &Key) -> anyhow::Result<String> {
     );
     buf.push_str(
         &Function::new_method_with_args(
-            &snake_case_key_name,
+            &format!("set_{}", &snake_case_key_name),
             vec![FunctionArg::Other {
                 name: "value".into(),
                 type_: context.arg_rust_type.clone(),
