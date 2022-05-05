@@ -6,16 +6,24 @@ use super::{Function, FunctionArg};
 
 #[typetag::serde(tag = "type")]
 pub trait Key: std::fmt::Debug {
+    /// Name of they key as defined in the schema
     fn name(&self) -> &str;
 
+    /// Setter function content
+    ///
+    /// Note: Use the string `value` as the arg
     fn setter_content(&self) -> String;
 
+    /// Getter function content
     fn getter_content(&self) -> String;
 
+    /// Setter function arg type or the type of `value`
     fn arg_type(&self) -> &str;
 
+    /// Getter function return type
     fn ret_type(&self) -> &str;
 
+    /// Create function from this
     fn to_functions(&self) -> Vec<Function> {
         let getter = Function::new_method(&self.name().to_snake_case())
             .public(true)
@@ -35,43 +43,4 @@ pub trait Key: std::fmt::Debug {
 
         vec![getter, setter]
     }
-}
-
-/// Needs the following parameters:
-/// - name: Name of Struct
-/// - arg_type: Argument type used in setter (`&str`, `i64`, etc.)
-/// - ret_type: Argument type used in getter (`glib::GString`, `i64`, etc.)
-/// - call_name: What method to call in [`gio::Settings`] (`int`, `boolean`, etc.)
-/// - variant_type: [`glib::Variant`] type string (`i`, `b`, etc.)
-#[macro_export]
-macro_rules! impl_basic_key {
-    ($name:ident, $arg_type:expr, $ret_type:expr, $call_name:expr, $variant_type:expr) => {
-        #[derive(Debug, serde::Deserialize, serde::Serialize)]
-        pub struct $name {
-            name: String,
-        }
-
-        #[typetag::serde(name = $variant_type)]
-        impl crate::key::Key for $name {
-            fn name(&self) -> &str {
-                self.name.as_str()
-            }
-
-            fn setter_content(&self) -> String {
-                format!(r#"self.0.set_{}("{}", value)"#, $call_name, self.name())
-            }
-
-            fn getter_content(&self) -> String {
-                format!(r#"self.0.{}("{}")"#, $call_name, self.name())
-            }
-
-            fn arg_type(&self) -> &str {
-                $arg_type
-            }
-
-            fn ret_type(&self) -> &str {
-                $ret_type
-            }
-        }
-    };
 }
