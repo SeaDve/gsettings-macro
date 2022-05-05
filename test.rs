@@ -1,3 +1,5 @@
+// Generated with gsettings-codegen v0.1.0
+
 #[derive(Debug, Clone)]
 pub struct Settings(gio::Settings);
 

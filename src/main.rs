@@ -91,6 +91,11 @@ fn generate_key_code(key: &Key) -> anyhow::Result<String> {
 
 fn generate_schema_code(schema: &Schema) -> String {
     let mut buff = vec![
+        format!(
+            "// Generated with gsettings-codegen v{}",
+            env!("CARGO_PKG_VERSION")
+        ),
+        String::new(),
         "#[derive(Debug, Clone)]".into(),
         "pub struct Settings(gio::Settings);".into(),
         String::new(),
