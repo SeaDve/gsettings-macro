@@ -2,6 +2,8 @@ use std::ops::Deref;
 
 use serde::Deserialize;
 
+use super::key::Key;
+
 #[derive(Debug, Deserialize)]
 pub struct SchemaList {
     #[serde(rename = "$value")]
@@ -20,12 +22,5 @@ impl Deref for SchemaList {
 pub struct Schema {
     pub id: String,
     #[serde(rename = "$value")]
-    pub keys: Vec<Key>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Key {
-    pub name: String,
-    #[serde(rename = "type", default)]
-    pub type_: String,
+    pub keys: Vec<Box<dyn Key>>,
 }

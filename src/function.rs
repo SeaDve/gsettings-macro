@@ -45,19 +45,19 @@ impl Function {
     }
 
     /// Whether the function has pub prefix
-    pub fn public(&mut self, value: bool) -> &mut Self {
+    pub fn public(mut self, value: bool) -> Self {
         self.is_pub = Some(value);
         self
     }
 
     /// Rust return type
-    pub fn ret_type(&mut self, value: impl Into<String>) -> &mut Self {
+    pub fn ret_type(mut self, value: impl Into<String>) -> Self {
         self.ret_type = Some(value.into());
         self
     }
 
     /// Actual content of the function
-    pub fn content(&mut self, value: impl Into<String>) -> &mut Self {
+    pub fn content(mut self, value: impl Into<String>) -> Self {
         self.content = Some(value.into());
         self
     }
@@ -114,34 +114,29 @@ pub struct DelegateMethod(Function);
 
 impl DelegateMethod {
     pub fn new_with_args(name: &str, args: Vec<Arg>) -> Self {
-        let mut this = Self(Function::new_method_with_args(name, args));
-        this.0.public(true);
-        this.0.content(format!(
-            "self.0.{}({})",
-            this.0.name,
-            this.0
-                .args
-                .iter()
-                .filter_map(|arg| match arg {
-                    Arg::SelfRef => None,
-                    Arg::Other { name, .. } => {
-                        Some(name.to_string())
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join(",")
-        ));
-        this
+        let content_args = args
+            .iter()
+            .filter_map(|arg| match arg {
+                Arg::SelfRef => None,
+                Arg::Other { name, .. } => Some(name.to_string()),
+            })
+            .collect::<Vec<_>>()
+            .join(",");
+
+        Self(
+            Function::new_method_with_args(name, args)
+                .public(true)
+                .content(format!("self.0.{}({})", name, content_args)),
+        )
     }
 
     /// Rust return type
-    pub fn ret_type(&mut self, value: impl Into<String>) -> &mut Self {
-        self.0.ret_type(value);
-        self
+    pub fn ret_type(self, value: impl Into<String>) -> Self {
+        Self(self.0.ret_type(value))
     }
 
     /// Generate rust code
-    pub fn generate(&mut self) -> String {
+    pub fn generate(self) -> String {
         self.0.generate()
     }
 }

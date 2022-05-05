@@ -1,15 +1,14 @@
 mod function;
+mod key;
+mod schema;
 mod settings;
-mod types;
-
-use heck::ToSnakeCase;
 
 use std::{env, fs::File};
 
 use self::{
     function::{Arg as FunctionArg, DelegateMethod, Function},
+    schema::{Schema, SchemaList},
     settings::Settings,
-    types::{Key, Schema, SchemaList},
 };
 
 const USAGE_MESSAGE: &str = "usage: gsettings-codegen [FILE_PATH]";
@@ -45,61 +44,6 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn generate_key_code(key: &Key) -> anyhow::Result<String> {
-    struct Context {
-        arg_rust_type: String,
-        ret_rust_type: String,
-        call_name: String,
-    }
-
-    let context = match key.type_.as_str() {
-        "i" => Context {
-            arg_rust_type: "i32".into(),
-            ret_rust_type: "i32".into(),
-            call_name: "int".into(),
-        },
-        "s" => Context {
-            arg_rust_type: "&str".into(),
-            ret_rust_type: "glib::GString".into(),
-            call_name: "string".into(),
-        },
-        "b" => Context {
-            arg_rust_type: "bool".into(),
-            ret_rust_type: "bool".into(),
-            call_name: "boolean".into(),
-        },
-        type_ => anyhow::bail!("Unsupported type `{type_}`"),
-    };
-
-    let snake_case_key_name = key.name.to_snake_case();
-
-    let mut buf = String::new();
-    buf.push_str(
-        &Function::new_method(&snake_case_key_name)
-            .public(true)
-            .ret_type(&context.ret_rust_type)
-            .content(&format!(r#"self.0.{}("{}")"#, context.call_name, key.name))
-            .generate(),
-    );
-    buf.push_str(
-        &Function::new_method_with_args(
-            &format!("set_{}", &snake_case_key_name),
-            vec![FunctionArg::Other {
-                name: "value".into(),
-                type_: context.arg_rust_type.clone(),
-            }],
-        )
-        .public(true)
-        .ret_type("Result<(), glib::BoolError>")
-        .content(&format!(
-            r#"self.0.set_{}("{}", {})"#,
-            context.call_name, key.name, "value"
-        ))
-        .generate(),
-    );
-    Ok(buf)
-}
-
 fn generate_schema_code(schema: &Schema) -> String {
     let mut settings = Settings::new(&schema.id);
 
@@ -116,14 +60,8 @@ fn generate_schema_code(schema: &Schema) -> String {
     );
 
     for key in schema.keys.iter() {
-        match generate_key_code(key) {
-            Ok(code) => {
-                settings.push_impl(code);
-            }
-            Err(err) => {
-                log::info!("Skipped generating functions for `{}`: {}", key.name, err);
-                continue;
-            }
+        for function in key.to_functions() {
+            settings.push_impl(function.generate());
         }
     }
 
