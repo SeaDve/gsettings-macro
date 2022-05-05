@@ -41,7 +41,7 @@ fn main() -> anyhow::Result<()> {
 
     println!("{}", buf);
 
-    eprintln!("Successfully generated code at `{}`", schema_file_path);
+    eprintln!("Successfully generated code for `{}`", schema_file_path);
 
     Ok(())
 }
