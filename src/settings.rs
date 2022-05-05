@@ -3,7 +3,7 @@ use super::Function;
 /// Generates settings struct with new method
 pub struct Settings {
     id: String,
-    impl_codes: Vec<String>,
+    impl_codes: Vec<Function>,
 }
 
 impl Settings {
@@ -15,8 +15,8 @@ impl Settings {
     }
 
     /// Adds code inside impl
-    pub fn push_impl(&mut self, code: String) {
-        self.impl_codes.push(code);
+    pub fn push_impl(&mut self, function: Function) {
+        self.impl_codes.push(function);
     }
 
     /// Generate rust code
@@ -34,7 +34,7 @@ impl Settings {
                 .generate(),
         );
         for code in &self.impl_codes {
-            buf.push_str(code);
+            buf.push_str(&code.generate());
         }
         buf.push('}');
 

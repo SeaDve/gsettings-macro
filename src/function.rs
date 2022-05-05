@@ -135,8 +135,8 @@ impl DelegateMethod {
         Self(self.0.ret_type(value))
     }
 
-    /// Generate rust code
-    pub fn generate(self) -> String {
-        self.0.generate()
+    /// Convert into function
+    pub fn into_inner(self) -> Function {
+        self.0
     }
 }

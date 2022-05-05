@@ -56,12 +56,12 @@ fn generate_schema_code(schema: &Schema) -> String {
             }],
         )
         .ret_type("gio::Action")
-        .generate(),
+        .into_inner(),
     );
 
     for key in schema.keys.iter() {
         for function in key.to_functions() {
-            settings.push_impl(function.generate());
+            settings.push_impl(function);
         }
     }
 
