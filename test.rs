@@ -33,6 +33,12 @@ impl Settings {
     pub fn set_history(&self, value: &str) -> Result<(), glib::BoolError> {
         self.0.set_string("history", value)
     }
+    pub fn delay(&self) -> u32 {
+        self.0.uint("delay")
+    }
+    pub fn set_delay(&self, value: u32) -> Result<(), glib::BoolError> {
+        self.0.set_uint("delay", value)
+    }
     pub fn preferred_audio_source(&self) -> glib::GString {
         self.0.string("preferred-audio-source")
     }

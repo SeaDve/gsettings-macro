@@ -21,6 +21,9 @@
             <summary>Contains recently recognized songs</summary>
             <description></description>
         </key>
+        <key name="delay" type="u">
+            <default>600</default>
+        </key>
         <key name="preferred-audio-source" type="s">
             <choices>
                 <choice value="microphone"/>
