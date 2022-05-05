@@ -5,7 +5,6 @@ pub enum Arg {
 }
 
 /// Generates function rust code
-#[derive(Debug)]
 pub struct Function {
     name: String,
     args: Vec<Arg>,
@@ -17,9 +16,14 @@ pub struct Function {
 impl Function {
     /// Function with no args
     pub fn new(name: &str) -> Self {
+        Self::new_with_args(name, Vec::new())
+    }
+
+    /// Function with args
+    pub fn new_with_args(name: &str, args: Vec<Arg>) -> Self {
         Self {
             name: name.to_string(),
-            args: Vec::new(),
+            args,
             is_pub: None,
             ret_type: None,
             content: None,
@@ -28,28 +32,16 @@ impl Function {
 
     /// Function with `&self` parameter
     pub fn new_method(name: &str) -> Self {
-        Self {
-            name: name.to_string(),
-            args: vec![Arg::SelfRef],
-            is_pub: None,
-            ret_type: None,
-            content: None,
-        }
+        Self::new_method_with_args(name, Vec::new())
     }
 
     /// Function with `&self` parameter with additional args
     pub fn new_method_with_args(name: &str, mut args: Vec<Arg>) -> Self {
-        Self {
-            name: name.to_string(),
-            args: {
-                let mut arg_list = vec![Arg::SelfRef];
-                arg_list.append(&mut args);
-                arg_list
-            },
-            is_pub: None,
-            ret_type: None,
-            content: None,
-        }
+        Self::new_with_args(name, {
+            let mut arg_list = vec![Arg::SelfRef];
+            arg_list.append(&mut args);
+            arg_list
+        })
     }
 
     /// Whether the function has pub prefix
@@ -114,5 +106,41 @@ impl Function {
         buf.push('}');
 
         buf
+    }
+}
+
+/// Assumes that inner can be accessed with `self.0`
+pub struct DelagateMethod(Function);
+
+impl DelagateMethod {
+    pub fn new_with_args(name: &str, args: Vec<Arg>) -> Self {
+        Self(Function::new_method_with_args(name, args))
+    }
+
+    /// Rust return type
+    pub fn ret_type(&mut self, value: impl Into<String>) -> &mut Self {
+        self.0.ret_type(value);
+        self
+    }
+
+    /// Generate rust code
+    pub fn generate(&mut self) -> String {
+        self.0.public(true);
+        self.0.content(format!(
+            "self.0.{}({})",
+            self.0.name,
+            self.0
+                .args
+                .iter()
+                .filter_map(|arg| match arg {
+                    Arg::SelfRef => None,
+                    Arg::Other { name, .. } => {
+                        Some(name.to_string())
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(",")
+        ));
+        self.0.generate()
     }
 }

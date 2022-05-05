@@ -8,6 +8,10 @@ impl Settings {
         Self(gio::Settings::new("io.github.seadve.test"))
     }
 
+    pub fn create_action(&self, key: &str) -> gio::Action {
+        self.0.create_action(key)
+    }
+
     pub fn window_width(&self) -> i32 {
         self.0.int("window-width")
     }
