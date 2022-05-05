@@ -38,7 +38,7 @@ pub trait Key: std::fmt::Debug {
     }
 }
 
-/// Needs the following paramters:
+/// Needs the following parameters:
 /// - name: Name of Struct
 /// - arg_type: Argument type used in setter (`&str`, `i64`, etc.)
 /// - ret_type: Argument type used in getter (`glib::GString`, `i64`, etc.)
