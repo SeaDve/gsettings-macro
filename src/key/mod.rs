@@ -2,7 +2,6 @@ mod basic;
 
 use heck::ToSnakeCase;
 
-pub use self::basic::{BoolKey, IntKey, StringKey};
 use super::{Function, FunctionArg};
 
 #[typetag::serde(tag = "type")]

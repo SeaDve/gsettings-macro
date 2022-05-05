@@ -9,6 +9,12 @@ will want to tweak the generated code.
 
 It would be better if this was handled by a macro, but here we go.
 
+## Todo list
+
+* Add enum and flags support
+* Add other common types support (`a{ss}`, etc.)
+* Maybe include default, description, and summary in the generated code?
+
 ## Usage
 
 ```bash
