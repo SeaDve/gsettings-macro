@@ -14,8 +14,6 @@ use self::{
 const USAGE_MESSAGE: &str = "usage: gsettings-codegen [FILE_PATH]";
 
 fn main() -> anyhow::Result<()> {
-    pretty_env_logger::init();
-
     let mut args = env::args();
     args.next();
     let schema_file_path = args.next().ok_or_else(|| anyhow::anyhow!(USAGE_MESSAGE))?;
