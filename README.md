@@ -20,3 +20,8 @@ gsettings-codegen [FILE_PATH] > settings.rs
 ```bash
 cargo run
 ```
+
+## Example
+
+See `./test.gschema.xml` for sample source GSchema and `./test.rs` for
+sample output.
