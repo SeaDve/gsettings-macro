@@ -54,6 +54,8 @@ fn parse_schema(args: &AttributeArgs) -> Result<Schema> {
     Ok(schema)
 }
 
+/// Needs `gio`, `gio::prelude::SettingsExt`, and  `gio::prelude::SettingsExtManual`
+/// in scope.
 #[proc_macro_attribute]
 #[proc_macro_error]
 pub fn gen_settings(

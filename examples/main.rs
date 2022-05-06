@@ -9,12 +9,24 @@ fn main() {
 
     let settings = Settings::new();
 
-    settings.set_window_width(3).unwrap();
-    settings.window_width();
+    settings
+        .set_is_maximized(true)
+        .expect("key is not writable");
+    assert!(settings.is_maximized());
 
-    settings.set_window_height(3).unwrap();
-    settings.window_width();
+    settings
+        .set_keycode("very secure password")
+        .expect("key is not writable");
+    assert_eq!(settings.keycode(), "very secure password");
 
-    settings.set_invalid_words(&["test"]).unwrap();
-    settings.invalid_words();
+    settings
+        .set_invalid_words(&["invalid", "words"])
+        .expect("key is not writable");
+    assert_eq!(settings.invalid_words(), vec!["invalid", "words"]);
+
+    settings
+        .set_window_width(30_000)
+        .expect("key is not writable");
+    settings.window_width();
+    assert_eq!(settings.window_width(), 30_000);
 }
