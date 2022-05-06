@@ -18,9 +18,9 @@ Schema like the following
             <summary>Window maximized behaviour</summary>
             <description></description>
         </key>
-        <key name="history" type="s">
-            <default>"[]"</default>
-            <summary>Contains recently recognized songs</summary>
+        <key name="theme" type="s">
+            <default>"light"</default>
+            <summary>Current theme</summary>
             <description></description>
         </key>
         <key name="invalid-words" type="as">
@@ -56,9 +56,9 @@ settings
 assert!(settings.is_maximized());
 
 settings
-    .set_keycode("very secure password")
+    .set_theme("dark")
     .expect("key is not writable");
-assert_eq!(settings.keycode(), "very secure password");
+assert_eq!(settings.theme(), "dark");
 
 settings
     .set_invalid_words(&["invalid", "words"])
