@@ -98,8 +98,7 @@ fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     Ok((schema, schema_id))
 }
 
-/// Needs `gio`, `gio::prelude::SettingsExt`, and  `gio::prelude::SettingsExtManual`
-/// in scope.
+/// Needs `gio` in scope.
 ///
 /// Not specifying the id in the attribute will require the id in the [`new`] constructor.
 /// Additionally, it will not implement [`Default`].

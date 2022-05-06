@@ -159,14 +159,14 @@ impl ToTokens for StringKey {
             quote! {
                 #[doc = #docs]
                 pub fn #setter_func_name(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
-                    self.0.set_string(#key_name, value.to_string().as_str())
+                    gio::prelude::SettingsExt::set_string(&self.0, #key_name, value.to_string().as_str())
                 }
             }
         } else {
             quote! {
                 #[doc = #docs]
                 pub fn #setter_func_name(&self, value: #str_slice_type) -> std::result::Result<(), gio::glib::BoolError> {
-                    self.0.set_string(#key_name, value)
+                    gio::prelude::SettingsExt::set_string(&self.0, #key_name, value)
                 }
             }
         };
@@ -175,14 +175,14 @@ impl ToTokens for StringKey {
             quote! {
                 #[doc = #docs]
                 pub fn #getter_func_name(&self) -> #choice_type_ident {
-                    #choice_type_ident::from_str(&self.0.string(#key_name))
+                    #choice_type_ident::from_str(&gio::prelude::SettingsExt::string(&self.0, #key_name))
                 }
             }
         } else {
             quote! {
                 #[doc = #docs]
                 pub fn #getter_func_name(&self) -> #gstring_type {
-                    self.0.string(#key_name)
+                    gio::prelude::SettingsExt::string(&self.0, #key_name)
                 }
             }
         };

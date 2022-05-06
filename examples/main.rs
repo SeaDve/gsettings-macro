@@ -1,6 +1,4 @@
 fn main() {
-    use gio::prelude::*;
-
     #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
     pub struct Settings;
 

@@ -55,12 +55,12 @@ macro_rules! impl_basic_key {
                 tokens.extend(quote! {
                     #[doc = #doc_buf]
                     pub fn #setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
-                        self.0.#set_gfunc_name(#key_name, value)
+                        gio::prelude::SettingsExt::#set_gfunc_name(&self.0, #key_name, value)
                     }
 
                     #[doc = #doc_buf]
                     pub fn #getter_func_name(&self) -> #get_type {
-                        self.0.#get_gfunc_name(#key_name)
+                        gio::prelude::SettingsExt::#get_gfunc_name(&self.0, #key_name)
                     }
                 });
             }

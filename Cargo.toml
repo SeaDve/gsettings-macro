@@ -19,7 +19,7 @@ proc-macro = true
 [dependencies]
 anyhow = "1.0.57"
 heck = "0.4.0"
-proc-macro2 = "1.0.37"
+proc-macro2 = "1.0.38"
 proc-macro-error = "1.0.4"
 quickxml_to_serde = { version = "0.5.0", features = ["json_types"] }
 quote = "1.0.18"
