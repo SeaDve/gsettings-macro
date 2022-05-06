@@ -12,9 +12,13 @@ use syn::Ident;
 /// - variant_type: [`glib::Variant`] type string (`i`, `b`, etc.)
 macro_rules! impl_basic_key {
     ($name:ident, $arg_type:literal, $ret_type:literal, $gfunc_name:literal, $variant_type:literal) => {
-        #[derive(Debug, Deserialize, Serialize)]
+        #[derive(Deserialize, Serialize)]
         struct $name {
             name: String,
+            #[serde(default)]
+            default: std::collections::HashMap<String, String>,
+            #[serde(default)]
+            summary: std::collections::HashMap<String, String>,
         }
 
         #[typetag::serde(name = $variant_type)]
@@ -34,11 +38,29 @@ macro_rules! impl_basic_key {
                 let get_gfunc_name = Ident::new($gfunc_name, Span::call_site());
                 let set_gfunc_name = format_ident!("set_{}", get_gfunc_name);
 
+                let mut doc_buf = String::new();
+
+                if let Some(ref summary) = self.summary.get("$value") {
+                    if !summary.is_empty() {
+                        doc_buf.push_str(&summary);
+                        doc_buf.push('\n');
+                    }
+                }
+
+                if let Some(ref default) = self.default.get("$value") {
+                    if !default.is_empty() {
+                        doc_buf.push('\n');
+                        doc_buf.push_str(&format!("default: {}", default));
+                    }
+                }
+
                 tokens.extend(quote! {
+                    #[doc = #doc_buf]
                     pub fn #setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
                         self.0.#set_gfunc_name(#key_name, value)
                     }
 
+                    #[doc = #doc_buf]
                     pub fn #getter_func_name(&self) -> #get_type {
                         self.0.#get_gfunc_name(#key_name)
                     }

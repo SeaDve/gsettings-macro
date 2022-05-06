@@ -3,7 +3,10 @@
 Macro for easy GSettings key access
 
 The main purpose of this is to reduce the risk of mistyping a key and
-reduce boilerplate rust code.
+reduce boilerplate rust code. Furthermore, the summary and the default
+of the value is included in the documentation of the getter and setter
+function. This would be helpful if you use `rust-analyzer` and would
+encourage documenting GSchema keys.
 
 Schema like the following
 
@@ -81,4 +84,3 @@ assert_eq!(settings.window_width(), 30_000);
 * Usage documentation
 * Add enum and flags support
 * Add other common types support (`a{ss}`, etc.)
-* Maybe include default, description, and summary in the generated code?
