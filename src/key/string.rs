@@ -147,6 +147,7 @@ impl ToTokens for StringKey {
 
         let getter_func_name = Ident::new(&key_name_snake_case, Span::call_site());
         let setter_func_name = format_ident!("set_{}", getter_func_name);
+        let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
 
         let str_slice_type = syn::parse_str::<syn::Type>("&str").unwrap();
         let gstring_type = syn::parse_str::<syn::Type>("gio::glib::GString").unwrap();
@@ -158,14 +159,24 @@ impl ToTokens for StringKey {
         let setter_func = if self.has_choice() {
             quote! {
                 #[doc = #docs]
-                pub fn #setter_func_name(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
+                pub fn #setter_func_name(&self, value: #choice_type_ident) {
+                    self.#try_setter_func_name(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
+                }
+
+                #[doc = #docs]
+                pub fn #try_setter_func_name(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
                     gio::prelude::SettingsExt::set_string(&self.0, #key_name, value.to_string().as_str())
                 }
             }
         } else {
             quote! {
                 #[doc = #docs]
-                pub fn #setter_func_name(&self, value: #str_slice_type) -> std::result::Result<(), gio::glib::BoolError> {
+                pub fn #setter_func_name(&self, value: #str_slice_type) {
+                    self.#try_setter_func_name(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
+                }
+
+                #[doc = #docs]
+                pub fn #try_setter_func_name(&self, value: #str_slice_type) -> std::result::Result<(), gio::glib::BoolError> {
                     gio::prelude::SettingsExt::set_string(&self.0, #key_name, value)
                 }
             }

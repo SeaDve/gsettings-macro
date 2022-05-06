@@ -61,30 +61,19 @@ pub struct Settings;
 
 let settings = Settings::new();
 
-settings
-    .set_is_maximized(true)
-    .expect("key is not writable");
+settings.set_is_maximized(true);
 assert!(settings.is_maximized());
 
-settings
-    .set_theme("dark")
-    .expect("key is not writable");
+settings.set_theme("dark");
 assert_eq!(settings.theme(), "dark");
 
-settings
-    .set_invalid_words(&["invalid", "words"])
-    .expect("key is not writable");
+settings.set_invalid_words(&["invalid", "words"]);
 assert_eq!(settings.invalid_words(), vec!["invalid", "words"]);
 
-settings
-    .set_window_width(30_000)
-    .expect("key is not writable");
-settings.window_width();
+settings.set_window_width(30_000);
 assert_eq!(settings.window_width(), 30_000);
 
-settings
-    .set_preferred_audio_source(PreferredAudioSource::DesktopAudio)
-    .expect("key is not writable");
+settings.set_preferred_audio_source(PreferredAudioSource::DesktopAudio);
 assert_eq!(
     settings.preferred_audio_source(),
     PreferredAudioSource::DesktopAudio

@@ -29,6 +29,7 @@ macro_rules! impl_basic_key {
 
                 let getter_func_name = Ident::new(&key_name_snake_case, Span::call_site());
                 let setter_func_name = format_ident!("set_{}", getter_func_name);
+                let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
 
                 let get_type = syn::parse_str::<syn::Type>($ret_type).unwrap_or_else(|_| panic!("Invalid type {}", $ret_type));
                 let set_type = syn::parse_str::<syn::Type>($arg_type).unwrap_or_else(|_| panic!("Invalid type {}", $ret_type));
@@ -54,7 +55,12 @@ macro_rules! impl_basic_key {
 
                 tokens.extend(quote! {
                     #[doc = #doc_buf]
-                    pub fn #setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
+                    pub fn #setter_func_name(&self, value: #set_type) {
+                        self.#try_setter_func_name(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
+                    }
+
+                    #[doc = #doc_buf]
+                    pub fn #try_setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
                         gio::prelude::SettingsExt::#set_gfunc_name(&self.0, #key_name, value)
                     }
 
