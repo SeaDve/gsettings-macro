@@ -27,6 +27,13 @@ fn main() {
     settings
         .set_window_width(30_000)
         .expect("key is not writable");
-    settings.window_width();
     assert_eq!(settings.window_width(), 30_000);
+
+    settings
+        .set_preferred_audio_source(PreferredAudioSource::DesktopAudio)
+        .expect("key is not writable");
+    assert_eq!(
+        settings.preferred_audio_source(),
+        PreferredAudioSource::DesktopAudio
+    );
 }

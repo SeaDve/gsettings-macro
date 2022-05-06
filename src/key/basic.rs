@@ -15,10 +15,8 @@ macro_rules! impl_basic_key {
         #[derive(Deserialize, Serialize)]
         struct $name {
             name: String,
-            #[serde(default)]
-            default: std::collections::HashMap<String, String>,
-            #[serde(default)]
-            summary: std::collections::HashMap<String, String>,
+            default: Option<String>,
+            summary: Option<String>,
         }
 
         #[typetag::serde(name = $variant_type)]
@@ -40,14 +38,14 @@ macro_rules! impl_basic_key {
 
                 let mut doc_buf = String::new();
 
-                if let Some(ref summary) = self.summary.get("$value") {
+                if let Some(ref summary) = self.summary {
                     if !summary.is_empty() {
-                        doc_buf.push_str(&summary);
+                        doc_buf.push_str(summary);
                         doc_buf.push('\n');
                     }
                 }
 
-                if let Some(ref default) = self.default.get("$value") {
+                if let Some(ref default) = self.default {
                     if !default.is_empty() {
                         doc_buf.push('\n');
                         doc_buf.push_str(&format!("default: {}", default));
@@ -72,7 +70,6 @@ macro_rules! impl_basic_key {
 
 impl_basic_key!(BooleanKey, "bool", "bool", "boolean", "b");
 
-impl_basic_key!(StringKey, "&str", "gio::glib::GString", "string", "s");
 impl_basic_key!(
     StringVecKey,
     "&[&str]",

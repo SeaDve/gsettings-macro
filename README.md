@@ -33,6 +33,15 @@ Schema like the following
             <summary>Window width</summary>
             <description>Window width</description>
         </key>
+        <key name="preferred-audio-source" type="s">
+            <choices>
+                <choice value="microphone"/>
+                <choice value="desktop-audio"/>
+            </choices>
+            <default>"microphone"</default>
+            <summary>Preferred audio source to use in recording audio</summary>
+            <description></description>
+        </key>
     </schema>
 </schemalist>
 ```
@@ -70,6 +79,14 @@ settings
     .expect("key is not writable");
 settings.window_width();
 assert_eq!(settings.window_width(), 30_000);
+
+settings
+    .set_preferred_audio_source(PreferredAudioSource::DesktopAudio)
+    .expect("key is not writable");
+assert_eq!(
+    settings.preferred_audio_source(),
+    PreferredAudioSource::DesktopAudio
+);
 ```
 
 ## Known issue
