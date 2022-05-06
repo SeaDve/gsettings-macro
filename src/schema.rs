@@ -1,11 +1,11 @@
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 
 use serde::Deserialize;
 
-use super::key::Key;
+use crate::key::Key;
 
-#[derive(Debug, Deserialize)]
-pub struct SchemaList {
+#[derive(Deserialize)]
+pub(crate) struct SchemaList {
     #[serde(rename = "$value")]
     schemas: Vec<Schema>,
 }
@@ -18,8 +18,14 @@ impl Deref for SchemaList {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Schema {
+impl DerefMut for SchemaList {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.schemas
+    }
+}
+
+#[derive(Deserialize)]
+pub(crate) struct Schema {
     pub id: String,
     #[serde(rename = "$value")]
     pub keys: Vec<Box<dyn Key>>,

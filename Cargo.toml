@@ -1,13 +1,24 @@
 [package]
-name = "gsettings-codegen"
+name = "gsettings-macro"
 version = "0.1.0"
+authors = ["Dave Patrick"]
 edition = "2021"
+
+[lib]
+proc-macro = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 anyhow = "1.0.57"
 heck = "0.4.0"
+proc-macro2 = "1.0.37"
+proc-macro-error = "1.0.4"
 quick-xml = { version = "0.22.0", features = ["serialize"] }
+quote = "1.0.18"
 serde = { version = "1.0.137", features = ["derive"] }
+syn = "1.0.92"
 typetag = "0.1.8"
+
+[dev-dependencies]
+gio = { version = "0.15.11", features = ["v2_60"] }
