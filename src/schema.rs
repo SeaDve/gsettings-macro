@@ -21,7 +21,6 @@ impl SchemaList {
 
 #[derive(Deserialize)]
 pub(crate) struct Schema {
-    pub id: String,
     #[serde(rename = "key")]
     pub keys: Vec<Box<dyn Key>>,
 }

@@ -10,7 +10,7 @@ use std::{fs::File, io::Read};
 
 use crate::schema::{Root as SchemaFileRoot, Schema};
 
-fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, String)> {
+fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, Option<String>)> {
     let mut schema_path = None;
     let mut schema_id = None;
 
@@ -28,17 +28,18 @@ fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, String)> {
                 } else {
                     emit_call_site_error!("expected a string literal after `id = `");
                 }
+            } else {
+                emit_call_site_error!("expected `#[gen_settings(file = \"path/to/schema\")]` or `#[gen_settings(file = \"path/to/schema\", id = \"org.some.id\")]`")
             }
         }
     }
 
     let schema_path = schema_path.ok_or_else(|| anyhow!("expected a file meta"))?;
-    let schema_id = schema_id.ok_or_else(|| anyhow!("expected a file meta"))?;
 
     Ok((schema_path, schema_id))
 }
 
-fn parse_schema(args: &AttributeArgs) -> Result<Schema> {
+fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     let (schema_path, schema_id) = parse_schema_path_and_id(args)?;
 
     use quickxml_to_serde::{Config, JsonArray, JsonType, NullValue};
@@ -90,17 +91,18 @@ fn parse_schema(args: &AttributeArgs) -> Result<Schema> {
         emit_call_site_error!("schema file must have a single schema");
     }
 
-    let mut schema = schema_list
+    let schema = schema_list
         .pop()
         .ok_or_else(|| anyhow!("a schema from file"))?;
 
-    schema.id = schema_id;
-
-    Ok(schema)
+    Ok((schema, schema_id))
 }
 
 /// Needs `gio`, `gio::prelude::SettingsExt`, and  `gio::prelude::SettingsExtManual`
 /// in scope.
+///
+/// Not specifying the id in the attribute will require the id in the [`new`] constructor.
+/// Additionally, it will not implement [`Default`].
 #[proc_macro_attribute]
 #[proc_macro_error]
 pub fn gen_settings(
@@ -114,8 +116,7 @@ pub fn gen_settings(
         emit_call_site_warning!("any struct field would be ignored")
     }
 
-    let schema = parse_schema(&attr).expect("failed to parse schema");
-    let schema_id = schema.id;
+    let (schema, schema_id) = parse_schema(&attr).expect("failed to parse schema");
 
     let ident = item.ident;
 
@@ -130,16 +131,28 @@ pub fn gen_settings(
         keys_token_stream.extend(key.to_token_stream())
     }
 
-    let expanded = quote! {
+    let constructor_token_stream = if let Some(ref id) = schema_id {
+        quote! {
+            pub fn new() -> Self {
+                Self(gio::Settings::new(#id))
+            }
+        }
+    } else {
+        quote! {
+            pub fn new(id: &str) -> Self {
+                Self(gio::Settings::new(id))
+            }
+        }
+    };
+
+    let mut expanded = quote! {
         #aux_token_stream
 
         #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
         pub struct #ident(gio::Settings);
 
         impl #ident {
-            pub fn new() -> Self {
-                Self(gio::Settings::new(#schema_id))
-            }
+            #constructor_token_stream
 
             #keys_token_stream
         }
@@ -158,18 +171,22 @@ pub fn gen_settings(
             }
         }
 
-        impl Default for #ident {
-            fn default() -> Self {
-                Self::new()
-            }
-        }
-
         impl std::fmt::Debug for #ident {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 std::fmt::Debug::fmt(&self.0, f)
             }
         }
     };
+
+    if schema_id.is_some() {
+        expanded.extend(quote! {
+            impl Default for #ident {
+                fn default() -> Self {
+                    Self::new()
+                }
+            }
+        });
+    }
 
     proc_macro::TokenStream::from(expanded)
 }

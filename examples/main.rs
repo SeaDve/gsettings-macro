@@ -1,13 +1,10 @@
 fn main() {
     use gio::prelude::*;
 
-    #[gsettings_macro::gen_settings(
-        file = "./examples/test.gschema.xml",
-        id = "io.github.seadve.test"
-    )]
+    #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
     pub struct Settings;
 
-    let settings = Settings::new();
+    let settings = Settings::new("io.github.seadve.test");
 
     settings
         .set_is_maximized(true)
