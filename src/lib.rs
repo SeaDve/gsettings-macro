@@ -85,8 +85,6 @@ pub fn gen_settings(
         pub struct #ident(gio::Settings);
 
         impl #ident {
-            pub const NONE: Option<&'static gio::Settings> = None;
-
             pub fn new() -> Self {
                 Self(gio::Settings::new(#schema_id))
             }
