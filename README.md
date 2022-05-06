@@ -44,7 +44,7 @@ use gio::prelude::*;
 
 #[gsettings_macro::gen_settings(
     file = "./examples/test.gschema.xml",
-    id = "io.github.sadve.test"
+    id = "io.github.seadve.test"
 )]
 pub struct Settings;
 
