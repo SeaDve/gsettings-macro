@@ -11,7 +11,7 @@ use syn::Ident;
 /// - call_name: What method to call in [`gio::Settings`] (`int`, `boolean`, etc.)
 /// - variant_type: [`glib::Variant`] type string (`i`, `b`, etc.)
 macro_rules! impl_basic_key {
-    ($name:ident, $arg_type:literal, $ret_type:literal, $gfunc_name:literal, $variant_type:literal) => {
+    ($name:ident, $arg_type:literal, $ret_type:literal, $variant_type:literal) => {
         #[derive(Deserialize, Serialize)]
         struct $name {
             name: String,
@@ -33,9 +33,6 @@ macro_rules! impl_basic_key {
 
                 let get_type = syn::parse_str::<syn::Type>($ret_type).unwrap_or_else(|_| panic!("Invalid type {}", $ret_type));
                 let set_type = syn::parse_str::<syn::Type>($arg_type).unwrap_or_else(|_| panic!("Invalid type {}", $ret_type));
-
-                let get_gfunc_name = Ident::new($gfunc_name, Span::call_site());
-                let set_gfunc_name = format_ident!("set_{}", get_gfunc_name);
 
                 let mut doc_buf = String::new();
 
@@ -61,12 +58,12 @@ macro_rules! impl_basic_key {
 
                     #[doc = #doc_buf]
                     pub fn #try_setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
-                        gio::prelude::SettingsExt::#set_gfunc_name(&self.0, #key_name, value)
+                        gio::prelude::SettingsExtManual::set(&self.0, #key_name, &value)
                     }
 
                     #[doc = #doc_buf]
                     pub fn #getter_func_name(&self) -> #get_type {
-                        gio::prelude::SettingsExt::#get_gfunc_name(&self.0, #key_name)
+                        gio::prelude::SettingsExtManual::get(&self.0, #key_name)
                     }
                 });
             }
@@ -74,20 +71,14 @@ macro_rules! impl_basic_key {
     };
 }
 
-impl_basic_key!(BooleanKey, "bool", "bool", "boolean", "b");
+impl_basic_key!(BooleanKey, "bool", "bool", "b");
 
-impl_basic_key!(
-    StringVecKey,
-    "&[&str]",
-    "Vec<gio::glib::GString>",
-    "strv",
-    "as"
-);
+impl_basic_key!(StringVecKey, "&[&str]", "Vec<String>", "as");
 
-impl_basic_key!(IntKey, "i32", "i32", "int", "i");
-impl_basic_key!(UIntKey, "u32", "u32", "uint", "u");
+impl_basic_key!(IntKey, "i32", "i32", "i");
+impl_basic_key!(UIntKey, "u32", "u32", "u");
 
-impl_basic_key!(Int64Key, "i64", "i64", "int64", "x");
-impl_basic_key!(UInt64Key, "u64", "u64", "uint64", "t");
+impl_basic_key!(Int64Key, "i64", "i64", "x");
+impl_basic_key!(UInt64Key, "u64", "u64", "t");
 
-impl_basic_key!(DoubleKey, "f64", "f64", "double", "d");
+impl_basic_key!(DoubleKey, "f64", "f64", "d");

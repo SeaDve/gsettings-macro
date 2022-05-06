@@ -16,6 +16,18 @@ fn no_id_defined() {
     settings.set_window_width(30_000);
     assert_eq!(settings.window_width(), 30_000);
 
+    settings.set_window_height(30_000);
+    assert_eq!(settings.window_height(), 30_000);
+
+    settings.set_window_width_64(30_000);
+    assert_eq!(settings.window_width_64(), 30_000);
+
+    settings.set_window_height_64(30_000);
+    assert_eq!(settings.window_height_64(), 30_000);
+
+    settings.set_volume(1.0);
+    assert_eq!(settings.volume(), 1.0);
+
     settings.set_preferred_audio_source(PreferredAudioSource::DesktopAudio);
     assert_eq!(
         settings.preferred_audio_source(),
