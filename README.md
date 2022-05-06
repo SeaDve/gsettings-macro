@@ -104,8 +104,10 @@ gsettings-macro = "0.1.0"
 * Not updating when the gschema file is modified
   * Use hacks like `include_str!`
 
-## Todo list
+## Todos
 
-* Usage documentation
+* Add usage documentation
+* Add `try_set*` variant
+* Use `glib::Variant` API
 * Add enum and flags support
 * Add other common types support (`a{ss}`, etc.)

@@ -1,4 +1,4 @@
-fn main() {
+fn no_id_defined() {
     #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
     pub struct Settings;
 
@@ -31,4 +31,24 @@ fn main() {
         settings.preferred_audio_source(),
         PreferredAudioSource::DesktopAudio
     );
+}
+
+fn id_defined() {
+    #[gsettings_macro::gen_settings(
+        file = "./examples/test.gschema.xml",
+        id = "io.github.seadve.test"
+    )]
+    pub struct Settings;
+
+    let settings = Settings::new();
+
+    settings
+        .set_is_maximized(true)
+        .expect("key is not writable");
+    assert!(settings.is_maximized());
+}
+
+fn main() {
+    no_id_defined();
+    id_defined();
 }

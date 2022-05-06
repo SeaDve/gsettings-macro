@@ -138,8 +138,8 @@ pub fn gen_settings(
         }
     } else {
         quote! {
-            pub fn new(id: &str) -> Self {
-                Self(gio::Settings::new(id))
+            pub fn new(schema_id: &str) -> Self {
+                Self(gio::Settings::new(schema_id))
             }
         }
     };
