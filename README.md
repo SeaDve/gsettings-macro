@@ -95,6 +95,7 @@ gsettings-macro = "0.1.0"
 
 ## Todos
 
+* Add `connect_#key_changed` variant
 * Add usage documentation
 * Show max and min values in the method docs (e.g. `<range min="-1" max="512"/>`)
 * Use `glib::Variant` API
