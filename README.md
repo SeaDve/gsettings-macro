@@ -1,3 +1,5 @@
+## Note: This is a PRE-ALPHA software. API breakage and bugs are expected. Please report them to the issue tracker. Once this is implemented upstream, this crate will be yanked.
+
 # GSettings Macro
 
 Macro for easy GSettings key access
@@ -89,7 +91,13 @@ assert_eq!(
 );
 ```
 
-## Known issue
+## Usage
+
+```
+gsettings-macro = "0.1.0"
+```
+
+## Known issues
 
 * Failing to compile on unknown variants
   * Maybe skip generating them
