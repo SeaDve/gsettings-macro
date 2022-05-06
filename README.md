@@ -1,6 +1,6 @@
 # GSettings Macro
 
-Create custom Settings struct with methods to access key.
+Macro for easy GSettings key access
 
 The main purpose of this is to reduce the risk of mistyping a key and
 reduce boilerplate rust code.
@@ -8,7 +8,9 @@ reduce boilerplate rust code.
 ## Known issue
 
 * Failing to compile on unknown variants
+  * Maybe skip generating them
 * Not updating when the gschema file is modified
+  * Use hacks like `include_str!`
 
 ## Todo list
 
