@@ -96,7 +96,6 @@ gsettings-macro = "0.1.0"
 ## Todos
 
 * Add usage documentation
-* Add `try_set*` variant
 * Use `glib::Variant` API
 * Add enum and flags support
 * Add other common types support (`a{ss}`, etc.)
