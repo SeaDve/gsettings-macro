@@ -58,8 +58,8 @@ impl Choices {
             impl #ident {
                 pub fn from_str(string: &str) -> Self {
                     match string {
+                        #(#from_str_arms),*,
                         other => panic!("Invalid variant `{}`", other),
-                        #(#from_str_arms),*
                     }
                 }
             }
