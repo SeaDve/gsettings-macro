@@ -89,7 +89,8 @@ gsettings-macro = "0.1.0"
 ## Known issues
 
 * Failing to compile on unknown variants
-  * Maybe skip generating them
+  * Introduce `#[gen_settings_define(signature = "s", ret_type = "String", arg_type = "&str")]` etc.
+  * Add way to skip generating like `#[gen_settings_define(signature ="s", skip)]`
 * Not updating when the gschema file is modified
   * Use hacks like `include_str!`
 

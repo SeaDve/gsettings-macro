@@ -135,8 +135,6 @@ pub fn gen_settings(
                 aux_token_stream.extend(aux);
             }
         } else {
-            // TODO suggest user to add #[gen_settings_define(signature = "s", ret_type = "String", arg_type = "&str")] etc.
-
             emit_call_site_error!(
                 "Failed to generate code for `{}` key with signature `{}`",
                 &key.name,
