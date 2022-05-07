@@ -85,8 +85,8 @@ impl<'a> GenerationItem<'a> {
     }
 
     pub fn aux(&self) -> Option<proc_macro2::TokenStream> {
-        if let ContextItem::Complex { ref aux, .. } = self.context {
-            return aux.clone();
+        if let ContextItem::Complex { ref auxilliary, .. } = self.context {
+            return auxilliary.clone();
         }
 
         None
@@ -127,8 +127,8 @@ impl quote::ToTokens for GenerationItem<'_> {
                     }
                 });
             }
-            ContextItem::Complex { func, .. } => {
-                tokens.extend(func.clone());
+            ContextItem::Complex { functions, .. } => {
+                tokens.extend(functions.clone());
             }
         }
 
@@ -136,7 +136,7 @@ impl quote::ToTokens for GenerationItem<'_> {
         let bind_name = format_ident!("bind_{}", getter_func_name);
         let create_action_name = format_ident!("create_{}_action", getter_func_name);
 
-        // Common items that even complex should not implement manually
+        // Common items that even `ContextItem::Complex` should not implement manually
         tokens.extend(quote! {
             #[doc = #docs]
             pub fn #connect_changed_name(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
@@ -165,8 +165,8 @@ pub enum ContextItem {
         ret_type: String,
     },
     Complex {
-        func: proc_macro2::TokenStream,
-        aux: Option<proc_macro2::TokenStream>,
+        functions: proc_macro2::TokenStream,
+        auxilliary: Option<proc_macro2::TokenStream>,
         doc: String,
     },
 }
@@ -184,13 +184,13 @@ impl ContextItem {
     }
 
     pub fn new_complex_with_aux(
-        func: proc_macro2::TokenStream,
-        aux: proc_macro2::TokenStream,
+        functions: proc_macro2::TokenStream,
+        auxilliary: proc_macro2::TokenStream,
         doc: String,
     ) -> Self {
         Self::Complex {
-            func,
-            aux: Some(aux),
+            functions,
+            auxilliary: Some(auxilliary),
             doc,
         }
     }
