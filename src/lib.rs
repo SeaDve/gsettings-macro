@@ -3,8 +3,11 @@ mod schema;
 
 use anyhow::{anyhow, Context, Result};
 use proc_macro_error::{emit_call_site_error, proc_macro_error};
-use quote::{quote, ToTokens};
-use syn::{AttributeArgs, ItemStruct, Lit, Meta, NestedMeta};
+use quote::{quote, ToTokens, TokenStreamExt};
+use syn::{
+    parse::{Parse, ParseStream},
+    AttributeArgs, Lit, Meta, NestedMeta, Token,
+};
 
 use std::{fs::File, io::BufReader};
 
@@ -63,6 +66,40 @@ fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     Ok((schema, schema_id))
 }
 
+struct SettingsStruct {
+    vis: syn::Visibility,
+    attrs: Vec<syn::Attribute>,
+    struct_token: Token![struct],
+    ident: syn::Ident,
+    semi_token: Token![;],
+}
+
+impl Parse for SettingsStruct {
+    fn parse(input: ParseStream) -> syn::parse::Result<Self> {
+        Ok(Self {
+            vis: input.parse()?,
+            attrs: input.call(syn::Attribute::parse_outer)?,
+            struct_token: input.parse()?,
+            ident: input.parse()?,
+            semi_token: input.parse()?,
+        })
+    }
+}
+
+impl ToTokens for SettingsStruct {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        tokens.append_all(&self.attrs);
+        self.vis.to_tokens(tokens);
+        self.struct_token.to_tokens(tokens);
+        self.ident.to_tokens(tokens);
+
+        let field: syn::FieldsUnnamed = syn::parse_quote!((gio::Settings));
+        field.to_tokens(tokens);
+
+        self.semi_token.to_tokens(tokens);
+    }
+}
+
 /// Needs `gio` in scope.
 ///
 /// Not specifying the id in the attribute will require the id in the [`new`] constructor.
@@ -74,15 +111,11 @@ pub fn gen_settings(
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let attr = syn::parse_macro_input!(attr as AttributeArgs);
-    let item = syn::parse_macro_input!(item as ItemStruct);
-
-    if !item.fields.is_empty() {
-        emit_call_site_error!("any struct field would be ignored")
-    }
+    let settings_struct = syn::parse_macro_input!(item as SettingsStruct);
 
     let (schema, schema_id) = parse_schema(&attr).expect("failed to parse schema");
 
-    let ident = item.ident;
+    let ident = &settings_struct.ident;
 
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
@@ -123,7 +156,7 @@ pub fn gen_settings(
         #aux_token_stream
 
         #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
-        pub struct #ident(gio::Settings);
+        #settings_struct
 
         impl #ident {
             #constructor_token_stream
