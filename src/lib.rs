@@ -2,14 +2,16 @@ mod generators;
 mod schema;
 
 use anyhow::{anyhow, Context, Result};
-use proc_macro_error::{emit_call_site_error, proc_macro_error};
-use quote::{quote, ToTokens, TokenStreamExt};
+use generators::Override;
+use proc_macro_error::{abort, emit_call_site_error, emit_error, proc_macro_error};
+use quote::{quote, ToTokens};
 use syn::{
     parse::{Parse, ParseStream},
+    spanned::Spanned,
     AttributeArgs, Lit, Meta, NestedMeta, Token,
 };
 
-use std::{fs::File, io::BufReader};
+use std::{collections::HashMap, fs::File, io::BufReader};
 
 use self::{
     generators::KeyGenerators,
@@ -66,9 +68,83 @@ fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     Ok((schema, schema_id))
 }
 
+fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, Override>> {
+    let mut overrides = HashMap::new();
+
+    for attr in attrs {
+        if attr.path.is_ident("gen_settings_define") {
+            if let Meta::List(ref meta_list) = attr.parse_meta()? {
+                let mut signature = None;
+                let mut arg_type = None;
+                let mut ret_type = None;
+
+                for nested_meta in &meta_list.nested {
+                    if let NestedMeta::Meta(Meta::NameValue(name_value)) = nested_meta {
+                        if name_value.path.is_ident("signature") {
+                            if let Lit::Str(ref lit_str) = name_value.lit {
+                                signature.replace(lit_str.value());
+                            } else {
+                                emit_error!(
+                                    name_value.span(),
+                                    "expected a string literal after `signature = `"
+                                );
+                            }
+                        } else if name_value.path.is_ident("arg_type") {
+                            if let Lit::Str(ref lit_str) = name_value.lit {
+                                arg_type.replace(lit_str.value());
+                            } else {
+                                emit_error!(
+                                    name_value.span(),
+                                    "expected a string literal after `arg_type = `"
+                                );
+                            }
+                        } else if name_value.path.is_ident("ret_type") {
+                            if let Lit::Str(ref lit_str) = name_value.lit {
+                                ret_type.replace(lit_str.value());
+                            } else {
+                                emit_error!(
+                                    name_value.span(),
+                                    "expected a string literal after `ret_type = `"
+                                );
+                            }
+                        } else {
+                            emit_call_site_error!(
+                                "expected `signature`, `arg_type` and `ret_type`"
+                            );
+                        }
+                    } else {
+                        emit_call_site_error!("wrong meta");
+                    }
+                }
+
+                overrides.insert(
+                    signature
+                        .take()
+                        .unwrap_or_else(|| abort!(meta_list.span(), "expected `signature = \"\"`")),
+                    Override::Define {
+                        arg_type: arg_type.take().unwrap_or_else(|| {
+                            abort!(meta_list.span(), "expected `arg_type = \"\"`")
+                        }),
+                        ret_type: ret_type.take().unwrap_or_else(|| {
+                            abort!(meta_list.span(), "expected `ret_type = \"\"`")
+                        }),
+                    },
+                );
+            }
+        } else if attr.path.is_ident("gen_settings_skip") {
+            let signature: syn::LitStr = attr.parse_args()?;
+            overrides.insert(signature.value(), Override::Skip);
+        } else {
+            emit_call_site_error!("expected `gen_settings_define` or `gen_settings_skip`");
+        }
+    }
+
+    Ok(overrides)
+}
+
 struct SettingsStruct {
-    vis: syn::Visibility,
     attrs: Vec<syn::Attribute>,
+    vis: syn::Visibility,
     struct_token: Token![struct],
     ident: syn::Ident,
     semi_token: Token![;],
@@ -77,8 +153,8 @@ struct SettingsStruct {
 impl Parse for SettingsStruct {
     fn parse(input: ParseStream) -> syn::parse::Result<Self> {
         Ok(Self {
-            vis: input.parse()?,
             attrs: input.call(syn::Attribute::parse_outer)?,
+            vis: input.parse()?,
             struct_token: input.parse()?,
             ident: input.parse()?,
             semi_token: input.parse()?,
@@ -88,7 +164,6 @@ impl Parse for SettingsStruct {
 
 impl ToTokens for SettingsStruct {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        tokens.append_all(&self.attrs);
         self.vis.to_tokens(tokens);
         self.struct_token.to_tokens(tokens);
         self.ident.to_tokens(tokens);
@@ -120,21 +195,28 @@ pub fn gen_settings(
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
-    let key_generators = KeyGenerators::default();
+    let mut key_generators = KeyGenerators::default();
+    let overrides =
+        parse_struct_attributes(&settings_struct.attrs).expect("failed to parse struct attributes");
+    key_generators.add_overrides(overrides);
 
     for key in &schema.keys {
-        if let Some(generator) = key_generators.get(key) {
-            keys_token_stream.extend(generator.to_token_stream());
+        match key_generators.get(key) {
+            generators::GetResult::Skip => (),
+            generators::GetResult::Some(generator) => {
+                keys_token_stream.extend(generator.to_token_stream());
 
-            if let Some(aux) = generator.aux() {
-                aux_token_stream.extend(aux);
+                if let Some(aux) = generator.aux() {
+                    aux_token_stream.extend(aux);
+                }
             }
-        } else {
-            emit_call_site_error!(
-                "unsupported signature `{}` used by key `{}`",
-                &key.type_,
-                &key.name,
-            )
+            generators::GetResult::Unknown => {
+                emit_call_site_error!(
+                    "unsupported signature `{}` used by key `{}`; consider using #[gen_settings_define( .. )]",
+                    &key.type_,
+                    &key.name,
+                )
+            }
         }
     }
 

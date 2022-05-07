@@ -3,30 +3,62 @@ mod string;
 use heck::ToSnakeCase;
 use proc_macro2::Span;
 use quote::{format_ident, quote};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use syn::Ident;
 
 use crate::schema::Key as SchemaKey;
 
+pub enum Override {
+    Define { arg_type: String, ret_type: String },
+    Skip,
+}
+
+pub enum GetResult<'a> {
+    Some(KeyGenerator<'a>),
+    Skip,
+    Unknown,
+}
+
 pub struct KeyGenerators {
     inner: HashMap<String, Context>,
+    skips: HashSet<String>,
 }
 
 impl KeyGenerators {
-    pub fn get<'a>(&'a self, key: &'a SchemaKey) -> Option<KeyGenerator<'a>> {
+    pub fn get<'a>(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
+        if self.skips.contains(&key.type_) {
+            return GetResult::Skip;
+        }
+
         // Auto types
         if let Some(context) = self.inner.get(&key.type_) {
-            return Some(KeyGenerator::new(key, context.clone()));
+            return GetResult::Some(KeyGenerator::new(key, context.clone()));
         }
 
         // Manual types
         match key.type_.as_str() {
-            "s" => Some(string::key_generator(key)),
-            _ => None,
+            "s" => GetResult::Some(string::key_generator(key)),
+            _ => GetResult::Unknown,
         }
     }
 
-    pub fn insert(&mut self, signature: &str, context: Context) {
+    pub fn add_overrides(&mut self, overrides: HashMap<String, Override>) {
+        for (signature, item) in overrides {
+            match item {
+                Override::Define { arg_type, ret_type } => {
+                    self.insert(
+                        &signature,
+                        Context::new_auto_dissimilar(&arg_type, &ret_type),
+                    );
+                }
+                Override::Skip => {
+                    self.skips.insert(signature);
+                }
+            }
+        }
+    }
+
+    fn insert(&mut self, signature: &str, context: Context) {
         self.inner.insert(signature.into(), context);
     }
 }
@@ -35,6 +67,7 @@ impl Default for KeyGenerators {
     fn default() -> Self {
         let mut this = Self {
             inner: HashMap::new(),
+            skips: HashSet::new(),
         };
         // Known basic types
         this.insert("b", Context::new_auto("bool"));
@@ -103,9 +136,9 @@ impl quote::ToTokens for KeyGenerator<'_> {
                 let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
 
                 let get_type = syn::parse_str::<syn::Type>(ret_type)
-                    .unwrap_or_else(|_| panic!("Invalid type {}", ret_type));
+                    .unwrap_or_else(|_| panic!("Invalid type `{}`", ret_type));
                 let set_type = syn::parse_str::<syn::Type>(arg_type)
-                    .unwrap_or_else(|_| panic!("Invalid type {}", arg_type));
+                    .unwrap_or_else(|_| panic!("Invalid type `{}`", arg_type));
 
                 tokens.extend(quote! {
                     #[doc = #docs]

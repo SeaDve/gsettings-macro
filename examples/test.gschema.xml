@@ -55,5 +55,10 @@
             <summary>(width, height)</summary>
             <description></description>
         </key>
+        <key name="string-tuple" type="(ss)">
+            <default>("string", "another one")</default>
+            <summary>(string #1, string #2)</summary>
+            <description></description>
+        </key>
     </schema>
 </schemalist>

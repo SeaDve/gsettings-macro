@@ -1,6 +1,11 @@
 fn no_id_defined() {
     #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
-    pub struct Settings;
+    #[gen_settings_define(
+        signature = "(ss)",
+        arg_type = "(&str, &str)",
+        ret_type = "(String, String)"
+    )]
+    struct Settings;
 
     let settings = Settings::new("io.github.seadve.test");
 
@@ -72,6 +77,13 @@ fn no_id_defined() {
     settings.connect_dimensions_changed(|_| {});
     settings.bind_dimensions(&object, "prop-name").build();
     settings.create_dimensions_action();
+
+    // Custom type defined by the attribute
+    settings.set_string_tuple(("hi", "hi"));
+    assert_eq!(settings.string_tuple(), ("hi".into(), "hi".into()));
+    settings.connect_string_tuple_changed(|_| {});
+    settings.bind_string_tuple(&object, "prop-name").build();
+    settings.create_string_tuple_action();
 }
 
 fn id_defined() {
@@ -79,6 +91,7 @@ fn id_defined() {
         file = "./examples/test.gschema.xml",
         id = "io.github.seadve.test"
     )]
+    #[gen_settings_skip("(ss)")]
     pub struct Settings;
 
     let settings = Settings::new();
@@ -92,6 +105,7 @@ fn try_set_variant() {
         file = "./examples/test.gschema.xml",
         id = "io.github.seadve.test"
     )]
+    #[gen_settings_skip("(ss)")]
     pub struct Settings;
 
     let settings = Settings::new();
