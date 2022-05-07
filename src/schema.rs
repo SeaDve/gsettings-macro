@@ -1,11 +1,6 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct Root {
-    pub schemalist: SchemaList,
-}
-
-#[derive(Debug, Deserialize)]
 pub struct SchemaList {
     #[serde(rename = "schema")]
     schemas: Vec<Schema>,

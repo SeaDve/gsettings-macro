@@ -6,11 +6,11 @@ use proc_macro_error::{emit_call_site_error, proc_macro_error};
 use quote::{quote, ToTokens};
 use syn::{AttributeArgs, ItemStruct, Lit, Meta, NestedMeta};
 
-use std::{fs::File, io::Read};
+use std::{fs::File, io::BufReader};
 
 use crate::{
     generation::GenerationItems,
-    schema::{Root as SchemaFileRoot, Schema},
+    schema::{Schema, SchemaList},
 };
 
 fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, Option<String>)> {
@@ -45,50 +45,12 @@ fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, Option<Stri
 fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     let (schema_path, schema_id) = parse_schema_path_and_id(args)?;
 
-    use quickxml_to_serde::{Config, JsonArray, JsonType, NullValue};
+    let file = File::open(&schema_path)
+        .with_context(|| format!("failed to open file at {}", schema_path))?;
 
-    let mut xml_content = String::new();
-    File::open(&schema_path)
-        .with_context(|| format!("failed to open file at {}", schema_path))?
-        .read_to_string(&mut xml_content)?;
+    let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(file))?;
 
-    let config = Config::new_with_custom_values(true, "", "#text", NullValue::Ignore)
-        .add_json_type_override(
-            "schemalist/schema",
-            JsonArray::Always(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key",
-            JsonArray::Always(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key/default",
-            JsonArray::Infer(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key/summary",
-            JsonArray::Infer(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key/description",
-            JsonArray::Infer(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key/choices",
-            JsonArray::Infer(JsonType::AlwaysString),
-        )
-        .add_json_type_override(
-            "schemalist/schema/key/choices/choice",
-            JsonArray::Always(JsonType::AlwaysString),
-        );
-
-    // ideally we would use xml directly, but it is harder to deal with than json
-    let json_value = quickxml_to_serde::xml_string_to_json(xml_content, &config)?;
-
-    let root: SchemaFileRoot =
-        serde_json::from_value(json_value).expect("failed to parse schema file");
-
-    let mut schema_list = root.schemalist.into_vec();
+    let mut schema_list = schema_list.into_vec();
 
     if schema_list.len() != 1 {
         emit_call_site_error!("schema file must have a single schema");
