@@ -66,6 +66,12 @@ fn no_id_defined() {
         .bind_preferred_audio_source(&object, "prop-name")
         .build();
     settings.create_preferred_audio_source_action();
+
+    settings.set_dimensions((20, 20));
+    assert_eq!(settings.dimensions(), (20, 20));
+    settings.connect_dimensions_changed(|_| {});
+    settings.bind_dimensions(&object, "prop-name").build();
+    settings.create_dimensions_action();
 }
 
 fn id_defined() {

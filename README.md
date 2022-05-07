@@ -100,4 +100,4 @@ gsettings-macro = "0.1.0"
 * Add usage documentation
 * Show max and min values in the method docs (e.g. `<range min="-1" max="512"/>`)
 * Add enum and flags support
-* Add other common types support (`a{ss}`, `(ss)`, `(ii)`, etc.)
+* Add other common types support (`a{ss}`, `(ss)`, etc.)

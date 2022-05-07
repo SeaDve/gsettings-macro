@@ -136,9 +136,9 @@ pub fn gen_settings(
             }
         } else {
             emit_call_site_error!(
-                "Failed to generate code for `{}` key with signature `{}`",
+                "unsupported signature `{}` used by key `{}`",
+                &key.type_,
                 &key.name,
-                &key.type_
             )
         }
     }

@@ -43,6 +43,7 @@ impl Default for GenerationItems {
         this.insert("x", ContextItem::new_basic("i64"));
         this.insert("t", ContextItem::new_basic("u64"));
         this.insert("d", ContextItem::new_basic("f64"));
+        this.insert("(ii)", ContextItem::new_basic("(i32, i32)"));
         this.insert(
             "as",
             ContextItem::new_basic_dissimilar("&[&str]", "Vec<String>"),

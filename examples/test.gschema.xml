@@ -50,5 +50,10 @@
             <summary>Preferred audio source to use in recording audio</summary>
             <description></description>
         </key>
+        <key name="dimensions" type="(ii)">
+            <default>"(10, 10)"</default>
+            <summary>(width, height)</summary>
+            <description></description>
+        </key>
     </schema>
 </schemalist>
