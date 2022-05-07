@@ -14,6 +14,7 @@ pub struct GenerationItems {
 
 impl GenerationItems {
     pub fn get<'a>(&'a self, key: &'a SchemaKey) -> Option<GenerationItem<'a>> {
+        // Basic types
         if let Some(context_item) = self.inner.get(&key.type_) {
             return Some(GenerationItem::new(key, context_item.clone()));
         }
@@ -35,6 +36,7 @@ impl Default for GenerationItems {
         let mut this = Self {
             inner: HashMap::new(),
         };
+        // Known basic types
         this.insert("b", ContextItem::new_basic("bool"));
         this.insert("i", ContextItem::new_basic("i32"));
         this.insert("u", ContextItem::new_basic("u32"));
