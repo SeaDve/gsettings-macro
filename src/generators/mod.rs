@@ -8,63 +8,60 @@ use syn::Ident;
 
 use crate::schema::Key as SchemaKey;
 
-pub struct GenerationItems {
-    inner: HashMap<String, ContextItem>,
+pub struct KeyGenerators {
+    inner: HashMap<String, Context>,
 }
 
-impl GenerationItems {
-    pub fn get<'a>(&'a self, key: &'a SchemaKey) -> Option<GenerationItem<'a>> {
-        // Basic types
-        if let Some(context_item) = self.inner.get(&key.type_) {
-            return Some(GenerationItem::new(key, context_item.clone()));
+impl KeyGenerators {
+    pub fn get<'a>(&'a self, key: &'a SchemaKey) -> Option<KeyGenerator<'a>> {
+        // Auto types
+        if let Some(context) = self.inner.get(&key.type_) {
+            return Some(KeyGenerator::new(key, context.clone()));
         }
 
-        // Complex types
+        // Manual types
         match key.type_.as_str() {
-            "s" => Some(string::generation_item(key)),
+            "s" => Some(string::key_generator(key)),
             _ => None,
         }
     }
 
-    pub fn insert(&mut self, signature: &str, item: ContextItem) {
-        self.inner.insert(signature.into(), item);
+    pub fn insert(&mut self, signature: &str, context: Context) {
+        self.inner.insert(signature.into(), context);
     }
 }
 
-impl Default for GenerationItems {
+impl Default for KeyGenerators {
     fn default() -> Self {
         let mut this = Self {
             inner: HashMap::new(),
         };
         // Known basic types
-        this.insert("b", ContextItem::new_basic("bool"));
-        this.insert("i", ContextItem::new_basic("i32"));
-        this.insert("u", ContextItem::new_basic("u32"));
-        this.insert("x", ContextItem::new_basic("i64"));
-        this.insert("t", ContextItem::new_basic("u64"));
-        this.insert("d", ContextItem::new_basic("f64"));
-        this.insert("(ii)", ContextItem::new_basic("(i32, i32)"));
-        this.insert(
-            "as",
-            ContextItem::new_basic_dissimilar("&[&str]", "Vec<String>"),
-        );
+        this.insert("b", Context::new_auto("bool"));
+        this.insert("i", Context::new_auto("i32"));
+        this.insert("u", Context::new_auto("u32"));
+        this.insert("x", Context::new_auto("i64"));
+        this.insert("t", Context::new_auto("u64"));
+        this.insert("d", Context::new_auto("f64"));
+        this.insert("(ii)", Context::new_auto("(i32, i32)"));
+        this.insert("as", Context::new_auto_dissimilar("&[&str]", "Vec<String>"));
         this
     }
 }
 
-pub struct GenerationItem<'a> {
+pub struct KeyGenerator<'a> {
     key: &'a SchemaKey,
-    context: ContextItem,
+    context: Context,
 }
 
-impl<'a> GenerationItem<'a> {
-    fn new(key: &'a SchemaKey, context: ContextItem) -> Self {
+impl<'a> KeyGenerator<'a> {
+    fn new(key: &'a SchemaKey, context: Context) -> Self {
         Self { key, context }
     }
 
     fn docs(&self) -> String {
         match &self.context {
-            ContextItem::Basic { .. } => {
+            Context::Auto { .. } => {
                 let mut doc_buf = String::new();
                 if let Some(ref summary) = self.key.summary {
                     if !summary.is_empty() {
@@ -80,12 +77,12 @@ impl<'a> GenerationItem<'a> {
                 }
                 doc_buf
             }
-            ContextItem::Complex { doc, .. } => doc.clone(),
+            Context::Manual { doc, .. } => doc.clone(),
         }
     }
 
     pub fn aux(&self) -> Option<proc_macro2::TokenStream> {
-        if let ContextItem::Complex { ref auxilliary, .. } = self.context {
+        if let Context::Manual { ref auxilliary, .. } = self.context {
             return auxilliary.clone();
         }
 
@@ -93,7 +90,7 @@ impl<'a> GenerationItem<'a> {
     }
 }
 
-impl quote::ToTokens for GenerationItem<'_> {
+impl quote::ToTokens for KeyGenerator<'_> {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         let docs = self.docs();
         let key_name = self.key.name.as_str();
@@ -101,7 +98,7 @@ impl quote::ToTokens for GenerationItem<'_> {
         let getter_func_name = Ident::new(&key_name_snake_case, Span::call_site());
 
         match &self.context {
-            ContextItem::Basic { arg_type, ret_type } => {
+            Context::Auto { arg_type, ret_type } => {
                 let setter_func_name = format_ident!("set_{}", getter_func_name);
                 let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
 
@@ -127,7 +124,7 @@ impl quote::ToTokens for GenerationItem<'_> {
                     }
                 });
             }
-            ContextItem::Complex { functions, .. } => {
+            Context::Manual { functions, .. } => {
                 tokens.extend(functions.clone());
             }
         }
@@ -136,7 +133,7 @@ impl quote::ToTokens for GenerationItem<'_> {
         let bind_name = format_ident!("bind_{}", getter_func_name);
         let create_action_name = format_ident!("create_{}_action", getter_func_name);
 
-        // Common items that even `ContextItem::Complex` should not implement manually
+        // Common items that even `Context::Manual` should not implement manually
         tokens.extend(quote! {
             #[doc = #docs]
             pub fn #connect_changed_name(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
@@ -159,36 +156,36 @@ impl quote::ToTokens for GenerationItem<'_> {
 }
 
 #[derive(Clone)]
-pub enum ContextItem {
-    Basic {
+pub enum Context {
+    Auto {
         arg_type: String,
         ret_type: String,
     },
-    Complex {
+    Manual {
         functions: proc_macro2::TokenStream,
         auxilliary: Option<proc_macro2::TokenStream>,
         doc: String,
     },
 }
 
-impl ContextItem {
-    pub fn new_basic(type_: &str) -> Self {
-        Self::new_basic_dissimilar(type_, type_)
+impl Context {
+    pub fn new_auto(type_: &str) -> Self {
+        Self::new_auto_dissimilar(type_, type_)
     }
 
-    pub fn new_basic_dissimilar(arg_type: &str, ret_type: &str) -> Self {
-        Self::Basic {
+    pub fn new_auto_dissimilar(arg_type: &str, ret_type: &str) -> Self {
+        Self::Auto {
             arg_type: arg_type.to_string(),
             ret_type: ret_type.to_string(),
         }
     }
 
-    pub fn new_complex_with_aux(
+    pub fn new_manual_with_aux(
         functions: proc_macro2::TokenStream,
         auxilliary: proc_macro2::TokenStream,
         doc: String,
     ) -> Self {
-        Self::Complex {
+        Self::Manual {
             functions,
             auxilliary: Some(auxilliary),
             doc,

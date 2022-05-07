@@ -3,10 +3,10 @@ use proc_macro2::Span;
 use quote::{format_ident, quote};
 use syn::{spanned::Spanned, Ident};
 
-use super::{ContextItem, GenerationItem, SchemaKey};
+use super::{Context, KeyGenerator, SchemaKey};
 use crate::schema::Choice as KeyChoice;
 
-pub fn generation_item(key: &SchemaKey) -> GenerationItem<'_> {
+pub fn key_generator(key: &SchemaKey) -> KeyGenerator<'_> {
     if let Some(ref choices) = key.choices {
         let choice_type_name = key.name.to_pascal_case();
         let choice_type_ident = Ident::new(&choice_type_name, choice_type_name.span());
@@ -39,12 +39,9 @@ pub fn generation_item(key: &SchemaKey) -> GenerationItem<'_> {
 
         let choice_enum = choice_enum(&choice_type_ident, &choices.choices);
 
-        GenerationItem::new(
-            key,
-            ContextItem::new_complex_with_aux(func, choice_enum, docs),
-        )
+        KeyGenerator::new(key, Context::new_manual_with_aux(func, choice_enum, docs))
     } else {
-        GenerationItem::new(key, ContextItem::new_basic_dissimilar("&str", "String"))
+        KeyGenerator::new(key, Context::new_auto_dissimilar("&str", "String"))
     }
 }
 
@@ -104,7 +101,7 @@ fn choice_enum(ident: &Ident, choices: &[KeyChoice]) -> proc_macro2::TokenStream
     }
 }
 
-fn is_complex(key: &SchemaKey) -> bool {
+fn has_choice(key: &SchemaKey) -> bool {
     if let Some(ref choices) = key.choices {
         return !choices.choices.is_empty();
     }
@@ -123,7 +120,8 @@ fn docs(key: &SchemaKey) -> String {
     }
 
     if let Some(ref default) = key.default {
-        let display = if is_complex(key) {
+        let display = if has_choice(key) {
+            // Use pascal case since it is an enum
             default.to_pascal_case()
         } else {
             default.to_string()

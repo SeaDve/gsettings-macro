@@ -1,4 +1,4 @@
-mod generation;
+mod generators;
 mod schema;
 
 use anyhow::{anyhow, Context, Result};
@@ -8,8 +8,8 @@ use syn::{AttributeArgs, ItemStruct, Lit, Meta, NestedMeta};
 
 use std::{fs::File, io::BufReader};
 
-use crate::{
-    generation::GenerationItems,
+use self::{
+    generators::KeyGenerators,
     schema::{Schema, SchemaList},
 };
 
@@ -87,13 +87,13 @@ pub fn gen_settings(
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
-    let generation_items = GenerationItems::default();
+    let key_generators = KeyGenerators::default();
 
     for key in &schema.keys {
-        if let Some(generation_item) = generation_items.get(key) {
-            keys_token_stream.extend(generation_item.to_token_stream());
+        if let Some(generator) = key_generators.get(key) {
+            keys_token_stream.extend(generator.to_token_stream());
 
-            if let Some(aux) = generation_item.aux() {
+            if let Some(aux) = generator.aux() {
                 aux_token_stream.extend(aux);
             }
         } else {
