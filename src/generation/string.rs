@@ -39,7 +39,10 @@ pub fn generation_item(key: &SchemaKey) -> GenerationItem<'_> {
 
         let choice_enum = choice_enum(&choice_type_ident, &choices.choices);
 
-        GenerationItem::new(key, ContextItem::new_complex_with_aux(func, choice_enum))
+        GenerationItem::new(
+            key,
+            ContextItem::new_complex_with_aux(func, choice_enum, docs),
+        )
     } else {
         GenerationItem::new(key, ContextItem::new_basic_dissimilar("&str", "String"))
     }
