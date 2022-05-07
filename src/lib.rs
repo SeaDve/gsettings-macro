@@ -1,14 +1,17 @@
-mod key;
+mod generation;
 mod schema;
 
 use anyhow::{anyhow, Context, Result};
 use proc_macro_error::{emit_call_site_error, emit_call_site_warning, proc_macro_error};
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{AttributeArgs, ItemStruct, Lit, Meta, NestedMeta};
 
 use std::{fs::File, io::Read};
 
-use crate::schema::{Root as SchemaFileRoot, Schema};
+use crate::{
+    generation::GenerationItems,
+    schema::{Root as SchemaFileRoot, Schema},
+};
 
 fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, Option<String>)> {
     let mut schema_path = None;
@@ -122,12 +125,22 @@ pub fn gen_settings(
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
-    for key in &schema.keys {
-        for token_stream in key.aux() {
-            aux_token_stream.extend(token_stream);
-        }
+    let generation_items = GenerationItems::default();
 
-        keys_token_stream.extend(key.to_token_stream())
+    for key in &schema.keys {
+        if let Some(generation_item) = generation_items.get(key) {
+            keys_token_stream.extend(generation_item.to_token_stream());
+
+            if let Some(aux) = generation_item.aux() {
+                aux_token_stream.extend(aux);
+            }
+        } else {
+            emit_call_site_warning!(
+                "Failed to generate code for `{}` key with signature `{}`",
+                &key.name,
+                &key.type_
+            )
+        }
     }
 
     let constructor_token_stream = if let Some(ref id) = schema_id {
