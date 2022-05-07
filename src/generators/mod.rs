@@ -82,8 +82,8 @@ impl<'a> KeyGenerator<'a> {
     }
 
     pub fn aux(&self) -> Option<proc_macro2::TokenStream> {
-        if let Context::Manual { ref auxilliary, .. } = self.context {
-            return auxilliary.clone();
+        if let Context::Manual { ref auxiliary, .. } = self.context {
+            return auxiliary.clone();
         }
 
         None
@@ -163,7 +163,7 @@ pub enum Context {
     },
     Manual {
         functions: proc_macro2::TokenStream,
-        auxilliary: Option<proc_macro2::TokenStream>,
+        auxiliary: Option<proc_macro2::TokenStream>,
         doc: String,
     },
 }
@@ -182,12 +182,12 @@ impl Context {
 
     pub fn new_manual_with_aux(
         functions: proc_macro2::TokenStream,
-        auxilliary: proc_macro2::TokenStream,
+        auxiliary: proc_macro2::TokenStream,
         doc: String,
     ) -> Self {
         Self::Manual {
             functions,
-            auxilliary: Some(auxilliary),
+            auxiliary: Some(auxiliary),
             doc,
         }
     }
