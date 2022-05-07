@@ -2,7 +2,7 @@ mod generation;
 mod schema;
 
 use anyhow::{anyhow, Context, Result};
-use proc_macro_error::{emit_call_site_error, emit_call_site_warning, proc_macro_error};
+use proc_macro_error::{emit_call_site_error, proc_macro_error};
 use quote::{quote, ToTokens};
 use syn::{AttributeArgs, ItemStruct, Lit, Meta, NestedMeta};
 
@@ -115,7 +115,7 @@ pub fn gen_settings(
     let item = syn::parse_macro_input!(item as ItemStruct);
 
     if !item.fields.is_empty() {
-        emit_call_site_warning!("any struct field would be ignored")
+        emit_call_site_error!("any struct field would be ignored")
     }
 
     let (schema, schema_id) = parse_schema(&attr).expect("failed to parse schema");
@@ -135,7 +135,9 @@ pub fn gen_settings(
                 aux_token_stream.extend(aux);
             }
         } else {
-            emit_call_site_warning!(
+            // TODO suggest user to add #[gen_settings_define(signature = "s", ret_type = "String", arg_type = "&str")] etc.
+
+            emit_call_site_error!(
                 "Failed to generate code for `{}` key with signature `{}`",
                 &key.name,
                 &key.type_
