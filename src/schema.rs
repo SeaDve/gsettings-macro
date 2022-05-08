@@ -26,6 +26,7 @@ pub struct Key {
     pub default: Option<String>,
     pub summary: Option<String>,
     pub choices: Option<Choices>,
+    pub range: Option<Range>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,4 +38,10 @@ pub struct Choice {
 pub struct Choices {
     #[serde(rename = "choice")]
     pub choices: Vec<Choice>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Range {
+    pub max: Option<String>,
+    pub min: Option<String>,
 }

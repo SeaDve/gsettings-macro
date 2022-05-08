@@ -37,6 +37,7 @@
             <description>Window height</description>
         </key>
         <key name="volume" type="d">
+            <range min="1" max="10"/>
             <default>6.3</default>
             <summary>Volume</summary>
             <description>Volume</description>

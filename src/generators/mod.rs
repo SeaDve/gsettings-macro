@@ -108,6 +108,26 @@ impl<'a> KeyGenerator<'a> {
                         doc_buf.push_str(&format!("default: {}", default));
                     }
                 }
+                // only needed for numerical types
+                if let Some(ref range) = self.key.range {
+                    let min_is_some = range.min.as_ref().map_or(false, |min| !min.is_empty());
+                    let max_is_some = range.max.as_ref().map_or(false, |max| !max.is_empty());
+
+                    if min_is_some || max_is_some {
+                        doc_buf.push('\n');
+                        doc_buf.push('\n');
+                    }
+                    if min_is_some {
+                        doc_buf.push_str(&format!("min: {}", range.min.as_ref().unwrap()));
+                    }
+                    if min_is_some && max_is_some {
+                        doc_buf.push(';');
+                        doc_buf.push(' ');
+                    }
+                    if max_is_some {
+                        doc_buf.push_str(&format!("max: {}", range.max.as_ref().unwrap()));
+                    }
+                }
                 doc_buf
             }
             Context::Manual { doc, .. } => doc.clone(),
