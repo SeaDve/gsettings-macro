@@ -201,8 +201,6 @@ pub fn impl_gen_settings(
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
-    let mut key_generators = KeyGenerators::default();
-
     let known_signatures = schema
         .keys
         .iter()
@@ -210,8 +208,7 @@ pub fn impl_gen_settings(
         .collect::<Vec<_>>();
     let overrides = parse_overrides(&known_signatures, &settings_struct.attrs)
         .expect("failed to parse struct attributes");
-
-    key_generators.add_overrides(overrides);
+    let key_generators = KeyGenerators::with_defaults(overrides);
 
     for key in &schema.keys {
         match key_generators.get(key) {

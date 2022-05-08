@@ -25,6 +25,40 @@ pub struct KeyGenerators {
 }
 
 impl KeyGenerators {
+    pub fn with_defaults(overrides: HashMap<String, Override>) -> Self {
+        let mut this = Self {
+            inner: HashMap::new(),
+            skips: HashSet::new(),
+        };
+
+        // Defaults: Basic types that could easily be implemented automatically
+        this.insert("b", Context::new_auto("bool"));
+        this.insert("i", Context::new_auto("i32"));
+        this.insert("u", Context::new_auto("u32"));
+        this.insert("x", Context::new_auto("i64"));
+        this.insert("t", Context::new_auto("u64"));
+        this.insert("d", Context::new_auto("f64"));
+        this.insert("(ii)", Context::new_auto("(i32, i32)"));
+        this.insert("as", Context::new_auto_dissimilar("&[&str]", "Vec<String>"));
+
+        // Overrides from user
+        for (signature, item) in overrides {
+            match item {
+                Override::Define { arg_type, ret_type } => {
+                    this.insert(
+                        &signature,
+                        Context::new_auto_dissimilar(&arg_type, &ret_type),
+                    );
+                }
+                Override::Skip => {
+                    this.skips.insert(signature);
+                }
+            }
+        }
+
+        this
+    }
+
     pub fn get<'a>(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
         if self.skips.contains(&key.type_) {
             return GetResult::Skip;
@@ -42,43 +76,8 @@ impl KeyGenerators {
         }
     }
 
-    pub fn add_overrides(&mut self, overrides: HashMap<String, Override>) {
-        for (signature, item) in overrides {
-            match item {
-                Override::Define { arg_type, ret_type } => {
-                    self.insert(
-                        &signature,
-                        Context::new_auto_dissimilar(&arg_type, &ret_type),
-                    );
-                }
-                Override::Skip => {
-                    self.skips.insert(signature);
-                }
-            }
-        }
-    }
-
     fn insert(&mut self, signature: &str, context: Context) {
         self.inner.insert(signature.into(), context);
-    }
-}
-
-impl Default for KeyGenerators {
-    fn default() -> Self {
-        let mut this = Self {
-            inner: HashMap::new(),
-            skips: HashSet::new(),
-        };
-        // Known basic types
-        this.insert("b", Context::new_auto("bool"));
-        this.insert("i", Context::new_auto("i32"));
-        this.insert("u", Context::new_auto("u32"));
-        this.insert("x", Context::new_auto("i64"));
-        this.insert("t", Context::new_auto("u64"));
-        this.insert("d", Context::new_auto("f64"));
-        this.insert("(ii)", Context::new_auto("(i32, i32)"));
-        this.insert("as", Context::new_auto_dissimilar("&[&str]", "Vec<String>"));
-        this
     }
 }
 
