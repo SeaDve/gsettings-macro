@@ -2,6 +2,8 @@ use std::path::{Path, PathBuf};
 
 fn no_id_defined() {
     #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
+    // As long as your type implements `FromVariant` for `ret_type` and `ToVariant` for arg_type
+    // you can define them like these.
     #[gen_settings_define(
         signature = "(ss)",
         arg_type = "(&str, &str)",
