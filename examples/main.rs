@@ -100,7 +100,7 @@ fn id_defined() {
         file = "./examples/test.gschema.xml",
         id = "io.github.seadve.test"
     )]
-    #[gen_settings_skip("(ss)")]
+    #[gen_settings_skip(signature = "(ss)")]
     pub struct Settings;
 
     let settings = Settings::new();
@@ -114,7 +114,7 @@ fn try_set_variant() {
         file = "./examples/test.gschema.xml",
         id = "io.github.seadve.test"
     )]
-    #[gen_settings_skip("(ss)")]
+    #[gen_settings_skip(signature = "(ss)")]
     pub struct Settings;
 
     let settings = Settings::new();

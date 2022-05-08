@@ -93,7 +93,6 @@ gsettings-macro = "0.1.0"
 
 ## Todos
 
-* Use `gen_settings_define` and `gen_settings_skip` to specific keys.
 * Add enum and flags support
 * Add usage documentation
 * Add tests with actual gschema (See https://gitlab.gnome.org/World/Health/-/blob/master/src/core/utils.rs)

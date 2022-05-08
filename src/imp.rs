@@ -117,7 +117,7 @@ fn parse_overrides(
                 let mut found = parse_name_value(
                     &meta_list.nested,
                     &["key_name", "signature", "arg_type", "ret_type"],
-                    "expected `#[gen_settings_define(signature | key_name = \"signature | key_name\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
+                    "expected `#[gen_settings_define(signature | key_name = \"signature | key-name\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
                 );
 
                 let signature = found.remove("signature");
@@ -140,14 +140,12 @@ fn parse_overrides(
                             );
                         }
 
-                        if let Some(item) = signature_overrides.get(&signature) {
-                            if matches!(item, Override::Define { .. }) {
-                                emit_error!(
-                                    meta_list.span(),
-                                    "duplicate define for signature `{}`",
-                                    signature
-                                );
-                            }
+                        if signature_overrides.get(&signature).is_some() {
+                            emit_error!(
+                                meta_list.span(),
+                                "duplicate override for signature `{}`",
+                                signature
+                            );
                         }
 
                         signature_overrides
@@ -158,14 +156,12 @@ fn parse_overrides(
                             emit_error!(meta_list.span(), "key_name `{}` not found", key_name);
                         }
 
-                        if let Some(item) = key_name_overrides.get(&key_name) {
-                            if matches!(item, Override::Define { .. }) {
-                                emit_error!(
-                                    meta_list.span(),
-                                    "duplicate define for key_name `{}`",
-                                    key_name
-                                );
-                            }
+                        if key_name_overrides.get(&key_name).is_some() {
+                            emit_error!(
+                                meta_list.span(),
+                                "duplicate override for key_name `{}`",
+                                key_name
+                            );
                         }
 
                         key_name_overrides
@@ -186,26 +182,69 @@ fn parse_overrides(
                 }
             }
         } else if attr.path.is_ident("gen_settings_skip") {
-            let arg: syn::LitStr = attr
-                .parse_args()
-                .unwrap_or_else(|err| abort!(attr.span(), "failed to parse args: {:?}", err));
-            let signature = arg.value();
+            let meta = attr
+                .parse_meta()
+                .unwrap_or_else(|err| abort!(attr.span(), "failed to parse meta: {:?}", err));
 
-            if !known_signatures.contains(&&*signature) {
-                emit_error!(attr.span(), "useless skip for signature `{}`", signature);
-            }
+            if let Meta::List(ref meta_list) = meta {
+                let mut found = parse_name_value(
+                    &meta_list.nested,
+                    &["key_name", "signature"],
+                    "expected `#[gen_settings_skip(signature | key_name = \"signature | key-name\")]`",
+                );
 
-            if let Some(item) = signature_overrides.get(&signature) {
-                if matches!(item, Override::Skip) {
-                    emit_error!(attr.span(), "duplicate skip for signature `{}`", signature);
+                let signature = found.remove("signature");
+                let key_name = found.remove("key_name");
+
+                match (signature, key_name) {
+                    (Some(signature), None) => {
+                        if !known_signatures.contains(&&*signature) {
+                            emit_error!(attr.span(), "useless skip for signature `{}`", signature);
+                        }
+
+                        if signature_overrides.get(&signature).is_some() {
+                            emit_error!(
+                                attr.span(),
+                                "duplicate override for signature `{}`",
+                                signature
+                            );
+                        }
+
+                        signature_overrides.insert(signature, Override::Skip);
+                    }
+                    (None, Some(key_name)) => {
+                        if !known_key_names.contains(&&*key_name) {
+                            emit_error!(meta_list.span(), "key_name `{}` not found", key_name);
+                        }
+
+                        if key_name_overrides.get(&key_name).is_some() {
+                            emit_error!(
+                                meta_list.span(),
+                                "duplicate override for key_name `{}`",
+                                key_name
+                            );
+                        }
+
+                        key_name_overrides.insert(key_name, Override::Skip);
+                    }
+                    (None, None) => {
+                        emit_error!(
+                            meta_list.span(),
+                            "must have either `signature` or `key_name` attribute"
+                        );
+                    }
+                    (Some(_), Some(_)) => {
+                        emit_error!(
+                            meta_list.span(),
+                            "must only have either a `signature` or a `key_name` attribute"
+                        );
+                    }
                 }
             }
-
-            signature_overrides.insert(signature, Override::Skip);
         } else {
             emit_error!(
                 attr.span(),
-                "expected `gen_settings_define` or `gen_settings_skip`"
+                "expected `#[gen_settings_define( .. )]` or `#[gen_settings_skip( .. )]`"
             );
         }
     }
