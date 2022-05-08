@@ -1,4 +1,3 @@
-use anyhow::{anyhow, Context, Result};
 use proc_macro_error::{abort, emit_call_site_error, emit_error};
 use quote::{quote, ToTokens};
 use syn::{
@@ -66,36 +65,50 @@ fn parse_schema_path_and_id(args: &AttributeArgs) -> (String, Option<String>) {
     (schema_path, schema_id)
 }
 
-fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
+fn parse_schema(args: &AttributeArgs) -> (Schema, Option<String>) {
     let (schema_path, schema_id) = parse_schema_path_and_id(args);
 
-    let file = File::open(&schema_path)
-        .with_context(|| format!("failed to open file at {}", schema_path))?;
+    let span = args.first().unwrap().span();
 
-    let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(file))?;
+    let file = File::open(&schema_path)
+        .unwrap_or_else(|err| abort!(span, "failed to open file at {}: {:?}", schema_path, err));
+
+    let schema_list: SchemaList =
+        quick_xml::de::from_reader(BufReader::new(file)).unwrap_or_else(|err| {
+            abort!(
+                span,
+                "failed to parse schema file at {}: {:?}",
+                schema_path,
+                err
+            )
+        });
 
     let mut schema_list = schema_list.into_vec();
 
     if schema_list.len() != 1 {
-        emit_call_site_error!("schema file must have a single schema");
+        emit_error!(span, "schema file must have a single schema");
     }
 
     let schema = schema_list
         .pop()
-        .ok_or_else(|| anyhow!("a schema from file"))?;
+        .unwrap_or_else(|| abort!(span, "expected a schema from file"));
 
-    Ok((schema, schema_id))
+    (schema, schema_id)
 }
 
 fn parse_overrides(
     known_signatures: &[&str],
     attrs: &[syn::Attribute],
-) -> Result<HashMap<String, Override>> {
+) -> HashMap<String, Override> {
     let mut overrides = HashMap::new();
 
     for attr in attrs {
         if attr.path.is_ident("gen_settings_define") {
-            if let Meta::List(ref meta_list) = attr.parse_meta()? {
+            let meta = attr
+                .parse_meta()
+                .unwrap_or_else(|err| abort!(attr.span(), "failed to parse meta: {:?}", err));
+
+            if let Meta::List(ref meta_list) = meta {
                 let mut found = parse_name_value(
                     &meta_list.nested,
                     &["signature", "arg_type", "ret_type"],
@@ -129,8 +142,10 @@ fn parse_overrides(
                 );
             }
         } else if attr.path.is_ident("gen_settings_skip") {
-            let signature: syn::LitStr = attr.parse_args()?;
-            let signature = signature.value();
+            let arg: syn::LitStr = attr
+                .parse_args()
+                .unwrap_or_else(|err| abort!(attr.span(), "failed to parse args: {:?}", err));
+            let signature = arg.value();
 
             if !known_signatures.contains(&&*signature) {
                 emit_error!(attr.span(), "useless skip for signature `{}`", signature);
@@ -151,7 +166,7 @@ fn parse_overrides(
         }
     }
 
-    Ok(overrides)
+    overrides
 }
 
 struct SettingsStruct {
@@ -194,15 +209,14 @@ pub fn impl_gen_settings(
     let attr = syn::parse_macro_input!(attr as AttributeArgs);
     let settings_struct = syn::parse_macro_input!(item as SettingsStruct);
 
-    let (schema, schema_id) = parse_schema(&attr).expect("failed to parse schema");
+    let (schema, schema_id) = parse_schema(&attr);
 
     let known_signatures = schema
         .keys
         .iter()
         .map(|key| key.type_.as_str())
         .collect::<Vec<_>>();
-    let overrides = parse_overrides(&known_signatures, &settings_struct.attrs)
-        .expect("failed to parse struct attributes");
+    let overrides = parse_overrides(&known_signatures, &settings_struct.attrs);
     let key_generators = KeyGenerators::with_defaults(overrides);
 
     let mut aux_token_stream = proc_macro2::TokenStream::new();
