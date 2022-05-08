@@ -91,7 +91,7 @@ fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     Ok((schema, schema_id))
 }
 
-fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, Override>> {
+fn parse_overrides(attrs: &[syn::Attribute]) -> Result<HashMap<String, Override>> {
     let mut overrides = HashMap::new();
 
     for attr in attrs {
@@ -103,10 +103,22 @@ fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, O
                     "expected `#[gen_settings_define(signature = \"(ss)\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
                 );
 
+                let signature = found.remove("signature").unwrap_or_else(|| {
+                    abort!(meta_list.span(), "expected a `signature` attribute")
+                });
+
+                if let Some(item) = overrides.get(&signature) {
+                    if matches!(item, Override::Define { .. }) {
+                        emit_error!(
+                            meta_list.span(),
+                            "duplicate define for signature `{}`",
+                            signature
+                        );
+                    }
+                }
+
                 overrides.insert(
-                    found.remove("signature").unwrap_or_else(|| {
-                        abort!(meta_list.span(), "expected a `signature` attribute")
-                    }),
+                    signature,
                     Override::Define {
                         arg_type: found.remove("arg_type").unwrap_or_else(|| {
                             abort!(meta_list.span(), "expected a `arg_type` attribute")
@@ -119,7 +131,15 @@ fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, O
             }
         } else if attr.path.is_ident("gen_settings_skip") {
             let signature: syn::LitStr = attr.parse_args()?;
-            overrides.insert(signature.value(), Override::Skip);
+            let signature = signature.value();
+
+            if let Some(item) = overrides.get(&signature) {
+                if matches!(item, Override::Skip) {
+                    emit_error!(attr.span(), "duplicate skip for signature `{}`", signature);
+                }
+            }
+
+            overrides.insert(signature, Override::Skip);
         } else {
             emit_error!(
                 attr.span(),
@@ -186,7 +206,7 @@ pub fn gen_settings(
 
     let mut key_generators = KeyGenerators::default();
     let overrides =
-        parse_struct_attributes(&settings_struct.attrs).expect("failed to parse struct attributes");
+        parse_overrides(&settings_struct.attrs).expect("failed to parse struct attributes");
     key_generators.add_overrides(overrides);
 
     for key in &schema.keys {
