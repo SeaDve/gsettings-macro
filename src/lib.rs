@@ -18,37 +18,60 @@ use self::{
     schema::{Schema, SchemaList},
 };
 
-fn parse_schema_path_and_id(args: &AttributeArgs) -> Result<(String, Option<String>)> {
-    let mut schema_path = None;
-    let mut schema_id = None;
+fn parse_name_value<'a, 'b>(
+    haystack: impl IntoIterator<Item = &'b NestedMeta>,
+    needles: &[&'a str],
+    err_msg: &str,
+) -> HashMap<&'a str, String> {
+    let mut ret = HashMap::new();
 
-    for nested_meta in args.iter() {
+    for nested_meta in haystack {
         if let NestedMeta::Meta(Meta::NameValue(name_value)) = nested_meta {
-            if name_value.path.is_ident("file") {
-                if let Lit::Str(ref lit_str) = name_value.lit {
-                    schema_path.replace(lit_str.value());
-                } else {
-                    emit_call_site_error!("expected a string literal after `file = `");
+            for needle in needles {
+                if name_value.path.is_ident(needle) {
+                    if let Lit::Str(ref lit_str) = name_value.lit {
+                        ret.insert(*needle, lit_str.value());
+                    } else {
+                        emit_error!(
+                            name_value.span(),
+                            "expected a string literal after `{} = `",
+                            needle
+                        );
+                    }
+                } else if name_value
+                    .path
+                    .get_ident()
+                    .map_or(false, |ident| !needles.contains(&&*ident.to_string()))
+                {
+                    emit_error!(name_value.span(), err_msg);
                 }
-            } else if name_value.path.is_ident("id") {
-                if let Lit::Str(ref lit_str) = name_value.lit {
-                    schema_id.replace(lit_str.value());
-                } else {
-                    emit_call_site_error!("expected a string literal after `id = `");
-                }
-            } else {
-                emit_call_site_error!("expected `#[gen_settings(file = \"path/to/schema\")]` or `#[gen_settings(file = \"path/to/schema\", id = \"org.some.id\")]`")
             }
+        } else {
+            emit_error!(nested_meta.span(), err_msg);
         }
     }
 
-    let schema_path = schema_path.ok_or_else(|| anyhow!("expected a file meta"))?;
+    ret
+}
 
-    Ok((schema_path, schema_id))
+fn parse_schema_path_and_id(args: &AttributeArgs) -> (String, Option<String>) {
+    let mut found = parse_name_value(
+        args,
+        &["file", "id"],
+        "expected `#[gen_settings(file = \"path/to/schema\")]` or `#[gen_settings(file = \"path/to/schema\", id = \"org.some.id\")]`"
+    );
+
+    let schema_path = found
+        .remove("file")
+        .unwrap_or_else(|| abort!(args.first().unwrap().span(), "expected a `file` attribute"));
+
+    let schema_id = found.remove("id");
+
+    (schema_path, schema_id)
 }
 
 fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
-    let (schema_path, schema_id) = parse_schema_path_and_id(args)?;
+    let (schema_path, schema_id) = parse_schema_path_and_id(args);
 
     let file = File::open(&schema_path)
         .with_context(|| format!("failed to open file at {}", schema_path))?;
@@ -74,59 +97,22 @@ fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, O
     for attr in attrs {
         if attr.path.is_ident("gen_settings_define") {
             if let Meta::List(ref meta_list) = attr.parse_meta()? {
-                let mut signature = None;
-                let mut arg_type = None;
-                let mut ret_type = None;
-
-                for nested_meta in &meta_list.nested {
-                    if let NestedMeta::Meta(Meta::NameValue(name_value)) = nested_meta {
-                        if name_value.path.is_ident("signature") {
-                            if let Lit::Str(ref lit_str) = name_value.lit {
-                                signature.replace(lit_str.value());
-                            } else {
-                                emit_error!(
-                                    name_value.span(),
-                                    "expected a string literal after `signature = `"
-                                );
-                            }
-                        } else if name_value.path.is_ident("arg_type") {
-                            if let Lit::Str(ref lit_str) = name_value.lit {
-                                arg_type.replace(lit_str.value());
-                            } else {
-                                emit_error!(
-                                    name_value.span(),
-                                    "expected a string literal after `arg_type = `"
-                                );
-                            }
-                        } else if name_value.path.is_ident("ret_type") {
-                            if let Lit::Str(ref lit_str) = name_value.lit {
-                                ret_type.replace(lit_str.value());
-                            } else {
-                                emit_error!(
-                                    name_value.span(),
-                                    "expected a string literal after `ret_type = `"
-                                );
-                            }
-                        } else {
-                            emit_call_site_error!(
-                                "expected `signature`, `arg_type` and `ret_type`"
-                            );
-                        }
-                    } else {
-                        emit_call_site_error!("wrong meta");
-                    }
-                }
+                let mut found = parse_name_value(
+                    &meta_list.nested,
+                    &["signature", "arg_type", "ret_type"],
+                    "expected `#[gen_settings_define(signature = \"(ss)\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
+                );
 
                 overrides.insert(
-                    signature
-                        .take()
-                        .unwrap_or_else(|| abort!(meta_list.span(), "expected `signature = \"\"`")),
+                    found.remove("signature").unwrap_or_else(|| {
+                        abort!(meta_list.span(), "expected a `signature` attribute")
+                    }),
                     Override::Define {
-                        arg_type: arg_type.take().unwrap_or_else(|| {
-                            abort!(meta_list.span(), "expected `arg_type = \"\"`")
+                        arg_type: found.remove("arg_type").unwrap_or_else(|| {
+                            abort!(meta_list.span(), "expected a `arg_type` attribute")
                         }),
-                        ret_type: ret_type.take().unwrap_or_else(|| {
-                            abort!(meta_list.span(), "expected `ret_type = \"\"`")
+                        ret_type: found.remove("ret_type").unwrap_or_else(|| {
+                            abort!(meta_list.span(), "expected a `ret_type` attribute")
                         }),
                     },
                 );
@@ -135,7 +121,10 @@ fn parse_struct_attributes(attrs: &[syn::Attribute]) -> Result<HashMap<String, O
             let signature: syn::LitStr = attr.parse_args()?;
             overrides.insert(signature.value(), Override::Skip);
         } else {
-            emit_call_site_error!("expected `gen_settings_define` or `gen_settings_skip`");
+            emit_error!(
+                attr.span(),
+                "expected `gen_settings_define` or `gen_settings_skip`"
+            );
         }
     }
 
@@ -212,7 +201,7 @@ pub fn gen_settings(
             }
             generators::GetResult::Unknown => {
                 emit_call_site_error!(
-                    "unsupported signature `{}` used by key `{}`; consider using #[gen_settings_define( .. )]",
+                    "unsupported signature `{}` used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`",
                     &key.type_,
                     &key.name,
                 )
