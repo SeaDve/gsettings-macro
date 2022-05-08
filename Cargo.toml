@@ -1,6 +1,6 @@
 [package]
 name = "gsettings-macro"
-version = "0.1.4"
+version = "0.1.5"
 description = "Macro for easy GSettings key access "
 homepage = "https://github.com/SeaDve/gsettings-macro"
 repository = "https://github.com/SeaDve/gsettings-macro"
