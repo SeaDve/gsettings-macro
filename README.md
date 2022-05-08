@@ -1,6 +1,8 @@
-## Note: This is a PRE-ALPHA software. API breakage and bugs are expected. Please report them to the issue tracker. Once this is implemented upstream, this crate will be yanked.
-
 # GSettings Macro
+
+[![docs](https://docs.rs/gsettings-macro/badge.svg)](https://docs.rs/gsettings-macro/)
+[![crates.io](https://img.shields.io/crates/v/gsettings-macro)](https://crates.io/crates/gsettings-macro)
+[![CI](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml/badge.svg)](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml)
 
 Macro for easy GSettings key access
 
