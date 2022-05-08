@@ -5,7 +5,7 @@ fn no_id_defined() {
         arg_type = "(&str, &str)",
         ret_type = "(String, String)"
     )]
-    struct Settings;
+    pub struct Settings;
 
     let settings = Settings::new("io.github.seadve.test");
 

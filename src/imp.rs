@@ -196,11 +196,6 @@ pub fn impl_gen_settings(
 
     let (schema, schema_id) = parse_schema(&attr).expect("failed to parse schema");
 
-    let ident = &settings_struct.ident;
-
-    let mut aux_token_stream = proc_macro2::TokenStream::new();
-    let mut keys_token_stream = proc_macro2::TokenStream::new();
-
     let known_signatures = schema
         .keys
         .iter()
@@ -209,6 +204,9 @@ pub fn impl_gen_settings(
     let overrides = parse_overrides(&known_signatures, &settings_struct.attrs)
         .expect("failed to parse struct attributes");
     let key_generators = KeyGenerators::with_defaults(overrides);
+
+    let mut aux_token_stream = proc_macro2::TokenStream::new();
+    let mut keys_token_stream = proc_macro2::TokenStream::new();
 
     for key in &schema.keys {
         match key_generators.get(key) {
@@ -243,6 +241,8 @@ pub fn impl_gen_settings(
             }
         }
     };
+
+    let ident = &settings_struct.ident;
 
     let mut expanded = quote! {
         #aux_token_stream
