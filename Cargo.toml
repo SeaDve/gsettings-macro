@@ -26,4 +26,4 @@ quick-xml = { version = "0.22.0", features = ["serialize"] }
 syn = "1.0.92"
 
 [dev-dependencies]
-gio = { version = "0.15.11", features = ["v2_60"] }
+gio = "0.15.11"
