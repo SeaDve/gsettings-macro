@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 fn no_id_defined() {
     #[gsettings_macro::gen_settings(file = "./examples/test.gschema.xml")]
     #[gen_settings_define(
@@ -5,6 +7,7 @@ fn no_id_defined() {
         arg_type = "(&str, &str)",
         ret_type = "(String, String)"
     )]
+    #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
     pub struct Settings;
 
     let settings = Settings::new("io.github.seadve.test");
@@ -84,6 +87,12 @@ fn no_id_defined() {
     settings.connect_string_tuple_changed(|_| {});
     settings.bind_string_tuple(&object, "prop-name").build();
     settings.create_string_tuple_action();
+
+    settings.set_cache_dir(Path::new("/some_dir"));
+    assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir"));
+    settings.connect_cache_dir_changed(|_| {});
+    settings.bind_cache_dir(&object, "prop-name").build();
+    settings.create_cache_dir_action();
 }
 
 fn id_defined() {

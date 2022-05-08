@@ -20,52 +20,82 @@ pub enum GetResult<'a> {
 }
 
 pub struct KeyGenerators {
-    inner: HashMap<String, Context>,
-    skips: HashSet<String>,
+    signatures: HashMap<String, Context>,
+    key_names: HashMap<String, Context>,
+    signature_skips: HashSet<String>,
+    key_name_skips: HashSet<String>,
 }
 
 impl KeyGenerators {
-    pub fn with_defaults(overrides: HashMap<String, Override>) -> Self {
+    pub fn with_defaults() -> Self {
         let mut this = Self {
-            inner: HashMap::new(),
-            skips: HashSet::new(),
+            signatures: HashMap::new(),
+            key_names: HashMap::new(),
+            signature_skips: HashSet::new(),
+            key_name_skips: HashSet::new(),
         };
 
         // Defaults: Basic types that could easily be implemented automatically
-        this.insert("b", Context::new_auto("bool"));
-        this.insert("i", Context::new_auto("i32"));
-        this.insert("u", Context::new_auto("u32"));
-        this.insert("x", Context::new_auto("i64"));
-        this.insert("t", Context::new_auto("u64"));
-        this.insert("d", Context::new_auto("f64"));
-        this.insert("(ii)", Context::new_auto("(i32, i32)"));
-        this.insert("as", Context::new_auto_dissimilar("&[&str]", "Vec<String>"));
+        this.insert_signature("b", Context::new_auto("bool"));
+        this.insert_signature("i", Context::new_auto("i32"));
+        this.insert_signature("u", Context::new_auto("u32"));
+        this.insert_signature("x", Context::new_auto("i64"));
+        this.insert_signature("t", Context::new_auto("u64"));
+        this.insert_signature("d", Context::new_auto("f64"));
+        this.insert_signature("(ii)", Context::new_auto("(i32, i32)"));
+        this.insert_signature("as", Context::new_auto_dissimilar("&[&str]", "Vec<String>"));
 
-        // Overrides from user
+        this
+    }
+
+    /// Add contexts that has higher priority than default, but lower than
+    /// key_name overrides
+    pub fn add_signature_overrides(&mut self, overrides: HashMap<String, Override>) {
         for (signature, item) in overrides {
             match item {
                 Override::Define { arg_type, ret_type } => {
-                    this.insert(
+                    self.insert_signature(
                         &signature,
                         Context::new_auto_dissimilar(&arg_type, &ret_type),
                     );
                 }
                 Override::Skip => {
-                    this.skips.insert(signature);
+                    self.signature_skips.insert(signature);
                 }
             }
         }
+    }
 
-        this
+    /// Add contexts that has higher priority than both default and signature overrides.
+    pub fn add_key_name_overrides(&mut self, overrides: HashMap<String, Override>) {
+        for (key_name, item) in overrides {
+            match item {
+                Override::Define { arg_type, ret_type } => {
+                    self.key_names
+                        .insert(key_name, Context::new_auto_dissimilar(&arg_type, &ret_type));
+                }
+                Override::Skip => {
+                    self.key_name_skips.insert(key_name);
+                }
+            }
+        }
     }
 
     pub fn get<'a>(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
-        if self.skips.contains(&key.type_) {
+        if self.key_name_skips.contains(&key.name) {
             return GetResult::Skip;
         }
 
+        if self.signature_skips.contains(&key.type_) {
+            return GetResult::Skip;
+        }
+
+        if let Some(context) = self.key_names.get(&key.name) {
+            return GetResult::Some(KeyGenerator::new(key, context.clone()));
+        }
+
         // Auto types
-        if let Some(context) = self.inner.get(&key.type_) {
+        if let Some(context) = self.signatures.get(&key.type_) {
             return GetResult::Some(KeyGenerator::new(key, context.clone()));
         }
 
@@ -76,8 +106,8 @@ impl KeyGenerators {
         }
     }
 
-    fn insert(&mut self, signature: &str, context: Context) {
-        self.inner.insert(signature.into(), context);
+    fn insert_signature(&mut self, signature: &str, context: Context) {
+        self.signatures.insert(signature.into(), context);
     }
 }
 

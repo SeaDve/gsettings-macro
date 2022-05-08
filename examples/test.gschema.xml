@@ -61,5 +61,10 @@
             <summary>(string #1, string #2)</summary>
             <description></description>
         </key>
+        <key name="cache-dir" type="s">
+            <default>"/tmp/cache_dir/"</default>
+            <summary>default dir to store cache</summary>
+            <description></description>
+        </key>
     </schema>
 </schemalist>

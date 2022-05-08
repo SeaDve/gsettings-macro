@@ -96,11 +96,16 @@ fn parse_schema(args: &AttributeArgs) -> (Schema, Option<String>) {
     (schema, schema_id)
 }
 
+/// Returns (HashMap, HashMap);
+/// the former containing signature to override;
+/// the latter containing key name to override.
 fn parse_overrides(
     known_signatures: &[&str],
+    known_key_names: &[&str],
     attrs: &[syn::Attribute],
-) -> HashMap<String, Override> {
-    let mut overrides = HashMap::new();
+) -> (HashMap<String, Override>, HashMap<String, Override>) {
+    let mut signature_overrides = HashMap::new();
+    let mut key_name_overrides = HashMap::new();
 
     for attr in attrs {
         if attr.path.is_ident("gen_settings_define") {
@@ -111,35 +116,74 @@ fn parse_overrides(
             if let Meta::List(ref meta_list) = meta {
                 let mut found = parse_name_value(
                     &meta_list.nested,
-                    &["signature", "arg_type", "ret_type"],
-                    "expected `#[gen_settings_define(signature = \"(ss)\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
+                    &["key_name", "signature", "arg_type", "ret_type"],
+                    "expected `#[gen_settings_define(signature | key_name = \"signature | key_name\", arg_type = \"arg_type\", ret_type = \"ret_type\")]`",
                 );
 
-                let signature = found.remove("signature").unwrap_or_else(|| {
-                    abort!(meta_list.span(), "expected a `signature` attribute")
-                });
+                let signature = found.remove("signature");
+                let key_name = found.remove("key_name");
 
-                if let Some(item) = overrides.get(&signature) {
-                    if matches!(item, Override::Define { .. }) {
+                let arg_type = found
+                    .remove("arg_type")
+                    .unwrap_or_else(|| abort!(meta_list.span(), "expected a `arg_type` attribute"));
+                let ret_type = found
+                    .remove("ret_type")
+                    .unwrap_or_else(|| abort!(meta_list.span(), "expected a `ret_type` attribute"));
+
+                match (signature, key_name) {
+                    (Some(signature), None) => {
+                        if !known_signatures.contains(&&*signature) {
+                            emit_error!(
+                                meta_list.span(),
+                                "useless define for signature `{}`",
+                                signature
+                            );
+                        }
+
+                        if let Some(item) = signature_overrides.get(&signature) {
+                            if matches!(item, Override::Define { .. }) {
+                                emit_error!(
+                                    meta_list.span(),
+                                    "duplicate define for signature `{}`",
+                                    signature
+                                );
+                            }
+                        }
+
+                        signature_overrides
+                            .insert(signature, Override::Define { arg_type, ret_type });
+                    }
+                    (None, Some(key_name)) => {
+                        if !known_key_names.contains(&&*key_name) {
+                            emit_error!(meta_list.span(), "key_name `{}` not found", key_name);
+                        }
+
+                        if let Some(item) = key_name_overrides.get(&key_name) {
+                            if matches!(item, Override::Define { .. }) {
+                                emit_error!(
+                                    meta_list.span(),
+                                    "duplicate define for key_name `{}`",
+                                    key_name
+                                );
+                            }
+                        }
+
+                        key_name_overrides
+                            .insert(key_name, Override::Define { arg_type, ret_type });
+                    }
+                    (None, None) => {
                         emit_error!(
                             meta_list.span(),
-                            "duplicate define for signature `{}`",
-                            signature
+                            "must have either `signature` or `key_name` attribute"
+                        );
+                    }
+                    (Some(_), Some(_)) => {
+                        emit_error!(
+                            meta_list.span(),
+                            "must only have either a `signature` or a `key_name` attribute"
                         );
                     }
                 }
-
-                overrides.insert(
-                    signature,
-                    Override::Define {
-                        arg_type: found.remove("arg_type").unwrap_or_else(|| {
-                            abort!(meta_list.span(), "expected a `arg_type` attribute")
-                        }),
-                        ret_type: found.remove("ret_type").unwrap_or_else(|| {
-                            abort!(meta_list.span(), "expected a `ret_type` attribute")
-                        }),
-                    },
-                );
             }
         } else if attr.path.is_ident("gen_settings_skip") {
             let arg: syn::LitStr = attr
@@ -151,13 +195,13 @@ fn parse_overrides(
                 emit_error!(attr.span(), "useless skip for signature `{}`", signature);
             }
 
-            if let Some(item) = overrides.get(&signature) {
+            if let Some(item) = signature_overrides.get(&signature) {
                 if matches!(item, Override::Skip) {
                     emit_error!(attr.span(), "duplicate skip for signature `{}`", signature);
                 }
             }
 
-            overrides.insert(signature, Override::Skip);
+            signature_overrides.insert(signature, Override::Skip);
         } else {
             emit_error!(
                 attr.span(),
@@ -166,7 +210,7 @@ fn parse_overrides(
         }
     }
 
-    overrides
+    (signature_overrides, key_name_overrides)
 }
 
 struct SettingsStruct {
@@ -216,8 +260,16 @@ pub fn impl_gen_settings(
         .iter()
         .map(|key| key.type_.as_str())
         .collect::<Vec<_>>();
-    let overrides = parse_overrides(&known_signatures, &settings_struct.attrs);
-    let key_generators = KeyGenerators::with_defaults(overrides);
+    let known_key_names = schema
+        .keys
+        .iter()
+        .map(|key| key.name.as_str())
+        .collect::<Vec<_>>();
+    let (signature_overrides, key_name_overrides) =
+        parse_overrides(&known_signatures, &known_key_names, &settings_struct.attrs);
+    let mut key_generators = KeyGenerators::with_defaults();
+    key_generators.add_signature_overrides(signature_overrides);
+    key_generators.add_key_name_overrides(key_name_overrides);
 
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
