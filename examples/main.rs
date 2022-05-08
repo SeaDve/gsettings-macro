@@ -88,6 +88,7 @@ fn no_id_defined() {
     settings.bind_string_tuple(&object, "prop-name").build();
     settings.create_string_tuple_action();
 
+    // Custom type defined by the attribute
     settings.set_cache_dir(Path::new("/some_dir"));
     assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir"));
     settings.connect_cache_dir_changed(|_| {});
