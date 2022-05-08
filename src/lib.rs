@@ -91,7 +91,10 @@ fn parse_schema(args: &AttributeArgs) -> Result<(Schema, Option<String>)> {
     Ok((schema, schema_id))
 }
 
-fn parse_overrides(attrs: &[syn::Attribute]) -> Result<HashMap<String, Override>> {
+fn parse_overrides(
+    known_signatures: &[&str],
+    attrs: &[syn::Attribute],
+) -> Result<HashMap<String, Override>> {
     let mut overrides = HashMap::new();
 
     for attr in attrs {
@@ -132,6 +135,10 @@ fn parse_overrides(attrs: &[syn::Attribute]) -> Result<HashMap<String, Override>
         } else if attr.path.is_ident("gen_settings_skip") {
             let signature: syn::LitStr = attr.parse_args()?;
             let signature = signature.value();
+
+            if !known_signatures.contains(&&*signature) {
+                emit_error!(attr.span(), "useless skip for signature `{}`", signature);
+            }
 
             if let Some(item) = overrides.get(&signature) {
                 if matches!(item, Override::Skip) {
@@ -205,8 +212,15 @@ pub fn gen_settings(
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
     let mut key_generators = KeyGenerators::default();
-    let overrides =
-        parse_overrides(&settings_struct.attrs).expect("failed to parse struct attributes");
+
+    let known_signatures = schema
+        .keys
+        .iter()
+        .map(|key| key.type_.as_str())
+        .collect::<Vec<_>>();
+    let overrides = parse_overrides(&known_signatures, &settings_struct.attrs)
+        .expect("failed to parse struct attributes");
+
     key_generators.add_overrides(overrides);
 
     for key in &schema.keys {
