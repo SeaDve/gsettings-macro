@@ -14,25 +14,25 @@ pub fn key_generator(key: &SchemaKey) -> KeyGenerator<'_> {
         let key_name = key.name.as_str();
         let key_name_snake_case = key_name.to_snake_case();
 
-        let getter_func_name = Ident::new(&key_name_snake_case, Span::call_site());
-        let setter_func_name = format_ident!("set_{}", getter_func_name);
-        let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
+        let getter_func_ident = Ident::new(&key_name_snake_case, Span::call_site());
+        let setter_func_ident = format_ident!("set_{}", getter_func_ident);
+        let try_setter_func_ident = format_ident!("try_set_{}", getter_func_ident);
 
         let docs = docs(key);
 
         let func = quote! {
             #[doc = #docs]
-            pub fn #setter_func_name(&self, value: #choice_type_ident) {
-                self.#try_setter_func_name(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
+            pub fn #setter_func_ident(&self, value: #choice_type_ident) {
+                self.#try_setter_func_ident(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
             }
 
             #[doc = #docs]
-            pub fn #try_setter_func_name(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
+            pub fn #try_setter_func_ident(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
                 gio::prelude::SettingsExt::set_string(&self.0, #key_name, value.to_string().as_str())
             }
 
             #[doc = #docs]
-            pub fn #getter_func_name(&self) -> #choice_type_ident {
+            pub fn #getter_func_ident(&self) -> #choice_type_ident {
                 #choice_type_ident::from_str(&gio::prelude::SettingsExt::string(&self.0, #key_name))
             }
         };

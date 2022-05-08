@@ -333,10 +333,10 @@ pub fn impl_gen_settings(
         }
     }
 
-    let constructor_token_stream = if let Some(ref id) = schema_id {
+    let constructor_token_stream = if let Some(ref schema_id) = schema_id {
         quote! {
             pub fn new() -> Self {
-                Self(gio::Settings::new(#id))
+                Self(gio::Settings::new(#schema_id))
             }
         }
     } else {
@@ -347,7 +347,7 @@ pub fn impl_gen_settings(
         }
     };
 
-    let ident = &settings_struct.ident;
+    let struct_ident = &settings_struct.ident;
 
     let mut expanded = quote! {
         #aux_token_stream
@@ -355,13 +355,13 @@ pub fn impl_gen_settings(
         #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
         #settings_struct
 
-        impl #ident {
+        impl #struct_ident {
             #constructor_token_stream
 
             #keys_token_stream
         }
 
-        impl std::ops::Deref for #ident {
+        impl std::ops::Deref for #struct_ident {
             type Target = gio::Settings;
 
             fn deref(&self) -> &Self::Target {
@@ -369,13 +369,13 @@ pub fn impl_gen_settings(
             }
         }
 
-        impl std::ops::DerefMut for #ident {
+        impl std::ops::DerefMut for #struct_ident {
             fn deref_mut(&mut self) -> &mut Self::Target {
                 &mut self.0
             }
         }
 
-        impl std::fmt::Debug for #ident {
+        impl std::fmt::Debug for #struct_ident {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 std::fmt::Debug::fmt(&self.0, f)
             }
@@ -384,7 +384,7 @@ pub fn impl_gen_settings(
 
     if schema_id.is_some() {
         expanded.extend(quote! {
-            impl Default for #ident {
+            impl Default for #struct_ident {
                 fn default() -> Self {
                     Self::new()
                 }

@@ -177,12 +177,12 @@ impl quote::ToTokens for KeyGenerator<'_> {
         let docs = self.docs();
         let key_name = self.key.name.as_str();
         let key_name_snake_case = key_name.to_snake_case();
-        let getter_func_name = Ident::new(&key_name_snake_case, Span::call_site());
+        let getter_func_ident = Ident::new(&key_name_snake_case, Span::call_site());
 
         match &self.context {
             Context::Auto { arg_type, ret_type } => {
-                let setter_func_name = format_ident!("set_{}", getter_func_name);
-                let try_setter_func_name = format_ident!("try_set_{}", getter_func_name);
+                let setter_func_ident = format_ident!("set_{}", getter_func_ident);
+                let try_setter_func_ident = format_ident!("try_set_{}", getter_func_ident);
 
                 let get_type = syn::parse_str::<syn::Type>(ret_type)
                     .unwrap_or_else(|_| panic!("Invalid type `{}`", ret_type));
@@ -191,17 +191,17 @@ impl quote::ToTokens for KeyGenerator<'_> {
 
                 tokens.extend(quote! {
                     #[doc = #docs]
-                    pub fn #setter_func_name(&self, value: #set_type) {
-                        self.#try_setter_func_name(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
+                    pub fn #setter_func_ident(&self, value: #set_type) {
+                        self.#try_setter_func_ident(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
                     }
 
                     #[doc = #docs]
-                    pub fn #try_setter_func_name(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
+                    pub fn #try_setter_func_ident(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
                         gio::prelude::SettingsExtManual::set(&self.0, #key_name, &value)
                     }
 
                     #[doc = #docs]
-                    pub fn #getter_func_name(&self) -> #get_type {
+                    pub fn #getter_func_ident(&self) -> #get_type {
                         gio::prelude::SettingsExtManual::get(&self.0, #key_name)
                     }
                 });
@@ -211,26 +211,26 @@ impl quote::ToTokens for KeyGenerator<'_> {
             }
         }
 
-        let connect_changed_name = format_ident!("connect_{}_changed", getter_func_name);
-        let bind_name = format_ident!("bind_{}", getter_func_name);
-        let create_action_name = format_ident!("create_{}_action", getter_func_name);
+        let connect_changed_func_ident = format_ident!("connect_{}_changed", getter_func_ident);
+        let bind_func_ident = format_ident!("bind_{}", getter_func_ident);
+        let create_action_func_ident = format_ident!("create_{}_action", getter_func_ident);
 
         // Common items that even `Context::Manual` should not implement manually
         tokens.extend(quote! {
             #[doc = #docs]
-            pub fn #connect_changed_name(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
+            pub fn #connect_changed_func_ident(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
                 gio::prelude::SettingsExt::connect_changed(&self.0, Some(#key_name), move |settings, _| {
                     f(settings)
                 })
             }
 
             #[doc = #docs]
-            pub fn #bind_name<'a>(&'a self, object: &'a impl gio::glib::object::IsA<gio::glib::Object>, property: &'a str) -> gio::BindingBuilder<'a> {
+            pub fn #bind_func_ident<'a>(&'a self, object: &'a impl gio::glib::object::IsA<gio::glib::Object>, property: &'a str) -> gio::BindingBuilder<'a> {
                 gio::prelude::SettingsExtManual::bind(&self.0, #key_name, object, property)
             }
 
             #[doc = #docs]
-            pub fn #create_action_name(&self) -> gio::Action {
+            pub fn #create_action_func_ident(&self) -> gio::Action {
                 gio::prelude::SettingsExt::create_action(&self.0, #key_name)
             }
         })
