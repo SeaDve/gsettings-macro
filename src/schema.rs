@@ -23,7 +23,7 @@ pub struct Key {
     #[serde(rename = "type")]
     pub type_: String,
     pub name: String,
-    pub default: Option<String>,
+    pub default: String,
     pub summary: Option<String>,
     pub choices: Option<Choices>,
     pub range: Option<Range>,

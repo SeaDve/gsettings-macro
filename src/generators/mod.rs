@@ -131,12 +131,10 @@ impl<'a> KeyGenerator<'a> {
                         doc_buf.push('\n');
                     }
                 }
-                if let Some(ref default) = self.key.default {
-                    if !default.is_empty() {
-                        doc_buf.push('\n');
-                        doc_buf.push_str(&format!("default: {}", default));
-                    }
-                }
+
+                doc_buf.push('\n');
+                doc_buf.push_str(&format!("default: {}", self.key.default));
+
                 // only needed for numerical types
                 if let Some(ref range) = self.key.range {
                     let min_is_some = range.min.as_ref().map_or(false, |min| !min.is_empty());

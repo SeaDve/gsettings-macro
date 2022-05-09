@@ -119,19 +119,15 @@ fn docs(key: &SchemaKey) -> String {
         }
     }
 
-    if let Some(ref default) = key.default {
-        let display = if has_choice(key) {
-            // Use pascal case since it is an enum
-            default.to_pascal_case()
-        } else {
-            default.to_string()
-        };
+    let display = if has_choice(key) {
+        // Use pascal case since it is an enum
+        key.default.to_pascal_case()
+    } else {
+        key.default.to_string()
+    };
 
-        if !default.is_empty() {
-            buf.push('\n');
-            buf.push_str(&format!("default: {}", display));
-        }
-    }
+    buf.push('\n');
+    buf.push_str(&format!("default: {}", display));
 
     buf
 }
