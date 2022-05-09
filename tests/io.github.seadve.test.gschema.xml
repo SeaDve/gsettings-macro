@@ -7,9 +7,9 @@
         <value nick="sonar" value="3"/>
     </enum>
     <flags id="io.github.seadve.SpacesStyle">
-        <value nick="before-colon" value="16"/>
-        <value nick="before-comma" value="32"/>
-        <value nick="before-semicolon" value="64"/>
+        <value nick="before-colon" value="1"/>
+        <value nick="before-comma" value="2"/>
+        <value nick="before-semicolon" value="4"/>
     </flags>
     <schema path="/io/github/seadve/" id="io.github.seadve.test">
         <key name="is-maximized" type="b">
