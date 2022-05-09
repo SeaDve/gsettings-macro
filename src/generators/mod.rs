@@ -258,3 +258,71 @@ impl Context {
         }
     }
 }
+
+/// Creates an enum with given name and variant names. It implements
+/// [`FromVariant`](gio::glib::FromVariant), [`ToVariant`](gio::glib::ToVariant),
+/// and [`StaticVariantType`](gio::glib::StaticVariantType).
+///
+/// The input names are converted to pascal case
+fn new_variant_enum(name: &str, variant_names: &[&str]) -> proc_macro2::TokenStream {
+    use heck::ToPascalCase;
+    use syn::spanned::Spanned;
+
+    let variant_idents = variant_names
+        .iter()
+        .map(|variant| Ident::new(&variant.to_pascal_case(), variant.span()))
+        .collect::<Vec<_>>();
+
+    let from_variant_arms =
+        variant_names
+            .iter()
+            .zip(variant_idents.iter())
+            .map(|(variant_name, variant_ident)| {
+                quote! {
+                    #variant_name => Some(Self::#variant_ident)
+                }
+            });
+
+    let to_variant_arms =
+        variant_names
+            .iter()
+            .zip(variant_idents.iter())
+            .map(|(variant_name, variant_ident)| {
+                quote! {
+                    Self::#variant_ident => gio::glib::ToVariant::to_variant(#variant_name)
+                }
+            });
+
+    let name_pascal_case = name.to_pascal_case();
+    let ident = Ident::new(&name_pascal_case, name_pascal_case.span());
+
+    quote! {
+        #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+        pub enum #ident {
+            #(#variant_idents),*
+        }
+
+        impl gio::glib::StaticVariantType for #ident {
+            fn static_variant_type() -> std::borrow::Cow<'static, gio::glib::VariantTy> {
+                std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING)
+            }
+        }
+
+        impl gio::glib::FromVariant for #ident {
+            fn from_variant(variant: &gio::glib::Variant) -> Option<Self> {
+                match variant.get::<String>()?.as_str() {
+                    #(#from_variant_arms),*,
+                    _ => None,
+                }
+            }
+        }
+
+        impl gio::glib::ToVariant for #ident {
+            fn to_variant(&self) -> gio::glib::Variant {
+                match self {
+                    #(#to_variant_arms),*
+                }
+            }
+        }
+    }
+}
