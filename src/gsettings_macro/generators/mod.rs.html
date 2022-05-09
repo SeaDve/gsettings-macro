@@ -331,7 +331,22 @@
 <span id="326">326</span>
 <span id="327">327</span>
 <span id="328">328</span>
-</pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">enumeration</span>;
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+</pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">bitflag</span>;
+<span class="kw">mod</span> <span class="ident">enumeration</span>;
 <span class="kw">mod</span> <span class="ident">string</span>;
 
 <span class="kw">use</span> <span class="ident">heck::ToSnakeCase</span>;
@@ -341,7 +356,9 @@
 <span class="kw">use</span> <span class="ident">std::collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
 <span class="kw">use</span> <span class="ident">syn::Ident</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::schema</span>::{<span class="ident">Enum</span> <span class="kw">as</span> <span class="ident">SchemaEnum</span>, <span class="ident">Key</span> <span class="kw">as</span> <span class="ident">SchemaKey</span>, <span class="ident">KeySignature</span> <span class="kw">as</span> <span class="ident">SchemaKeySignature</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::schema</span>::{
+    <span class="ident">Enum</span> <span class="kw">as</span> <span class="ident">SchemaEnum</span>, <span class="ident">Flag</span> <span class="kw">as</span> <span class="ident">SchemaFlag</span>, <span class="ident">Key</span> <span class="kw">as</span> <span class="ident">SchemaKey</span>, <span class="ident">KeySignature</span> <span class="kw">as</span> <span class="ident">SchemaKeySignature</span>,
+};
 
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Override</span> {
     <span class="ident">Define</span> { <span class="ident">arg_type</span>: <span class="ident">String</span>, <span class="ident">ret_type</span>: <span class="ident">String</span> },
@@ -358,16 +375,21 @@
     <span class="ident">signatures</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">SchemaKeySignature</span>, <span class="ident">Context</span><span class="op">&gt;</span>,
     <span class="ident">key_names</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Context</span><span class="op">&gt;</span>,
     <span class="ident">enums</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">SchemaEnum</span><span class="op">&gt;</span>,
+    <span class="ident">flags</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">SchemaFlag</span><span class="op">&gt;</span>,
     <span class="ident">signature_skips</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">SchemaKeySignature</span><span class="op">&gt;</span>,
     <span class="ident">key_name_skips</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">KeyGenerators</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_defaults</span>(<span class="ident">enums</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">SchemaEnum</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_defaults</span>(
+        <span class="ident">enums</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">SchemaEnum</span><span class="op">&gt;</span>,
+        <span class="ident">flags</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">SchemaFlag</span><span class="op">&gt;</span>,
+    ) -&gt; <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">Self</span> {
             <span class="ident">signatures</span>: <span class="ident">HashMap::new</span>(),
             <span class="ident">key_names</span>: <span class="ident">HashMap::new</span>(),
             <span class="ident">enums</span>,
+            <span class="ident">flags</span>,
             <span class="ident">signature_skips</span>: <span class="ident">HashSet::new</span>(),
             <span class="ident">key_name_skips</span>: <span class="ident">HashSet::new</span>(),
         };
@@ -444,6 +466,12 @@
                 <span class="ident">key</span>,
                 <span class="self">self</span>.<span class="ident">enums</span>.<span class="ident">get</span>(<span class="ident">enum_name</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
                     <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected an enum definition for `{}`&quot;</span>, <span class="ident">enum_name</span>)
+                }),
+            )),
+            <span class="ident">SchemaKeySignature::Flag</span>(<span class="kw-2">ref</span> <span class="ident">flag_name</span>) =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">bitflag::key_generator</span>(
+                <span class="ident">key</span>,
+                <span class="self">self</span>.<span class="ident">flags</span>.<span class="ident">get</span>(<span class="ident">flag_name</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
+                    <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected a flag definition for `{}`&quot;</span>, <span class="ident">flag_name</span>)
                 }),
             )),
         }

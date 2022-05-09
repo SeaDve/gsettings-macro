@@ -410,6 +410,11 @@
 <span id="405">405</span>
 <span id="406">406</span>
 <span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">proc_macro_error</span>::{<span class="ident">abort</span>, <span class="ident">abort_call_site</span>, <span class="ident">emit_call_site_error</span>, <span class="ident">emit_error</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote</span>, <span class="ident">ToTokens</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::{
@@ -729,7 +734,12 @@
         .<span class="ident">iter</span>()
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">enum_</span><span class="op">|</span> (<span class="ident">enum_</span>.<span class="ident">id</span>.<span class="ident">to_string</span>(), <span class="ident">enum_</span>.<span class="ident">clone</span>()))
         .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_generators</span> <span class="op">=</span> <span class="ident">KeyGenerators::with_defaults</span>(<span class="ident">enums</span>);
+    <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">schema_list</span>
+        .<span class="ident">flags</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">flag</span><span class="op">|</span> (<span class="ident">flag</span>.<span class="ident">id</span>.<span class="ident">to_string</span>(), <span class="ident">flag</span>.<span class="ident">clone</span>()))
+        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_generators</span> <span class="op">=</span> <span class="ident">KeyGenerators::with_defaults</span>(<span class="ident">enums</span>, <span class="ident">flags</span>);
     <span class="ident">key_generators</span>.<span class="ident">add_signature_overrides</span>(<span class="ident">signature_overrides</span>);
     <span class="ident">key_generators</span>.<span class="ident">add_key_name_overrides</span>(<span class="ident">key_name_overrides</span>);
 

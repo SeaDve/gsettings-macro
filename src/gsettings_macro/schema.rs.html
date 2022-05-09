@@ -109,22 +109,40 @@
 <span id="104">104</span>
 <span id="105">105</span>
 <span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
 
 <span class="kw">use</span> <span class="ident">proc_macro_error::abort_call_site</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SchemaList</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;enum&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;enum&quot;</span>, <span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">enums</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Enum</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">flags</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Flag</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;schema&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">schemas</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Schema</span><span class="op">&gt;</span>,
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Schema</span> {
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;key&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">keys</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Key</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
@@ -137,7 +155,25 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EnumValues</span> {
     <span class="kw">pub</span> <span class="ident">nick</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">String</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Flag</span> {
+    <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">String</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;value&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FlagValues</span><span class="op">&gt;</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FlagValues</span> {
+    <span class="kw">pub</span> <span class="ident">nick</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">u32</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Schema</span> {
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;key&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">keys</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Key</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
@@ -146,6 +182,8 @@
     <span class="ident">type_</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;enum&quot;</span>)]</span>
     <span class="ident">enum_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;flags&quot;</span>)]</span>
+    <span class="ident">flag_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">default</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">summary</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
@@ -156,6 +194,7 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">KeySignature</span> {
     <span class="ident">Type</span>(<span class="ident">String</span>),
     <span class="ident">Enum</span>(<span class="ident">String</span>),
+    <span class="ident">Flag</span>(<span class="ident">String</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">KeySignature</span> {
@@ -163,7 +202,8 @@
         <span class="kw">match</span> (<span class="self">self</span>, <span class="ident">other</span>) {
             (<span class="ident"><span class="self">Self</span>::Type</span>(<span class="ident">l0</span>), <span class="ident"><span class="self">Self</span>::Type</span>(<span class="ident">r0</span>)) =&gt; <span class="ident">l0</span> <span class="op">==</span> <span class="ident">r0</span>,
             (<span class="ident"><span class="self">Self</span>::Enum</span>(<span class="ident">l0</span>), <span class="ident"><span class="self">Self</span>::Enum</span>(<span class="ident">r0</span>)) =&gt; <span class="ident">l0</span> <span class="op">==</span> <span class="ident">r0</span>,
-            (<span class="ident"><span class="self">Self</span>::Enum</span>(<span class="kw">_</span>), <span class="ident"><span class="self">Self</span>::Type</span>(<span class="kw">_</span>)) <span class="op">|</span> (<span class="ident"><span class="self">Self</span>::Type</span>(<span class="kw">_</span>), <span class="ident"><span class="self">Self</span>::Enum</span>(<span class="kw">_</span>)) =&gt; <span class="bool-val">false</span>,
+            (<span class="ident"><span class="self">Self</span>::Flag</span>(<span class="ident">l0</span>), <span class="ident"><span class="self">Self</span>::Flag</span>(<span class="ident">r0</span>)) =&gt; <span class="ident">l0</span> <span class="op">==</span> <span class="ident">r0</span>,
+            <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
         }
     }
 }
@@ -175,6 +215,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">KeySignature::Type</span>(<span class="ident">type_</span>) =&gt; <span class="ident">type_</span>.<span class="ident">hash</span>(<span class="ident">state</span>),
             <span class="ident">KeySignature::Enum</span>(<span class="ident">enum_</span>) =&gt; <span class="ident">enum_</span>.<span class="ident">hash</span>(<span class="ident">state</span>),
+            <span class="ident">KeySignature::Flag</span>(<span class="ident">flag</span>) =&gt; <span class="ident">flag</span>.<span class="ident">hash</span>(<span class="ident">state</span>),
         }
     }
 }
@@ -184,17 +225,20 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">KeySignature::Type</span>(<span class="ident">type_</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`{}` type&quot;</span>, <span class="ident">type_</span>),
             <span class="ident">KeySignature::Enum</span>(<span class="ident">enum_</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`{}` enum&quot;</span>, <span class="ident">enum_</span>),
+            <span class="ident">KeySignature::Flag</span>(<span class="ident">flag</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;`{}` flag&quot;</span>, <span class="ident">flag</span>),
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Key</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">signature</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">KeySignature</span> {
-        <span class="kw">match</span> (<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">type_</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">enum_id</span>) {
-            (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">enum_id</span>)) =&gt; <span class="ident">KeySignature::Enum</span>(<span class="ident">enum_id</span>.<span class="ident">to_string</span>()),
-            (<span class="prelude-val">Some</span>(<span class="ident">type_name</span>), <span class="prelude-val">None</span>) =&gt; <span class="ident">KeySignature::Type</span>(<span class="ident">type_name</span>.<span class="ident">to_string</span>()),
-            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="macro">abort_call_site!</span>(<span class="string">&quot;must have a type or enum&quot;</span>),
-            (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="macro">abort_call_site!</span>(<span class="string">&quot;must either be a type or enum, not both&quot;</span>),
+        <span class="kw">match</span> (<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">type_</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">enum_id</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">flag_id</span>) {
+            (<span class="prelude-val">Some</span>(<span class="ident">type_name</span>), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="ident">KeySignature::Type</span>(<span class="ident">type_name</span>.<span class="ident">to_string</span>()),
+            (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">enum_id</span>), <span class="prelude-val">None</span>) =&gt; <span class="ident">KeySignature::Enum</span>(<span class="ident">enum_id</span>.<span class="ident">to_string</span>()),
+            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(<span class="ident">flag_id</span>)) =&gt; <span class="ident">KeySignature::Flag</span>(<span class="ident">flag_id</span>.<span class="ident">to_string</span>()),
+            <span class="kw">_</span> =&gt; <span class="macro">abort_call_site!</span>(
+                <span class="string">&quot;expected one of `type`, `enum` or `flags` specified attribute on key&quot;</span>
+            ),
         }
     }
 }
