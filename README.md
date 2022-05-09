@@ -95,6 +95,5 @@ gsettings-macro = "0.1.0"
 
 ## Todos
 
-* Add flags support
 * Add usage documentation
 * Add `bind_#key writable`, `default_#key_value`, `user_#key_value`, `reset_#key`, `connect_#key_writable_changed` variants

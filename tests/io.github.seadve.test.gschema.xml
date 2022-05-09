@@ -6,6 +6,15 @@
         <value nick="glass" value="2"/>
         <value nick="sonar" value="3"/>
     </enum>
+    <flags id="io.github.seadve.SpacesStyle">
+        <value nick="before-left-paren" value="1"/>
+        <value nick="before-left-bracket" value="2"/>
+        <value nick="before-left-brace" value="4"/>
+        <value nick="before-left-angle" value="8"/>
+        <value nick="before-colon" value="16"/>
+        <value nick="before-comma" value="32"/>
+        <value nick="before-semicolon" value="64"/>
+    </flags>
     <schema path="/io/github/seadve/" id="io.github.seadve.test">
         <key name="is-maximized" type="b">
             <default>false</default>
@@ -80,6 +89,11 @@
         <key name="alert-sound" enum="io.github.seadve.AlertSound">
             <default>'bark'</default>
             <summary>the sound to play on an alert</summary>
+            <description></description>
+        </key>
+        <key name="space-style" flags="io.github.seadve.SpacesStyle">
+            <default>[]</default>
+            <summary>style of space</summary>
             <description></description>
         </key>
     </schema>

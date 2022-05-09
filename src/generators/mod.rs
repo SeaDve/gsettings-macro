@@ -1,3 +1,4 @@
+mod bitflag;
 mod enumeration;
 mod string;
 
@@ -8,7 +9,9 @@ use quote::{format_ident, quote};
 use std::collections::{HashMap, HashSet};
 use syn::Ident;
 
-use crate::schema::{Enum as SchemaEnum, Key as SchemaKey, KeySignature as SchemaKeySignature};
+use crate::schema::{
+    Enum as SchemaEnum, Flag as SchemaFlag, Key as SchemaKey, KeySignature as SchemaKeySignature,
+};
 
 pub enum Override {
     Define { arg_type: String, ret_type: String },
@@ -25,16 +28,21 @@ pub struct KeyGenerators {
     signatures: HashMap<SchemaKeySignature, Context>,
     key_names: HashMap<String, Context>,
     enums: HashMap<String, SchemaEnum>,
+    flags: HashMap<String, SchemaFlag>,
     signature_skips: HashSet<SchemaKeySignature>,
     key_name_skips: HashSet<String>,
 }
 
 impl KeyGenerators {
-    pub fn with_defaults(enums: HashMap<String, SchemaEnum>) -> Self {
+    pub fn with_defaults(
+        enums: HashMap<String, SchemaEnum>,
+        flags: HashMap<String, SchemaFlag>,
+    ) -> Self {
         let mut this = Self {
             signatures: HashMap::new(),
             key_names: HashMap::new(),
             enums,
+            flags,
             signature_skips: HashSet::new(),
             key_name_skips: HashSet::new(),
         };
@@ -111,6 +119,12 @@ impl KeyGenerators {
                 key,
                 self.enums.get(enum_name).unwrap_or_else(|| {
                     abort_call_site!("expected an enum definition for `{}`", enum_name)
+                }),
+            )),
+            SchemaKeySignature::Flag(ref flag_name) => GetResult::Some(bitflag::key_generator(
+                key,
+                self.flags.get(flag_name).unwrap_or_else(|| {
+                    abort_call_site!("expected a flag definition for `{}`", flag_name)
                 }),
             )),
         }

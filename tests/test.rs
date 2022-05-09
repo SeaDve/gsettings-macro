@@ -290,6 +290,33 @@ fn enumeration() {
 
 #[test]
 #[serial_test::serial]
+fn bitflag() {
+    setup_schema();
+
+    #[gen_settings(
+        file = "./tests/io.github.seadve.test.gschema.xml",
+        id = "io.github.seadve.test"
+    )]
+    #[gen_settings_skip(signature = "(ss)")]
+    #[gen_settings_skip(signature = "ay")]
+    pub struct Settings;
+
+    let settings = Settings::new();
+
+    assert_eq!(settings.space_style(), SpaceStyle::empty());
+
+    settings.set_space_style(SpaceStyle::BEFORE_LEFT_PAREN);
+    assert_eq!(settings.space_style(), SpaceStyle::BEFORE_LEFT_PAREN);
+
+    settings.set_space_style(SpaceStyle::BEFORE_LEFT_PAREN | SpaceStyle::BEFORE_COMMA);
+    assert_eq!(
+        settings.space_style(),
+        SpaceStyle::BEFORE_LEFT_PAREN | SpaceStyle::BEFORE_COMMA
+    );
+}
+
+#[test]
+#[serial_test::serial]
 fn id_defined_in_macro() {
     setup_schema();
 
