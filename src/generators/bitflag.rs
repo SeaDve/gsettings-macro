@@ -36,9 +36,7 @@ fn bitflag_token_stream(name: &str, flag: &SchemaFlag) -> proc_macro2::TokenStre
             .map(|(value_ident, value)| {
                 let nick = &value.nick;
                 quote! {
-                    if string == #nick {
-                        this.insert(Self::#value_ident)
-                    }
+                    #nick => this.insert(Self::#value_ident)
                 }
             });
 
@@ -76,7 +74,10 @@ fn bitflag_token_stream(name: &str, flag: &SchemaFlag) -> proc_macro2::TokenStre
                 let mut this = Self::empty();
 
                 for string in variant.get::<Vec<String>>()? {
-                    #(#from_variant_arms)*
+                    match string.as_str() {
+                        #(#from_variant_arms),*,
+                        _ => panic!("invalid string `{}` for  {}", string, #name_pascal_case),
+                    }
                 }
 
                 Some(this)
