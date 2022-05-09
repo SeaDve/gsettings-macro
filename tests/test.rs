@@ -266,6 +266,28 @@ fn string_choice_enum() {
 
 #[test]
 #[serial_test::serial]
+fn enumeration() {
+    setup_schema();
+
+    #[gen_settings(
+        file = "./tests/io.github.seadve.test.gschema.xml",
+        id = "io.github.seadve.test"
+    )]
+    #[gen_settings_skip(signature = "(ss)")]
+    #[gen_settings_skip(signature = "ay")]
+    pub struct Settings;
+
+    let settings = Settings::new();
+
+    settings.set_alert_sound(AlertSound::Bark);
+    assert_eq!(settings.alert_sound(), AlertSound::Bark);
+
+    settings.set_alert_sound(AlertSound::Drip);
+    assert_eq!(settings.alert_sound(), AlertSound::Drip);
+}
+
+#[test]
+#[serial_test::serial]
 fn id_defined_in_macro() {
     setup_schema();
 

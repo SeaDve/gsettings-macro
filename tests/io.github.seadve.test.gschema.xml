@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
+    <enum id="io.github.seadve.AlertSound">
+        <value nick="bark" value="0"/>
+        <value nick="drip" value="1"/>
+        <value nick="glass" value="2"/>
+        <value nick="sonar" value="3"/>
+    </enum>
     <schema path="/io/github/seadve/" id="io.github.seadve.test">
         <key name="is-maximized" type="b">
             <default>false</default>
@@ -69,6 +75,11 @@
         <key name="cache-dir" type="ay">
             <default>b"/tmp/cache_dir/"</default>
             <summary>default dir to store cache</summary>
+            <description></description>
+        </key>
+        <key name="alert-sound" enum="io.github.seadve.AlertSound">
+            <default>'bark'</default>
+            <summary>the sound to play on an alert</summary>
             <description></description>
         </key>
     </schema>

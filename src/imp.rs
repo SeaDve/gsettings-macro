@@ -1,4 +1,4 @@
-use proc_macro_error::{abort, emit_call_site_error, emit_error};
+use proc_macro_error::{abort, abort_call_site, emit_call_site_error, emit_error};
 use quote::{quote, ToTokens};
 use syn::{
     parse::{Parse, ParseStream},
@@ -10,7 +10,7 @@ use std::{collections::HashMap, fs::File, io::BufReader};
 
 use super::{
     generators::{GetResult, KeyGenerators, Override},
-    schema::{Schema, SchemaList},
+    schema::{KeySignature as SchemaKeySignature, SchemaList},
 };
 
 fn parse_name_value<'a, 'b>(
@@ -65,7 +65,7 @@ fn parse_schema_path_and_id(args: &AttributeArgs) -> (String, Option<String>) {
     (schema_path, schema_id)
 }
 
-fn parse_schema(args: &AttributeArgs) -> (Schema, Option<String>) {
+fn parse_schema_list(args: &AttributeArgs) -> (SchemaList, Option<String>) {
     let (schema_path, schema_id) = parse_schema_path_and_id(args);
 
     let span = args.first().unwrap().span();
@@ -83,27 +83,20 @@ fn parse_schema(args: &AttributeArgs) -> (Schema, Option<String>) {
             )
         });
 
-    let mut schema_list = schema_list.into_vec();
-
-    if schema_list.len() != 1 {
-        emit_error!(span, "schema file must have a single schema");
-    }
-
-    let schema = schema_list
-        .pop()
-        .unwrap_or_else(|| abort!(span, "expected a schema from file"));
-
-    (schema, schema_id)
+    (schema_list, schema_id)
 }
 
 /// Returns (HashMap, HashMap);
 /// the former containing signature to override;
 /// the latter containing key name to override.
 fn parse_overrides(
-    known_signatures: &[&str],
+    known_signatures: &[SchemaKeySignature],
     known_key_names: &[&str],
     attrs: &[syn::Attribute],
-) -> (HashMap<String, Override>, HashMap<String, Override>) {
+) -> (
+    HashMap<SchemaKeySignature, Override>,
+    HashMap<String, Override>,
+) {
     let mut signature_overrides = HashMap::new();
     let mut key_name_overrides = HashMap::new();
 
@@ -132,7 +125,9 @@ fn parse_overrides(
 
                 match (signature, key_name) {
                     (Some(signature), None) => {
-                        if !known_signatures.contains(&&*signature) {
+                        let signature = SchemaKeySignature::Type(signature);
+
+                        if !known_signatures.contains(&signature) {
                             emit_error!(
                                 meta_list.span(),
                                 "useless define for signature `{}`",
@@ -198,7 +193,9 @@ fn parse_overrides(
 
                 match (signature, key_name) {
                     (Some(signature), None) => {
-                        if !known_signatures.contains(&&*signature) {
+                        let signature = SchemaKeySignature::Type(signature);
+
+                        if !known_signatures.contains(&signature) {
                             emit_error!(attr.span(), "useless skip for signature `{}`", signature);
                         }
 
@@ -292,12 +289,21 @@ pub fn impl_gen_settings(
     let attr = syn::parse_macro_input!(attr as AttributeArgs);
     let settings_struct = syn::parse_macro_input!(item as SettingsStruct);
 
-    let (schema, schema_id) = parse_schema(&attr);
+    let (schema_list, schema_id) = parse_schema_list(&attr);
+    let mut schemas = schema_list.schemas;
+
+    if schemas.len() != 1 {
+        emit_call_site_error!("schema file must have a single schema");
+    }
+
+    let schema = schemas
+        .pop()
+        .unwrap_or_else(|| abort_call_site!("expected a schema from file"));
 
     let known_signatures = schema
         .keys
         .iter()
-        .map(|key| key.type_.as_str())
+        .map(|key| key.signature())
         .collect::<Vec<_>>();
     let known_key_names = schema
         .keys
@@ -306,7 +312,12 @@ pub fn impl_gen_settings(
         .collect::<Vec<_>>();
     let (signature_overrides, key_name_overrides) =
         parse_overrides(&known_signatures, &known_key_names, &settings_struct.attrs);
-    let mut key_generators = KeyGenerators::with_defaults();
+    let enums = schema_list
+        .enums
+        .iter()
+        .map(|enum_| (enum_.id.to_string(), enum_.clone()))
+        .collect::<HashMap<_, _>>();
+    let mut key_generators = KeyGenerators::with_defaults(enums);
     key_generators.add_signature_overrides(signature_overrides);
     key_generators.add_key_name_overrides(key_name_overrides);
 
@@ -325,8 +336,8 @@ pub fn impl_gen_settings(
             }
             GetResult::Unknown => {
                 emit_call_site_error!(
-                    "unsupported signature `{}` used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`",
-                    &key.type_,
+                    "unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`",
+                    &key.signature(),
                     &key.name,
                 )
             }

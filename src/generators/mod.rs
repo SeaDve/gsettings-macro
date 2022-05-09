@@ -1,12 +1,14 @@
+mod enumeration;
 mod string;
 
 use heck::ToSnakeCase;
 use proc_macro2::Span;
+use proc_macro_error::abort_call_site;
 use quote::{format_ident, quote};
 use std::collections::{HashMap, HashSet};
 use syn::Ident;
 
-use crate::schema::Key as SchemaKey;
+use crate::schema::{Enum as SchemaEnum, Key as SchemaKey, KeySignature as SchemaKeySignature};
 
 pub enum Override {
     Define { arg_type: String, ret_type: String },
@@ -20,44 +22,44 @@ pub enum GetResult<'a> {
 }
 
 pub struct KeyGenerators {
-    signatures: HashMap<String, Context>,
+    signatures: HashMap<SchemaKeySignature, Context>,
     key_names: HashMap<String, Context>,
-    signature_skips: HashSet<String>,
+    enums: HashMap<String, SchemaEnum>,
+    signature_skips: HashSet<SchemaKeySignature>,
     key_name_skips: HashSet<String>,
 }
 
 impl KeyGenerators {
-    pub fn with_defaults() -> Self {
+    pub fn with_defaults(enums: HashMap<String, SchemaEnum>) -> Self {
         let mut this = Self {
             signatures: HashMap::new(),
             key_names: HashMap::new(),
+            enums,
             signature_skips: HashSet::new(),
             key_name_skips: HashSet::new(),
         };
 
         // Built ins
-        this.insert_signature("b", Context::new("bool"));
-        this.insert_signature("i", Context::new("i32"));
-        this.insert_signature("u", Context::new("u32"));
-        this.insert_signature("x", Context::new("i64"));
-        this.insert_signature("t", Context::new("u64"));
-        this.insert_signature("d", Context::new("f64"));
-        this.insert_signature("(ii)", Context::new("(i32, i32)"));
-        this.insert_signature("as", Context::new_dissimilar("&[&str]", "Vec<String>"));
+        this.insert_type("b", Context::new("bool"));
+        this.insert_type("i", Context::new("i32"));
+        this.insert_type("u", Context::new("u32"));
+        this.insert_type("x", Context::new("i64"));
+        this.insert_type("t", Context::new("u64"));
+        this.insert_type("d", Context::new("f64"));
+        this.insert_type("(ii)", Context::new("(i32, i32)"));
+        this.insert_type("as", Context::new_dissimilar("&[&str]", "Vec<String>"));
 
         this
     }
 
     /// Add contexts that has higher priority than default, but lower than
     /// key_name overrides
-    pub fn add_signature_overrides(&mut self, overrides: HashMap<String, Override>) {
+    pub fn add_signature_overrides(&mut self, overrides: HashMap<SchemaKeySignature, Override>) {
         for (signature, item) in overrides {
             match item {
                 Override::Define { arg_type, ret_type } => {
-                    self.insert_signature(
-                        &signature,
-                        Context::new_dissimilar(&arg_type, &ret_type),
-                    );
+                    self.signatures
+                        .insert(signature, Context::new_dissimilar(&arg_type, &ret_type));
                 }
                 Override::Skip => {
                     self.signature_skips.insert(signature);
@@ -82,11 +84,13 @@ impl KeyGenerators {
     }
 
     pub fn get<'a>(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
+        let key_signature = key.signature();
+
         if self.key_name_skips.contains(&key.name) {
             return GetResult::Skip;
         }
 
-        if self.signature_skips.contains(&key.type_) {
+        if self.signature_skips.contains(&key_signature) {
             return GetResult::Skip;
         }
 
@@ -94,18 +98,27 @@ impl KeyGenerators {
             return GetResult::Some(KeyGenerator::new(key, context.clone()));
         }
 
-        if let Some(context) = self.signatures.get(&key.type_) {
+        if let Some(context) = self.signatures.get(&key_signature) {
             return GetResult::Some(KeyGenerator::new(key, context.clone()));
         }
 
-        match key.type_.as_str() {
-            "s" => GetResult::Some(string::key_generator(key)),
-            _ => GetResult::Unknown,
+        match key_signature {
+            SchemaKeySignature::Type(type_) => match type_.as_str() {
+                "s" => GetResult::Some(string::key_generator(key)),
+                _ => GetResult::Unknown,
+            },
+            SchemaKeySignature::Enum(ref enum_name) => GetResult::Some(enumeration::key_generator(
+                key,
+                self.enums.get(enum_name).unwrap_or_else(|| {
+                    abort_call_site!("expected an enum definition for `{}`", enum_name)
+                }),
+            )),
         }
     }
 
-    fn insert_signature(&mut self, signature: &str, context: Context) {
-        self.signatures.insert(signature.to_string(), context);
+    fn insert_type(&mut self, signature: &str, context: Context) {
+        self.signatures
+            .insert(SchemaKeySignature::Type(signature.to_string()), context);
     }
 }
 
