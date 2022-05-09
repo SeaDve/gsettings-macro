@@ -58,25 +58,4 @@ jobs:
           override: true
       - uses: actions-rs/cargo@v1
         with:
-          command: test
-
-  examples:
-    name: Examples
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - name: Build examples
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --examples
-      - name: Run clippy on examples
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --examples
+          command: test -- --nocapture

@@ -97,5 +97,4 @@ gsettings-macro = "0.1.0"
 
 * Add enum and flags support
 * Add usage documentation
-* Add tests with actual gschema (See https://gitlab.gnome.org/World/Health/-/blob/master/src/core/utils.rs)
 * Add `bind_#key writable`, `default_#key_value`, `user_#key_value`, `reset_#key`, `connect_#key_writable_changed` variants
