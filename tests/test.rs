@@ -227,12 +227,17 @@ fn custom_define_key_name() {
 fn string_choice_enum() {
     setup_schema();
 
-    use gio::glib::{FromVariant, ToVariant};
+    use gio::glib::{FromVariant, StaticVariantType, ToVariant};
 
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_skip(signature = "(ss)")]
     #[gen_settings_skip(signature = "ay")]
     pub struct Settings;
+
+    assert_eq!(
+        PreferredAudioSource::static_variant_type(),
+        gio::glib::VariantTy::STRING
+    );
 
     assert_eq!(
         PreferredAudioSource::DesktopAudio
