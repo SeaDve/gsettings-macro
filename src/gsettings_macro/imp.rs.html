@@ -399,7 +399,18 @@
 <span id="394">394</span>
 <span id="395">395</span>
 <span id="396">396</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">proc_macro_error</span>::{<span class="ident">abort</span>, <span class="ident">emit_call_site_error</span>, <span class="ident">emit_error</span>};
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">proc_macro_error</span>::{<span class="ident">abort</span>, <span class="ident">abort_call_site</span>, <span class="ident">emit_call_site_error</span>, <span class="ident">emit_error</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote</span>, <span class="ident">ToTokens</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::{
     <span class="ident">parse</span>::{<span class="ident">Parse</span>, <span class="ident">ParseStream</span>},
@@ -411,7 +422,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::{
     <span class="ident">generators</span>::{<span class="ident">GetResult</span>, <span class="ident">KeyGenerators</span>, <span class="ident">Override</span>},
-    <span class="ident">schema</span>::{<span class="ident">Schema</span>, <span class="ident">SchemaList</span>},
+    <span class="ident">schema</span>::{<span class="ident">KeySignature</span> <span class="kw">as</span> <span class="ident">SchemaKeySignature</span>, <span class="ident">SchemaList</span>},
 };
 
 <span class="kw">fn</span> <span class="ident">parse_name_value</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>(
@@ -466,7 +477,7 @@
     (<span class="ident">schema_path</span>, <span class="ident">schema_id</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">parse_schema</span>(<span class="ident">args</span>: <span class="kw-2">&amp;</span><span class="ident">AttributeArgs</span>) -&gt; (<span class="ident">Schema</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) {
+<span class="kw">fn</span> <span class="ident">parse_schema_list</span>(<span class="ident">args</span>: <span class="kw-2">&amp;</span><span class="ident">AttributeArgs</span>) -&gt; (<span class="ident">SchemaList</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> (<span class="ident">schema_path</span>, <span class="ident">schema_id</span>) <span class="op">=</span> <span class="ident">parse_schema_path_and_id</span>(<span class="ident">args</span>);
 
     <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">args</span>.<span class="ident">first</span>().<span class="ident">unwrap</span>().<span class="ident">span</span>();
@@ -484,27 +495,20 @@
             )
         });
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">schema_list</span> <span class="op">=</span> <span class="ident">schema_list</span>.<span class="ident">into_vec</span>();
-
-    <span class="kw">if</span> <span class="ident">schema_list</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">1</span> {
-        <span class="macro">emit_error!</span>(<span class="ident">span</span>, <span class="string">&quot;schema file must have a single schema&quot;</span>);
-    }
-
-    <span class="kw">let</span> <span class="ident">schema</span> <span class="op">=</span> <span class="ident">schema_list</span>
-        .<span class="ident">pop</span>()
-        .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">abort!</span>(<span class="ident">span</span>, <span class="string">&quot;expected a schema from file&quot;</span>));
-
-    (<span class="ident">schema</span>, <span class="ident">schema_id</span>)
+    (<span class="ident">schema_list</span>, <span class="ident">schema_id</span>)
 }
 
 <span class="doccomment">/// Returns (HashMap, HashMap);</span>
 <span class="doccomment">/// the former containing signature to override;</span>
 <span class="doccomment">/// the latter containing key name to override.</span>
 <span class="kw">fn</span> <span class="ident">parse_overrides</span>(
-    <span class="ident">known_signatures</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">str</span>],
+    <span class="ident">known_signatures</span>: <span class="kw-2">&amp;</span>[<span class="ident">SchemaKeySignature</span>],
     <span class="ident">known_key_names</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">str</span>],
     <span class="ident">attrs</span>: <span class="kw-2">&amp;</span>[<span class="ident">syn::Attribute</span>],
-) -&gt; (<span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Override</span><span class="op">&gt;</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Override</span><span class="op">&gt;</span>) {
+) -&gt; (
+    <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">SchemaKeySignature</span>, <span class="ident">Override</span><span class="op">&gt;</span>,
+    <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Override</span><span class="op">&gt;</span>,
+) {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">signature_overrides</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_name_overrides</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
 
@@ -533,7 +537,9 @@
 
                 <span class="kw">match</span> (<span class="ident">signature</span>, <span class="ident">key_name</span>) {
                     (<span class="prelude-val">Some</span>(<span class="ident">signature</span>), <span class="prelude-val">None</span>) =&gt; {
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">known_signatures</span>.<span class="ident">contains</span>(<span class="op">&amp;&amp;</span><span class="kw-2">*</span><span class="ident">signature</span>) {
+                        <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">SchemaKeySignature::Type</span>(<span class="ident">signature</span>);
+
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">known_signatures</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">signature</span>) {
                             <span class="macro">emit_error!</span>(
                                 <span class="ident">meta_list</span>.<span class="ident">span</span>(),
                                 <span class="string">&quot;useless define for signature `{}`&quot;</span>,
@@ -599,7 +605,9 @@
 
                 <span class="kw">match</span> (<span class="ident">signature</span>, <span class="ident">key_name</span>) {
                     (<span class="prelude-val">Some</span>(<span class="ident">signature</span>), <span class="prelude-val">None</span>) =&gt; {
-                        <span class="kw">if</span> <span class="op">!</span><span class="ident">known_signatures</span>.<span class="ident">contains</span>(<span class="op">&amp;&amp;</span><span class="kw-2">*</span><span class="ident">signature</span>) {
+                        <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="ident">SchemaKeySignature::Type</span>(<span class="ident">signature</span>);
+
+                        <span class="kw">if</span> <span class="op">!</span><span class="ident">known_signatures</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">signature</span>) {
                             <span class="macro">emit_error!</span>(<span class="ident">attr</span>.<span class="ident">span</span>(), <span class="string">&quot;useless skip for signature `{}`&quot;</span>, <span class="ident">signature</span>);
                         }
 
@@ -693,12 +701,21 @@
     <span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="macro">syn::parse_macro_input!</span>(<span class="ident">attr</span> <span class="kw">as</span> <span class="ident">AttributeArgs</span>);
     <span class="kw">let</span> <span class="ident">settings_struct</span> <span class="op">=</span> <span class="macro">syn::parse_macro_input!</span>(<span class="ident">item</span> <span class="kw">as</span> <span class="ident">SettingsStruct</span>);
 
-    <span class="kw">let</span> (<span class="ident">schema</span>, <span class="ident">schema_id</span>) <span class="op">=</span> <span class="ident">parse_schema</span>(<span class="kw-2">&amp;</span><span class="ident">attr</span>);
+    <span class="kw">let</span> (<span class="ident">schema_list</span>, <span class="ident">schema_id</span>) <span class="op">=</span> <span class="ident">parse_schema_list</span>(<span class="kw-2">&amp;</span><span class="ident">attr</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">schemas</span> <span class="op">=</span> <span class="ident">schema_list</span>.<span class="ident">schemas</span>;
+
+    <span class="kw">if</span> <span class="ident">schemas</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">1</span> {
+        <span class="macro">emit_call_site_error!</span>(<span class="string">&quot;schema file must have a single schema&quot;</span>);
+    }
+
+    <span class="kw">let</span> <span class="ident">schema</span> <span class="op">=</span> <span class="ident">schemas</span>
+        .<span class="ident">pop</span>()
+        .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected a schema from file&quot;</span>));
 
     <span class="kw">let</span> <span class="ident">known_signatures</span> <span class="op">=</span> <span class="ident">schema</span>
         .<span class="ident">keys</span>
         .<span class="ident">iter</span>()
-        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">key</span><span class="op">|</span> <span class="ident">key</span>.<span class="ident">type_</span>.<span class="ident">as_str</span>())
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">key</span><span class="op">|</span> <span class="ident">key</span>.<span class="ident">signature</span>())
         .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
     <span class="kw">let</span> <span class="ident">known_key_names</span> <span class="op">=</span> <span class="ident">schema</span>
         .<span class="ident">keys</span>
@@ -707,7 +724,12 @@
         .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
     <span class="kw">let</span> (<span class="ident">signature_overrides</span>, <span class="ident">key_name_overrides</span>) <span class="op">=</span>
         <span class="ident">parse_overrides</span>(<span class="kw-2">&amp;</span><span class="ident">known_signatures</span>, <span class="kw-2">&amp;</span><span class="ident">known_key_names</span>, <span class="kw-2">&amp;</span><span class="ident">settings_struct</span>.<span class="ident">attrs</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_generators</span> <span class="op">=</span> <span class="ident">KeyGenerators::with_defaults</span>();
+    <span class="kw">let</span> <span class="ident">enums</span> <span class="op">=</span> <span class="ident">schema_list</span>
+        .<span class="ident">enums</span>
+        .<span class="ident">iter</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">enum_</span><span class="op">|</span> (<span class="ident">enum_</span>.<span class="ident">id</span>.<span class="ident">to_string</span>(), <span class="ident">enum_</span>.<span class="ident">clone</span>()))
+        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">key_generators</span> <span class="op">=</span> <span class="ident">KeyGenerators::with_defaults</span>(<span class="ident">enums</span>);
     <span class="ident">key_generators</span>.<span class="ident">add_signature_overrides</span>(<span class="ident">signature_overrides</span>);
     <span class="ident">key_generators</span>.<span class="ident">add_key_name_overrides</span>(<span class="ident">key_name_overrides</span>);
 
@@ -726,8 +748,8 @@
             }
             <span class="ident">GetResult::Unknown</span> =&gt; {
                 <span class="macro">emit_call_site_error!</span>(
-                    <span class="string">&quot;unsupported signature `{}` used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`&quot;</span>,
-                    <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">type_</span>,
+                    <span class="string">&quot;unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`&quot;</span>,
+                    <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">signature</span>(),
                     <span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">name</span>,
                 )
             }
