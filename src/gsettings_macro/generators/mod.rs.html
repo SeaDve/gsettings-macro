@@ -250,35 +250,6 @@
 <span id="245">245</span>
 <span id="246">246</span>
 <span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
-<span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
-<span id="254">254</span>
-<span id="255">255</span>
-<span id="256">256</span>
-<span id="257">257</span>
-<span id="258">258</span>
-<span id="259">259</span>
-<span id="260">260</span>
-<span id="261">261</span>
-<span id="262">262</span>
-<span id="263">263</span>
-<span id="264">264</span>
-<span id="265">265</span>
-<span id="266">266</span>
-<span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
-<span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">string</span>;
 
 <span class="kw">use</span> <span class="ident">heck::ToSnakeCase</span>;
@@ -316,15 +287,15 @@
             <span class="ident">key_name_skips</span>: <span class="ident">HashSet::new</span>(),
         };
 
-        <span class="comment">// Defaults: Basic types that could easily be implemented automatically</span>
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;b&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;bool&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;i&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;i32&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;u&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;u32&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;x&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;i64&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;t&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;u64&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;d&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;f64&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;(ii)&quot;</span>, <span class="ident">Context::new_auto</span>(<span class="string">&quot;(i32, i32)&quot;</span>));
-        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;as&quot;</span>, <span class="ident">Context::new_auto_dissimilar</span>(<span class="string">&quot;&amp;[&amp;str]&quot;</span>, <span class="string">&quot;Vec&lt;String&gt;&quot;</span>));
+        <span class="comment">// Built ins</span>
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;b&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;bool&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;i&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;i32&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;u&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;u32&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;x&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;i64&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;t&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;u64&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;d&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;f64&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;(ii)&quot;</span>, <span class="ident">Context::new</span>(<span class="string">&quot;(i32, i32)&quot;</span>));
+        <span class="ident">this</span>.<span class="ident">insert_signature</span>(<span class="string">&quot;as&quot;</span>, <span class="ident">Context::new_dissimilar</span>(<span class="string">&quot;&amp;[&amp;str]&quot;</span>, <span class="string">&quot;Vec&lt;String&gt;&quot;</span>));
 
         <span class="ident">this</span>
     }
@@ -337,7 +308,7 @@
                 <span class="ident">Override::Define</span> { <span class="ident">arg_type</span>, <span class="ident">ret_type</span> } =&gt; {
                     <span class="self">self</span>.<span class="ident">insert_signature</span>(
                         <span class="kw-2">&amp;</span><span class="ident">signature</span>,
-                        <span class="ident">Context::new_auto_dissimilar</span>(<span class="kw-2">&amp;</span><span class="ident">arg_type</span>, <span class="kw-2">&amp;</span><span class="ident">ret_type</span>),
+                        <span class="ident">Context::new_dissimilar</span>(<span class="kw-2">&amp;</span><span class="ident">arg_type</span>, <span class="kw-2">&amp;</span><span class="ident">ret_type</span>),
                     );
                 }
                 <span class="ident">Override::Skip</span> =&gt; {
@@ -353,7 +324,7 @@
             <span class="kw">match</span> <span class="ident">item</span> {
                 <span class="ident">Override::Define</span> { <span class="ident">arg_type</span>, <span class="ident">ret_type</span> } =&gt; {
                     <span class="self">self</span>.<span class="ident">key_names</span>
-                        .<span class="ident">insert</span>(<span class="ident">key_name</span>, <span class="ident">Context::new_auto_dissimilar</span>(<span class="kw-2">&amp;</span><span class="ident">arg_type</span>, <span class="kw-2">&amp;</span><span class="ident">ret_type</span>));
+                        .<span class="ident">insert</span>(<span class="ident">key_name</span>, <span class="ident">Context::new_dissimilar</span>(<span class="kw-2">&amp;</span><span class="ident">arg_type</span>, <span class="kw-2">&amp;</span><span class="ident">ret_type</span>));
                 }
                 <span class="ident">Override::Skip</span> =&gt; {
                     <span class="self">self</span>.<span class="ident">key_name_skips</span>.<span class="ident">insert</span>(<span class="ident">key_name</span>);
@@ -375,12 +346,10 @@
             <span class="kw">return</span> <span class="ident">GetResult::Some</span>(<span class="ident">KeyGenerator::new</span>(<span class="ident">key</span>, <span class="ident">context</span>.<span class="ident">clone</span>()));
         }
 
-        <span class="comment">// Auto types</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">context</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">signatures</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">type_</span>) {
             <span class="kw">return</span> <span class="ident">GetResult::Some</span>(<span class="ident">KeyGenerator::new</span>(<span class="ident">key</span>, <span class="ident">context</span>.<span class="ident">clone</span>()));
         }
 
-        <span class="comment">// Manual types</span>
         <span class="kw">match</span> <span class="ident">key</span>.<span class="ident">type_</span>.<span class="ident">as_str</span>() {
             <span class="string">&quot;s&quot;</span> =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">string::key_generator</span>(<span class="ident">key</span>)),
             <span class="kw">_</span> =&gt; <span class="ident">GetResult::Unknown</span>,
@@ -388,7 +357,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">insert_signature</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">signature</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">context</span>: <span class="ident">Context</span>) {
-        <span class="self">self</span>.<span class="ident">signatures</span>.<span class="ident">insert</span>(<span class="ident">signature</span>.<span class="ident">into</span>(), <span class="ident">context</span>);
+        <span class="self">self</span>.<span class="ident">signatures</span>.<span class="ident">insert</span>(<span class="ident">signature</span>.<span class="ident">to_string</span>(), <span class="ident">context</span>);
     }
 }
 
@@ -398,58 +367,48 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">KeyGenerator</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">auxiliary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::TokenStream</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">context</span>.<span class="ident">auxiliary</span>.<span class="ident">clone</span>()
+    }
+
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SchemaKey</span>, <span class="ident">context</span>: <span class="ident">Context</span>) -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">key</span>, <span class="ident">context</span> }
     }
 
     <span class="kw">fn</span> <span class="ident">docs</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
-        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span> {
-            <span class="ident">Context::Auto</span> { .. } =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">doc_buf</span> <span class="op">=</span> <span class="ident">String::new</span>();
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">summary</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">summary</span> {
-                    <span class="kw">if</span> <span class="op">!</span><span class="ident">summary</span>.<span class="ident">is_empty</span>() {
-                        <span class="ident">doc_buf</span>.<span class="ident">push_str</span>(<span class="ident">summary</span>);
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
-                    }
-                }
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">default</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">default</span> {
-                    <span class="kw">if</span> <span class="op">!</span><span class="ident">default</span>.<span class="ident">is_empty</span>() {
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
-                        <span class="ident">doc_buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;default: {}&quot;</span>, <span class="ident">default</span>));
-                    }
-                }
-                <span class="comment">// only needed for numerical types</span>
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">range</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">range</span> {
-                    <span class="kw">let</span> <span class="ident">min_is_some</span> <span class="op">=</span> <span class="ident">range</span>.<span class="ident">min</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">min</span><span class="op">|</span> <span class="op">!</span><span class="ident">min</span>.<span class="ident">is_empty</span>());
-                    <span class="kw">let</span> <span class="ident">max_is_some</span> <span class="op">=</span> <span class="ident">range</span>.<span class="ident">max</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">max</span><span class="op">|</span> <span class="op">!</span><span class="ident">max</span>.<span class="ident">is_empty</span>());
-
-                    <span class="kw">if</span> <span class="ident">min_is_some</span> <span class="op">|</span><span class="op">|</span> <span class="ident">max_is_some</span> {
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
-                    }
-                    <span class="kw">if</span> <span class="ident">min_is_some</span> {
-                        <span class="ident">doc_buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;min: {}&quot;</span>, <span class="ident">range</span>.<span class="ident">min</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()));
-                    }
-                    <span class="kw">if</span> <span class="ident">min_is_some</span> <span class="op">&amp;&amp;</span> <span class="ident">max_is_some</span> {
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39;;&#39;</span>);
-                        <span class="ident">doc_buf</span>.<span class="ident">push</span>(<span class="string">&#39; &#39;</span>);
-                    }
-                    <span class="kw">if</span> <span class="ident">max_is_some</span> {
-                        <span class="ident">doc_buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;max: {}&quot;</span>, <span class="ident">range</span>.<span class="ident">max</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()));
-                    }
-                }
-                <span class="ident">doc_buf</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">String::new</span>();
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">summary</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">summary</span> {
+            <span class="kw">if</span> <span class="op">!</span><span class="ident">summary</span>.<span class="ident">is_empty</span>() {
+                <span class="ident">buf</span>.<span class="ident">push_str</span>(<span class="ident">summary</span>);
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
             }
-            <span class="ident">Context::Manual</span> { <span class="ident">doc</span>, .. } =&gt; <span class="ident">doc</span>.<span class="ident">clone</span>(),
-        }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aux</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::TokenStream</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Context::Manual</span> { <span class="kw-2">ref</span> <span class="ident">auxiliary</span>, .. } <span class="op">=</span> <span class="self">self</span>.<span class="ident">context</span> {
-            <span class="kw">return</span> <span class="ident">auxiliary</span>.<span class="ident">clone</span>();
         }
 
-        <span class="prelude-val">None</span>
+        <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
+        <span class="ident">buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;default: {}&quot;</span>, <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">default</span>));
+
+        <span class="comment">// only needed for numerical types</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">range</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">key</span>.<span class="ident">range</span> {
+            <span class="kw">let</span> <span class="ident">min_is_some</span> <span class="op">=</span> <span class="ident">range</span>.<span class="ident">min</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">min</span><span class="op">|</span> <span class="op">!</span><span class="ident">min</span>.<span class="ident">is_empty</span>());
+            <span class="kw">let</span> <span class="ident">max_is_some</span> <span class="op">=</span> <span class="ident">range</span>.<span class="ident">max</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">max</span><span class="op">|</span> <span class="op">!</span><span class="ident">max</span>.<span class="ident">is_empty</span>());
+
+            <span class="kw">if</span> <span class="ident">min_is_some</span> <span class="op">|</span><span class="op">|</span> <span class="ident">max_is_some</span> {
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
+            }
+            <span class="kw">if</span> <span class="ident">min_is_some</span> {
+                <span class="ident">buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;min: {}&quot;</span>, <span class="ident">range</span>.<span class="ident">min</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()));
+            }
+            <span class="kw">if</span> <span class="ident">min_is_some</span> <span class="op">&amp;&amp;</span> <span class="ident">max_is_some</span> {
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39;;&#39;</span>);
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="string">&#39; &#39;</span>);
+            }
+            <span class="kw">if</span> <span class="ident">max_is_some</span> {
+                <span class="ident">buf</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;max: {}&quot;</span>, <span class="ident">range</span>.<span class="ident">max</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()));
+            }
+        }
+
+        <span class="ident">buf</span>
     }
 }
 
@@ -460,43 +419,10 @@
         <span class="kw">let</span> <span class="ident">key_name_snake_case</span> <span class="op">=</span> <span class="ident">key_name</span>.<span class="ident">to_snake_case</span>();
         <span class="kw">let</span> <span class="ident">getter_func_ident</span> <span class="op">=</span> <span class="ident">Ident::new</span>(<span class="kw-2">&amp;</span><span class="ident">key_name_snake_case</span>, <span class="ident">Span::call_site</span>());
 
-        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span> {
-            <span class="ident">Context::Auto</span> { <span class="ident">arg_type</span>, <span class="ident">ret_type</span> } =&gt; {
-                <span class="kw">let</span> <span class="ident">setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
-                <span class="kw">let</span> <span class="ident">try_setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;try_set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
-
-                <span class="kw">let</span> <span class="ident">get_type</span> <span class="op">=</span> <span class="ident">syn::parse_str</span>::<span class="op">&lt;</span><span class="ident">syn::Type</span><span class="op">&gt;</span>(<span class="ident">ret_type</span>)
-                    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="ident">ret_type</span>));
-                <span class="kw">let</span> <span class="ident">set_type</span> <span class="op">=</span> <span class="ident">syn::parse_str</span>::<span class="op">&lt;</span><span class="ident">syn::Type</span><span class="op">&gt;</span>(<span class="ident">arg_type</span>)
-                    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="ident">arg_type</span>));
-
-                <span class="ident">tokens</span>.<span class="ident">extend</span>(<span class="macro">quote!</span> {
-                    <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
-                    <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">setter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: #<span class="ident">set_type</span>) {
-                        <span class="self">self</span>.#<span class="ident">try_setter_func_ident</span>(<span class="ident">value</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;failed to set value for key `{}`: {:?}&quot;</span>, #<span class="ident">key_name</span>, <span class="ident">err</span>))
-                    }
-
-                    <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
-                    <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">try_setter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: #<span class="ident">set_type</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span>(), <span class="ident">gio::glib::BoolError</span><span class="op">&gt;</span> {
-                        <span class="ident">gio::prelude::SettingsExtManual::set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)
-                    }
-
-                    <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
-                    <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">getter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; #<span class="ident">get_type</span> {
-                        <span class="ident">gio::prelude::SettingsExtManual::get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>)
-                    }
-                });
-            }
-            <span class="ident">Context::Manual</span> { <span class="ident">functions</span>, .. } =&gt; {
-                <span class="ident">tokens</span>.<span class="ident">extend</span>(<span class="ident">functions</span>.<span class="ident">clone</span>());
-            }
-        }
-
         <span class="kw">let</span> <span class="ident">connect_changed_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;connect_{}_changed&quot;</span>, <span class="ident">getter_func_ident</span>);
         <span class="kw">let</span> <span class="ident">bind_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;bind_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
         <span class="kw">let</span> <span class="ident">create_action_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;create_{}_action&quot;</span>, <span class="ident">getter_func_ident</span>);
 
-        <span class="comment">// Common items that even `Context::Manual` should not implement manually</span>
         <span class="ident">tokens</span>.<span class="ident">extend</span>(<span class="macro">quote!</span> {
             <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
             <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">connect_changed_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">gio::Settings</span>) <span class="op">+</span> <span class="lifetime">&#39;static</span>) -&gt; <span class="ident">gio::glib::SignalHandlerId</span> {
@@ -514,44 +440,60 @@
             <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">create_action_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">gio::Action</span> {
                 <span class="ident">gio::prelude::SettingsExt::create_action</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>)
             }
-        })
+        });
+
+        <span class="kw">let</span> <span class="ident">setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
+        <span class="kw">let</span> <span class="ident">try_setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;try_set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
+
+        <span class="kw">let</span> <span class="ident">get_type</span> <span class="op">=</span> <span class="ident">syn::parse_str</span>::<span class="op">&lt;</span><span class="ident">syn::Type</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">ret_type</span>)
+            .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">ret_type</span>));
+        <span class="kw">let</span> <span class="ident">set_type</span> <span class="op">=</span> <span class="ident">syn::parse_str</span>::<span class="op">&lt;</span><span class="ident">syn::Type</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">arg_type</span>)
+            .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">arg_type</span>));
+
+        <span class="ident">tokens</span>.<span class="ident">extend</span>(<span class="macro">quote!</span> {
+            <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">setter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: #<span class="ident">set_type</span>) {
+                <span class="self">self</span>.#<span class="ident">try_setter_func_ident</span>(<span class="ident">value</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;failed to set value for key `{}`: {:?}&quot;</span>, #<span class="ident">key_name</span>, <span class="ident">err</span>))
+            }
+
+            <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">try_setter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: #<span class="ident">set_type</span>) -&gt; <span class="ident">std::result::Result</span><span class="op">&lt;</span>(), <span class="ident">gio::glib::BoolError</span><span class="op">&gt;</span> {
+                <span class="ident">gio::prelude::SettingsExtManual::set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>, <span class="kw-2">&amp;</span><span class="ident">value</span>)
+            }
+
+            <span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">docs</span>]</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">getter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; #<span class="ident">get_type</span> {
+                <span class="ident">gio::prelude::SettingsExtManual::get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>)
+            }
+        });
     }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Context</span> {
-    <span class="ident">Auto</span> {
-        <span class="ident">arg_type</span>: <span class="ident">String</span>,
-        <span class="ident">ret_type</span>: <span class="ident">String</span>,
-    },
-    <span class="ident">Manual</span> {
-        <span class="ident">functions</span>: <span class="ident">proc_macro2::TokenStream</span>,
-        <span class="ident">auxiliary</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::TokenStream</span><span class="op">&gt;</span>,
-        <span class="ident">doc</span>: <span class="ident">String</span>,
-    },
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Context</span> {
+    <span class="ident">arg_type</span>: <span class="ident">String</span>,
+    <span class="ident">ret_type</span>: <span class="ident">String</span>,
+    <span class="ident">auxiliary</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::TokenStream</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Context</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_auto</span>(<span class="ident">type_</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new_auto_dissimilar</span>(<span class="ident">type_</span>, <span class="ident">type_</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">type_</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::new_dissimilar</span>(<span class="ident">type_</span>, <span class="ident">type_</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_auto_dissimilar</span>(<span class="ident">arg_type</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">ret_type</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::Auto</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_dissimilar</span>(<span class="ident">arg_type</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">ret_type</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
             <span class="ident">arg_type</span>: <span class="ident">arg_type</span>.<span class="ident">to_string</span>(),
             <span class="ident">ret_type</span>: <span class="ident">ret_type</span>.<span class="ident">to_string</span>(),
+            <span class="ident">auxiliary</span>: <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_manual_with_aux</span>(
-        <span class="ident">functions</span>: <span class="ident">proc_macro2::TokenStream</span>,
-        <span class="ident">auxiliary</span>: <span class="ident">proc_macro2::TokenStream</span>,
-        <span class="ident">doc</span>: <span class="ident">String</span>,
-    ) -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::Manual</span> {
-            <span class="ident">functions</span>,
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_aux</span>(<span class="ident">type_</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">auxiliary</span>: <span class="ident">proc_macro2::TokenStream</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">arg_type</span>: <span class="ident">type_</span>.<span class="ident">to_string</span>(),
+            <span class="ident">ret_type</span>: <span class="ident">type_</span>.<span class="ident">to_string</span>(),
             <span class="ident">auxiliary</span>: <span class="prelude-val">Some</span>(<span class="ident">auxiliary</span>),
-            <span class="ident">doc</span>,
         }
     }
 }
