@@ -198,8 +198,11 @@ fn custom_define_signature() {
     settings.set_string_tuple(("hi", "hi2"));
     assert_eq!(settings.string_tuple(), ("hi".into(), "hi2".into()));
 
-    settings.set_two_strings(("hi", "hi2"));
-    assert_eq!(settings.string_tuple(), ("hi".into(), "hi2".into()));
+    settings.set_two_strings(("a string", "another string"));
+    assert_eq!(
+        settings.two_strings(),
+        ("a string".into(), "another string".into())
+    );
 }
 
 #[test]
