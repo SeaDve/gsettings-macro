@@ -279,8 +279,10 @@ fn enumeration() {
 
     let settings = Settings::new();
 
-    settings.set_alert_sound(AlertSound::Bark);
     assert_eq!(settings.alert_sound(), AlertSound::Bark);
+
+    settings.set_alert_sound(AlertSound::Glass);
+    assert_eq!(settings.alert_sound(), AlertSound::Glass);
 
     settings.set_alert_sound(AlertSound::Drip);
     assert_eq!(settings.alert_sound(), AlertSound::Drip);
