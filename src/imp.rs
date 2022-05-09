@@ -319,7 +319,7 @@ pub fn impl_gen_settings(
             GetResult::Some(generator) => {
                 keys_token_stream.extend(generator.to_token_stream());
 
-                if let Some(aux) = generator.aux() {
+                if let Some(aux) = generator.auxiliary() {
                     aux_token_stream.extend(aux);
                 }
             }

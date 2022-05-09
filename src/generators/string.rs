@@ -1,6 +1,5 @@
-use heck::{ToPascalCase, ToSnakeCase};
-use proc_macro2::Span;
-use quote::{format_ident, quote};
+use heck::ToPascalCase;
+use quote::quote;
 use syn::{spanned::Spanned, Ident};
 
 use super::{Context, KeyGenerator, SchemaKey};
@@ -9,72 +8,45 @@ use crate::schema::Choice as KeyChoice;
 pub fn key_generator(key: &SchemaKey) -> KeyGenerator<'_> {
     if let Some(ref choices) = key.choices {
         let choice_type_name = key.name.to_pascal_case();
-        let choice_type_ident = Ident::new(&choice_type_name, choice_type_name.span());
-
-        let key_name = key.name.as_str();
-        let key_name_snake_case = key_name.to_snake_case();
-
-        let getter_func_ident = Ident::new(&key_name_snake_case, Span::call_site());
-        let setter_func_ident = format_ident!("set_{}", getter_func_ident);
-        let try_setter_func_ident = format_ident!("try_set_{}", getter_func_ident);
-
-        let docs = docs(key);
-
-        let func = quote! {
-            #[doc = #docs]
-            pub fn #setter_func_ident(&self, value: #choice_type_ident) {
-                self.#try_setter_func_ident(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
-            }
-
-            #[doc = #docs]
-            pub fn #try_setter_func_ident(&self, value: #choice_type_ident) -> std::result::Result<(), gio::glib::BoolError> {
-                gio::prelude::SettingsExt::set_string(&self.0, #key_name, value.to_string().as_str())
-            }
-
-            #[doc = #docs]
-            pub fn #getter_func_ident(&self) -> #choice_type_ident {
-                #choice_type_ident::from_str(&gio::prelude::SettingsExt::string(&self.0, #key_name))
-            }
-        };
-
-        let choice_enum = choice_enum(&choice_type_ident, &choices.choices);
-
-        KeyGenerator::new(key, Context::new_manual_with_aux(func, choice_enum, docs))
+        let choice_enum = choice_enum(&choice_type_name, &choices.choices);
+        KeyGenerator::new(key, Context::new_with_aux(&choice_type_name, choice_enum))
     } else {
-        KeyGenerator::new(key, Context::new_auto_dissimilar("&str", "String"))
+        KeyGenerator::new(key, Context::new_dissimilar("&str", "String"))
     }
 }
 
-fn choice_enum(ident: &Ident, choices: &[KeyChoice]) -> proc_macro2::TokenStream {
-    let variants = choices
+fn choice_enum(name: &str, choices: &[KeyChoice]) -> proc_macro2::TokenStream {
+    let variant_names = choices
         .iter()
         .map(|choice| choice.value.as_str())
         .collect::<Vec<_>>();
 
-    let variant_idents = variants
+    let variant_idents = variant_names
         .iter()
         .map(|variant| Ident::new(&variant.to_pascal_case(), variant.span()))
         .collect::<Vec<_>>();
 
-    let from_str_arms = variants
-        .iter()
-        .zip(variant_idents.iter())
-        .map(|(variant_name, variant_ident)| {
-            quote! {
-                #variant_name => Self::#variant_ident
-            }
-        })
-        .collect::<Vec<_>>();
+    let from_variant_arms =
+        variant_names
+            .iter()
+            .zip(variant_idents.iter())
+            .map(|(variant_name, variant_ident)| {
+                quote! {
+                    #variant_name => Some(Self::#variant_ident)
+                }
+            });
 
-    let display_arms = variants
-        .iter()
-        .zip(variant_idents.iter())
-        .map(|(variant_name, variant_ident)| {
-            quote! {
-                Self::#variant_ident =>  write!(f, #variant_name)
-            }
-        })
-        .collect::<Vec<_>>();
+    let to_variant_arms =
+        variant_names
+            .iter()
+            .zip(variant_idents.iter())
+            .map(|(variant_name, variant_ident)| {
+                quote! {
+                    Self::#variant_ident => gio::glib::ToVariant::to_variant(#variant_name)
+                }
+            });
+
+    let ident = Ident::new(name, name.span());
 
     quote! {
         #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -82,52 +54,27 @@ fn choice_enum(ident: &Ident, choices: &[KeyChoice]) -> proc_macro2::TokenStream
             #(#variant_idents),*
         }
 
-        impl #ident {
-            pub fn from_str(string: &str) -> Self {
-                match string {
-                    #(#from_str_arms),*,
-                    other => panic!("Invalid variant `{}`", other),
+        impl gio::glib::StaticVariantType for #ident {
+            fn static_variant_type() -> std::borrow::Cow<'static, gio::glib::VariantTy> {
+                std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING)
+            }
+        }
+
+        impl gio::glib::FromVariant for #ident {
+            fn from_variant(variant: &gio::glib::Variant) -> Option<Self> {
+                match variant.get::<String>()?.as_str() {
+                    #(#from_variant_arms),*,
+                    _ => None,
                 }
             }
         }
 
-        impl std::fmt::Display for #ident {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                match *self {
-                    #(#display_arms),*
+        impl gio::glib::ToVariant for #ident {
+            fn to_variant(&self) -> gio::glib::Variant {
+                match self {
+                    #(#to_variant_arms),*
                 }
             }
         }
     }
-}
-
-fn has_choice(key: &SchemaKey) -> bool {
-    if let Some(ref choices) = key.choices {
-        return !choices.choices.is_empty();
-    }
-
-    false
-}
-
-fn docs(key: &SchemaKey) -> String {
-    let mut buf = String::new();
-
-    if let Some(ref summary) = key.summary {
-        if !summary.is_empty() {
-            buf.push_str(summary);
-            buf.push('\n');
-        }
-    }
-
-    let display = if has_choice(key) {
-        // Use pascal case since it is an enum
-        key.default.to_pascal_case()
-    } else {
-        key.default.to_string()
-    };
-
-    buf.push('\n');
-    buf.push_str(&format!("default: {}", display));
-
-    buf
 }

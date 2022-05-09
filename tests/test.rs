@@ -227,24 +227,35 @@ fn custom_define_key_name() {
 fn string_choice_enum() {
     setup_schema();
 
+    use gio::glib::{FromVariant, ToVariant};
+
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_skip(signature = "(ss)")]
     #[gen_settings_skip(signature = "ay")]
     pub struct Settings;
 
     assert_eq!(
-        PreferredAudioSource::DesktopAudio.to_string(),
+        PreferredAudioSource::DesktopAudio
+            .to_variant()
+            .get::<String>()
+            .unwrap(),
         "desktop-audio"
     );
-    assert_eq!(PreferredAudioSource::Microphone.to_string(), "microphone");
+    assert_eq!(
+        PreferredAudioSource::Microphone
+            .to_variant()
+            .get::<String>()
+            .unwrap(),
+        "microphone"
+    );
 
     assert_eq!(
         PreferredAudioSource::DesktopAudio,
-        PreferredAudioSource::from_str("desktop-audio")
+        PreferredAudioSource::from_variant(&"desktop-audio".to_variant()).unwrap()
     );
     assert_eq!(
         PreferredAudioSource::Microphone,
-        PreferredAudioSource::from_str("microphone")
+        PreferredAudioSource::from_variant(&"microphone".to_variant()).unwrap()
     );
 }
 
