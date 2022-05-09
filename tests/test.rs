@@ -305,14 +305,19 @@ fn bitflag() {
 
     assert_eq!(settings.space_style(), SpaceStyle::empty());
 
-    settings.set_space_style(SpaceStyle::BEFORE_LEFT_PAREN);
-    assert_eq!(settings.space_style(), SpaceStyle::BEFORE_LEFT_PAREN);
+    settings.set_space_style(SpaceStyle::BEFORE_COLON);
+    assert_eq!(settings.space_style(), SpaceStyle::BEFORE_COLON);
 
-    settings.set_space_style(SpaceStyle::BEFORE_LEFT_PAREN | SpaceStyle::BEFORE_COMMA);
+    settings.set_space_style(SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA);
     assert_eq!(
         settings.space_style(),
-        SpaceStyle::BEFORE_LEFT_PAREN | SpaceStyle::BEFORE_COMMA
+        SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA
     );
+
+    settings.set_space_style(
+        SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA | SpaceStyle::BEFORE_SEMICOLON,
+    );
+    assert_eq!(settings.space_style(), SpaceStyle::all());
 }
 
 #[test]
