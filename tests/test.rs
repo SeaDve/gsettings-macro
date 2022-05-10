@@ -224,6 +224,24 @@ fn custom_define_key_name() {
 
 #[test]
 #[serial_test::serial]
+fn overlapping_define() {
+    setup_schema();
+
+    use std::path::{Path, PathBuf};
+
+    #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
+    #[gen_settings_define(signature = "ay", arg_type = "&OsStr", ret_type = "OsString")]
+    #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
+    #[gen_settings_skip(signature = "(ss)")]
+    pub struct Settings;
+
+    let settings = Settings::new("io.github.seadve.test");
+    settings.set_cache_dir(Path::new("/some_dir"));
+    assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir"));
+}
+
+#[test]
+#[serial_test::serial]
 fn string_choice_enum() {
     setup_schema();
 
