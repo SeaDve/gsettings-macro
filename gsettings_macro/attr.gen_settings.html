@@ -4,7 +4,13 @@
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../gsettings_macro/index.html"><div class="logo-container"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></div>
         </a><div class="sidebar-elems"><h2 class="location"><a href="index.html">In gsettings_macro</a></h2><div id="sidebar-vars" data-name="gen_settings" data-ty="attr" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
-    <h1 class="fqn"><span class="in-band">Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#187">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust attr"><code>#[gen_settings]</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for easy [<code>gio::Settings</code>] key access.</p>
+    <h1 class="fqn"><span class="in-band">Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#195">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust attr"><code>#[gen_settings]</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for easy [<code>gio::Settings</code>] key access.</p>
+<p>The main purpose is to reduce the risk of mistyping a key, using
+the wrong method to access values, inputing incorrect values,
+and reduce boilerplate Rust code. Additionally, the summary and
+the default of the value is included in the documentation of each
+generated methods. This would be helpful if you use documentation
+hovers, encouraging GSchema keys documentation.</p>
 <p><strong>⚠️ IMPORTANT ⚠️</strong></p>
 <p><code>gio</code> needs to be in scope, so unless it’s one of the direct crate
 dependencies, you need to import it because <code>gen_settings</code> is using
@@ -47,9 +53,9 @@ key, and <code>try_set_#key</code>, which behaves the same as the original metho
 <li><code>create_action</code> -&gt; <code>create_#key_action</code></li>
 </ul>
 <h4 id="known-dbus-types"><a href="#known-dbus-types">Known DBus types</a></h4>
-<p>The setter and getter methods automatically sets the argument and
-return type for each key with the following mappings:</p>
-<div><table><thead><tr><th>DBus type name</th><th>argument type</th><th>return type</th></tr></thead><tbody>
+<p>The setter and getter methods has the following argument and
+return type, depending on the key’s DBus type code specified.</p>
+<div><table><thead><tr><th>DBus type code</th><th>argument type</th><th>return type</th></tr></thead><tbody>
 <tr><td>b</td><td><code>bool</code></td><td><code>bool</code></td></tr>
 <tr><td>i</td><td><code>i32</code></td><td><code>i32</code></td></tr>
 <tr><td>u</td><td><code>u32</code></td><td><code>u32</code></td></tr>
@@ -62,30 +68,30 @@ return type for each key with the following mappings:</p>
 </tbody></table>
 </div>
 <p>* If the schema’s key of DBus type <code>s</code> has no choice
-specified, the argument and return type specified
+specified, the argument and return types specified
 above would be true. Otherwise, it will generate an
-enum, like described below, and use it as argument
-and return type instead of <code>&amp;str</code> and <code>String</code>.</p>
-<p>The code would fail to compile if the dbus type name is not
+enum, like described in the next section, and use it as argument
+and return type instead of <code>&amp;str</code> and <code>String</code> respectively.</p>
+<p>The code would fail to compile if the DBus type code is not
 included above. However, it is possible to skip generating a
-specific key or DBus type name by using <code>#[gen_settings_skip]</code>
-or define a custom argument and return type using <code>#[gen_settings_define]</code>.
+specific key or DBus type code by using <code>#[gen_settings_skip]</code>
+or define a custom argument and return types using <code>#[gen_settings_define]</code>.
 Usage would be further explained in the following sections.</p>
 <h4 id="enums-and-flags"><a href="#enums-and-flags">Enums and Flags</a></h4>
-<p>Furthermore, it will automatically generate enums or flags
-if specified in the GSchema file. If it is an enum, it would
-generated a normal Rust enum with each enum variant nick
-specified in the GSchema converted to pascal case. The enum
-would implement both <a href="gio::glib::ToVariant"><code>ToVariant</code></a> and
-<a href="gio::glib::FromVariant"><code>FromVariant</code></a>, and also <a href="https://doc.rust-lang.org/1.60.0/core/clone/trait.Clone.html" title="Clone"><code>Clone</code></a>,
+<p>It will also automatically generate enums or flags. If it is
+an enum, it would generated a normal Rust enum with each enum
+variant nick specified in the GSchema converted to pascal case.
+The enum would implement both <a href="gio::glib::ToVariant"><code>ToVariant</code></a>
+and <a href="gio::glib::FromVariant"><code>FromVariant</code></a>, and also <a href="https://doc.rust-lang.org/1.60.0/core/clone/trait.Clone.html" title="Clone"><code>Clone</code></a>,
 <a href="https://doc.rust-lang.org/1.60.0/core/hash/macros/derive.Hash.html" title="Hash"><code>Hash</code></a>, <a href="https://doc.rust-lang.org/1.60.0/core/cmp/trait.PartialEq.html" title="PartialEq"><code>PartialEq</code></a>, <a href="https://doc.rust-lang.org/1.60.0/core/cmp/trait.Eq.html" title="Eq"><code>Eq</code></a>, <a href="https://doc.rust-lang.org/1.60.0/core/cmp/trait.PartialOrd.html" title="PartialOrd"><code>PartialOrd</code></a>, <a href="https://doc.rust-lang.org/1.60.0/core/cmp/trait.Ord.html" title="Ord"><code>Ord</code></a>. On
 the other hand, if it is a flag, it would generate bitflags
 same as the bitflags generated by the
 <a href="gio::glib::bitflags::bitflags"><code>bitflags</code></a> macro with each
 flags nick specified in the GSchema converted to screaming
 snake case.</p>
-<p>The generated types, enum or bitflags, would be present in the
-same scope of where the generated settings struct is defined.</p>
+<p>The generated types, enum or bitflags, would be public and
+present in the same scope of where the generated settings
+struct is defined.</p>
 <h4 id="skipping-generating-code"><a href="#skipping-generating-code">Skipping generating code</a></h4>
 <p>This would be helpful if you want to have full control
 with the key without the macro intervening.</p>
@@ -113,13 +119,13 @@ with the key without the macro intervening.</p>
 <span class="kw">use</span> <span class="ident">std::path</span>{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="attribute">#[<span class="ident">gen_settings</span>(<span class="ident">file</span> <span class="op">=</span> <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>)]</span>
-<span class="comment">// Define custom argument and return type for keys with type `(ss)`</span>
+<span class="comment">// Define custom argument and return types for keys with type `(ss)`</span>
 <span class="attribute">#[<span class="ident">gen_settings_define</span>(
     <span class="ident">signature</span> <span class="op">=</span> <span class="string">&quot;(ss)&quot;</span>,
     <span class="ident">arg_type</span> <span class="op">=</span> <span class="string">&quot;(&amp;str, &amp;str)&quot;</span>,
     <span class="ident">ret_type</span> <span class="op">=</span> <span class="string">&quot;(String, String)&quot;</span>
 )]</span>
-<span class="comment">// Define custom argument and return type for key with name `cache-dir`</span>
+<span class="comment">// Define custom argument and return types for key with name `cache-dir`</span>
 <span class="attribute">#[<span class="ident">gen_settings_define</span>(<span class="ident">key_name</span> <span class="op">=</span> <span class="string">&quot;cache-dir&quot;</span>, <span class="ident">arg_type</span> <span class="op">=</span> <span class="string">&quot;&amp;Path&quot;</span>, <span class="ident">ret_type</span> <span class="op">=</span> <span class="string">&quot;PathBuf&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SomeAppSettings</span>;
 
@@ -130,16 +136,15 @@ with the key without the macro intervening.</p>
 
 <span class="ident">settings</span>.<span class="ident">set_string_tuple</span>((<span class="string">&quot;hi&quot;</span>, <span class="string">&quot;hi2&quot;</span>));
 <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">string_tuple</span>(), (<span class="string">&quot;hi&quot;</span>.<span class="ident">into</span>(), <span class="string">&quot;hi2&quot;</span>.<span class="ident">into</span>()));</code></pre></div>
-<p>If you somehow don’t want an enum argument and return types. You
-can also use this to override that behavior.</p>
+<p>If you somehow don’t want an enum argument and return types for <code>s</code> DBus
+type code with choices. You can also use this to override that behavior.</p>
 <p>Note: The type has to implement both <a href="gio::glib::ToVariant"><code>ToVariant</code></a>
 and <a href="gio::glib::FromVariant"><code>FromVariant</code></a> or it would fail to compile.</p>
 <h4 id="default-trait"><a href="#default-trait">Default trait</a></h4>
-<p>The schema id can be specified as an attribute, which makes it
-implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and <code>new</code> constructor without arguments.
+<p>The schema id can be specified as an attribute, making it implement
+<a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and create a <code>new</code> constructor without arguments.
 Otherwise, it won’t implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and would require the
-schema id as an argument in the constructor as shown in the
-example above.</p>
+schema id as an argument in the constructor.</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
 
@@ -149,6 +154,8 @@ example above.</p>
 )]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplicationSettings</span>;
 
+<span class="comment">// The id is specified above so it is not needed</span>
+<span class="comment">// to specify it in the constructor.</span>
 <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="ident">ApplicationSettings::new</span>();
 <span class="kw">let</span> <span class="ident">another_instance</span> <span class="op">=</span> <span class="ident">ApplicationSettings::default</span>();</code></pre></div>
 </div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="gsettings_macro" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>

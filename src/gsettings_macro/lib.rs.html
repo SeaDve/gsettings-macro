@@ -193,6 +193,14 @@
 <span id="188">188</span>
 <span id="189">189</span>
 <span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">generators</span>;
 <span class="kw">mod</span> <span class="ident">imp</span>;
 <span class="kw">mod</span> <span class="ident">schema</span>;
@@ -201,6 +209,13 @@
 <span class="kw">use</span> <span class="ident">proc_macro_error::proc_macro_error</span>;
 
 <span class="doccomment">/// Macro for easy [`gio::Settings`] key access.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The main purpose is to reduce the risk of mistyping a key, using</span>
+<span class="doccomment">/// the wrong method to access values, inputing incorrect values,</span>
+<span class="doccomment">/// and reduce boilerplate Rust code. Additionally, the summary and</span>
+<span class="doccomment">/// the default of the value is included in the documentation of each</span>
+<span class="doccomment">/// generated methods. This would be helpful if you use documentation</span>
+<span class="doccomment">/// hovers, encouraging GSchema keys documentation.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// **⚠️ IMPORTANT ⚠️**</span>
 <span class="doccomment">///</span>
@@ -255,10 +270,10 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Known DBus types</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The setter and getter methods automatically sets the argument and</span>
-<span class="doccomment">/// return type for each key with the following mappings:</span>
+<span class="doccomment">/// The setter and getter methods has the following argument and</span>
+<span class="doccomment">/// return type, depending on the key&#39;s DBus type code specified.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// | DBus type name | argument type  | return type    |</span>
+<span class="doccomment">/// | DBus type code | argument type  | return type    |</span>
 <span class="doccomment">/// | -------------- | -------------- | -------------- |</span>
 <span class="doccomment">/// | b              | `bool`         | `bool`         |</span>
 <span class="doccomment">/// | i              | `i32`          | `i32`          |</span>
@@ -271,25 +286,24 @@
 <span class="doccomment">/// | s *            | `&amp;str`         | `String`       |</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// \* If the schema&#39;s key of DBus type `s` has no choice</span>
-<span class="doccomment">/// specified, the argument and return type specified</span>
+<span class="doccomment">/// specified, the argument and return types specified</span>
 <span class="doccomment">/// above would be true. Otherwise, it will generate an</span>
-<span class="doccomment">/// enum, like described below, and use it as argument</span>
-<span class="doccomment">/// and return type instead of `&amp;str` and `String`.</span>
+<span class="doccomment">/// enum, like described in the next section, and use it as argument</span>
+<span class="doccomment">/// and return type instead of `&amp;str` and `String` respectively.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The code would fail to compile if the dbus type name is not</span>
+<span class="doccomment">/// The code would fail to compile if the DBus type code is not</span>
 <span class="doccomment">/// included above. However, it is possible to skip generating a</span>
-<span class="doccomment">/// specific key or DBus type name by using `#[gen_settings_skip]`</span>
-<span class="doccomment">/// or define a custom argument and return type using `#[gen_settings_define]`.</span>
+<span class="doccomment">/// specific key or DBus type code by using `#[gen_settings_skip]`</span>
+<span class="doccomment">/// or define a custom argument and return types using `#[gen_settings_define]`.</span>
 <span class="doccomment">/// Usage would be further explained in the following sections.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Enums and Flags</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// Furthermore, it will automatically generate enums or flags</span>
-<span class="doccomment">/// if specified in the GSchema file. If it is an enum, it would</span>
-<span class="doccomment">/// generated a normal Rust enum with each enum variant nick</span>
-<span class="doccomment">/// specified in the GSchema converted to pascal case. The enum</span>
-<span class="doccomment">/// would implement both [`ToVariant`](gio::glib::ToVariant) and</span>
-<span class="doccomment">/// [`FromVariant`](gio::glib::FromVariant), and also [`Clone`],</span>
+<span class="doccomment">/// It will also automatically generate enums or flags. If it is</span>
+<span class="doccomment">/// an enum, it would generated a normal Rust enum with each enum</span>
+<span class="doccomment">/// variant nick specified in the GSchema converted to pascal case.</span>
+<span class="doccomment">/// The enum would implement both [`ToVariant`](gio::glib::ToVariant)</span>
+<span class="doccomment">/// and [`FromVariant`](gio::glib::FromVariant), and also [`Clone`],</span>
 <span class="doccomment">/// [`Hash`], [`PartialEq`], [`Eq`], [`PartialOrd`], [`Ord`]. On</span>
 <span class="doccomment">/// the other hand, if it is a flag, it would generate bitflags</span>
 <span class="doccomment">/// same as the bitflags generated by the</span>
@@ -297,8 +311,9 @@
 <span class="doccomment">/// flags nick specified in the GSchema converted to screaming</span>
 <span class="doccomment">/// snake case.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The generated types, enum or bitflags, would be present in the</span>
-<span class="doccomment">/// same scope of where the generated settings struct is defined.</span>
+<span class="doccomment">/// The generated types, enum or bitflags, would be public and</span>
+<span class="doccomment">/// present in the same scope of where the generated settings</span>
+<span class="doccomment">/// struct is defined.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Skipping generating code</span>
 <span class="doccomment">///</span>
@@ -333,13 +348,13 @@
 <span class="doccomment">/// use std::path{Path, PathBuf};</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[gen_settings(file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;)]</span>
-<span class="doccomment">/// // Define custom argument and return type for keys with type `(ss)`</span>
+<span class="doccomment">/// // Define custom argument and return types for keys with type `(ss)`</span>
 <span class="doccomment">/// #[gen_settings_define(</span>
 <span class="doccomment">///     signature = &quot;(ss)&quot;,</span>
 <span class="doccomment">///     arg_type = &quot;(&amp;str, &amp;str)&quot;,</span>
 <span class="doccomment">///     ret_type = &quot;(String, String)&quot;</span>
 <span class="doccomment">/// )]</span>
-<span class="doccomment">/// // Define custom argument and return type for key with name `cache-dir`</span>
+<span class="doccomment">/// // Define custom argument and return types for key with name `cache-dir`</span>
 <span class="doccomment">/// #[gen_settings_define(key_name = &quot;cache-dir&quot;, arg_type = &quot;&amp;Path&quot;, ret_type = &quot;PathBuf&quot;)]</span>
 <span class="doccomment">/// pub struct SomeAppSettings;</span>
 <span class="doccomment">///</span>
@@ -352,19 +367,18 @@
 <span class="doccomment">/// assert_eq!(settings.string_tuple(), (&quot;hi&quot;.into(), &quot;hi2&quot;.into()));</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// If you somehow don&#39;t want an enum argument and return types. You</span>
-<span class="doccomment">/// can also use this to override that behavior.</span>
+<span class="doccomment">/// If you somehow don&#39;t want an enum argument and return types for `s` DBus</span>
+<span class="doccomment">/// type code with choices. You can also use this to override that behavior.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Note: The type has to implement both [`ToVariant`](gio::glib::ToVariant)</span>
 <span class="doccomment">/// and [`FromVariant`](gio::glib::FromVariant) or it would fail to compile.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Default trait</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The schema id can be specified as an attribute, which makes it</span>
-<span class="doccomment">/// implement [`Default`] and `new` constructor without arguments.</span>
+<span class="doccomment">/// The schema id can be specified as an attribute, making it implement</span>
+<span class="doccomment">/// [`Default`] and create a `new` constructor without arguments.</span>
 <span class="doccomment">/// Otherwise, it won&#39;t implement [`Default`] and would require the</span>
-<span class="doccomment">/// schema id as an argument in the constructor as shown in the</span>
-<span class="doccomment">/// example above.</span>
+<span class="doccomment">/// schema id as an argument in the constructor.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```rust,ignore</span>
 <span class="doccomment">/// use gsettings_macro::gen_settings;</span>
@@ -375,6 +389,8 @@
 <span class="doccomment">/// )]</span>
 <span class="doccomment">/// pub struct ApplicationSettings;</span>
 <span class="doccomment">///</span>
+<span class="doccomment">/// // The id is specified above so it is not needed</span>
+<span class="doccomment">/// // to specify it in the constructor.</span>
 <span class="doccomment">/// let settings = ApplicationSettings::new();</span>
 <span class="doccomment">/// let another_instance = ApplicationSettings::default();</span>
 <span class="doccomment">/// ```</span>
