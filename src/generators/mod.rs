@@ -150,17 +150,22 @@ impl<'a> KeyGenerator<'a> {
         Self { key, context }
     }
 
-    fn docs(&self) -> String {
-        let mut buf = String::new();
+    fn func_docs(&self) -> proc_macro2::TokenStream {
+        let mut stream = proc_macro2::TokenStream::new();
+
         if let Some(ref summary) = self.key.summary {
             if !summary.is_empty() {
-                buf.push_str(summary);
-                buf.push('\n');
+                stream.extend(quote! {
+                    #[doc = #summary]
+                });
             }
         }
 
-        buf.push('\n');
-        buf.push_str(&format!("default: {}", self.key.default));
+        let default_docs = format!("default: {}", self.key.default);
+        stream.extend(quote! {
+            #[doc = ""]
+            #[doc = #default_docs]
+        });
 
         // only needed for numerical types
         if let Some(ref range) = self.key.range {
@@ -168,28 +173,32 @@ impl<'a> KeyGenerator<'a> {
             let max_is_some = range.max.as_ref().map_or(false, |max| !max.is_empty());
 
             if min_is_some || max_is_some {
-                buf.push('\n');
-                buf.push('\n');
+                stream.extend(quote! {
+                    #[doc = ""]
+                });
             }
+            let mut range_docs = String::new();
             if min_is_some {
-                buf.push_str(&format!("min: {}", range.min.as_ref().unwrap()));
+                range_docs.push_str(&format!("min: {}", range.min.as_ref().unwrap()));
             }
             if min_is_some && max_is_some {
-                buf.push(';');
-                buf.push(' ');
+                range_docs.push(';');
+                range_docs.push(' ');
             }
             if max_is_some {
-                buf.push_str(&format!("max: {}", range.max.as_ref().unwrap()));
+                range_docs.push_str(&format!("max: {}", range.max.as_ref().unwrap()));
             }
+            stream.extend(quote! {
+                #[doc = #range_docs]
+            })
         }
 
-        buf
+        stream
     }
 }
 
 impl quote::ToTokens for KeyGenerator<'_> {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
-        let docs = self.docs();
         let key_name = self.key.name.as_str();
         let key_name_snake_case = key_name.to_snake_case();
         let getter_func_ident = Ident::new(&key_name_snake_case, Span::call_site());
@@ -198,20 +207,22 @@ impl quote::ToTokens for KeyGenerator<'_> {
         let bind_func_ident = format_ident!("bind_{}", getter_func_ident);
         let create_action_func_ident = format_ident!("create_{}_action", getter_func_ident);
 
+        let func_docs = self.func_docs();
+
         tokens.extend(quote! {
-            #[doc = #docs]
+            #func_docs
             pub fn #connect_changed_func_ident(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
                 gio::prelude::SettingsExt::connect_changed(&self.0, Some(#key_name), move |settings, _| {
                     f(settings)
                 })
             }
 
-            #[doc = #docs]
+            #func_docs
             pub fn #bind_func_ident<'a>(&'a self, object: &'a impl gio::glib::object::IsA<gio::glib::Object>, property: &'a str) -> gio::BindingBuilder<'a> {
                 gio::prelude::SettingsExtManual::bind(&self.0, #key_name, object, property)
             }
 
-            #[doc = #docs]
+            #func_docs
             pub fn #create_action_func_ident(&self) -> gio::Action {
                 gio::prelude::SettingsExt::create_action(&self.0, #key_name)
             }
@@ -226,17 +237,17 @@ impl quote::ToTokens for KeyGenerator<'_> {
             .unwrap_or_else(|_| panic!("Invalid type `{}`", &self.context.arg_type));
 
         tokens.extend(quote! {
-            #[doc = #docs]
+            #func_docs
             pub fn #setter_func_ident(&self, value: #set_type) {
                 self.#try_setter_func_ident(value).unwrap_or_else(|err| panic!("failed to set value for key `{}`: {:?}", #key_name, err))
             }
 
-            #[doc = #docs]
+            #func_docs
             pub fn #try_setter_func_ident(&self, value: #set_type) -> std::result::Result<(), gio::glib::BoolError> {
                 gio::prelude::SettingsExtManual::set(&self.0, #key_name, &value)
             }
 
-            #[doc = #docs]
+            #func_docs
             pub fn #getter_func_ident(&self) -> #get_type {
                 gio::prelude::SettingsExtManual::get(&self.0, #key_name)
             }
