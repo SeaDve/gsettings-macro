@@ -12,26 +12,26 @@ pub struct SchemaList {
     pub schemas: Vec<Schema>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Enum {
     pub id: String,
     #[serde(rename = "value")]
     pub values: Vec<EnumValues>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct EnumValues {
     pub nick: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Flag {
     pub id: String,
     #[serde(rename = "value")]
     pub values: Vec<FlagValues>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct FlagValues {
     pub nick: String,
     pub value: u32,

@@ -24,19 +24,19 @@ pub enum GetResult<'a> {
     Unknown,
 }
 
-pub struct KeyGenerators {
+pub struct KeyGenerators<'a> {
     signatures: HashMap<SchemaKeySignature, Context>,
     key_names: HashMap<String, Context>,
-    enums: HashMap<String, SchemaEnum>,
-    flags: HashMap<String, SchemaFlag>,
+    enums: HashMap<String, &'a SchemaEnum>,
+    flags: HashMap<String, &'a SchemaFlag>,
     signature_skips: HashSet<SchemaKeySignature>,
     key_name_skips: HashSet<String>,
 }
 
-impl KeyGenerators {
+impl<'a> KeyGenerators<'a> {
     pub fn with_defaults(
-        enums: HashMap<String, SchemaEnum>,
-        flags: HashMap<String, SchemaFlag>,
+        enums: HashMap<String, &'a SchemaEnum>,
+        flags: HashMap<String, &'a SchemaFlag>,
     ) -> Self {
         let mut this = Self {
             signatures: HashMap::new(),
@@ -91,7 +91,7 @@ impl KeyGenerators {
         }
     }
 
-    pub fn get<'a>(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
+    pub fn get(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
         let key_signature = key.signature();
 
         if self.key_name_skips.contains(&key.name) {

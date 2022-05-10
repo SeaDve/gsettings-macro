@@ -315,12 +315,12 @@ pub fn impl_gen_settings(
     let enums = schema_list
         .enums
         .iter()
-        .map(|enum_| (enum_.id.to_string(), enum_.clone()))
+        .map(|enum_| (enum_.id.to_string(), enum_))
         .collect::<HashMap<_, _>>();
     let flags = schema_list
         .flags
         .iter()
-        .map(|flag| (flag.id.to_string(), flag.clone()))
+        .map(|flag| (flag.id.to_string(), flag))
         .collect::<HashMap<_, _>>();
     let mut key_generators = KeyGenerators::with_defaults(enums, flags);
     key_generators.add_signature_overrides(signature_overrides);
