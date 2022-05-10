@@ -176,6 +176,23 @@
 <span id="171">171</span>
 <span id="172">172</span>
 <span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">generators</span>;
 <span class="kw">mod</span> <span class="ident">imp</span>;
 <span class="kw">mod</span> <span class="ident">schema</span>;
@@ -184,6 +201,16 @@
 <span class="kw">use</span> <span class="ident">proc_macro_error::proc_macro_error</span>;
 
 <span class="doccomment">/// Macro for easy [`gio::Settings`] key access.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// **⚠️ IMPORTANT ⚠️**</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `gio` needs to be in scope, so unless it&#39;s one of the direct crate</span>
+<span class="doccomment">/// dependencies, you need to import it because `gen_settings` is using</span>
+<span class="doccomment">/// it internally. For example:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```rust,ignore</span>
+<span class="doccomment">/// use gtk::gio;</span>
+<span class="doccomment">/// ```</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Example</span>
 <span class="doccomment">///</span>
@@ -214,34 +241,7 @@
 <span class="doccomment">/// Note: The file path is relative to the project root or where the</span>
 <span class="doccomment">/// `Cargo.toml` file is located.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The schema id can be specified as an attribute, which makes it</span>
-<span class="doccomment">/// implement [`Default`] and `new` constructor without arguments.</span>
-<span class="doccomment">/// Otherwise, it won&#39;t implement [`Default`] and would require the</span>
-<span class="doccomment">/// schema id as an argument in the constructor as shown in the</span>
-<span class="doccomment">/// example above.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```rust,ignore</span>
-<span class="doccomment">/// use gsettings_macro::gen_settings;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// #[gen_settings(</span>
-<span class="doccomment">///     file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;,</span>
-<span class="doccomment">///     id = &quot;io.github.seadve.test</span>
-<span class="doccomment">/// )]</span>
-<span class="doccomment">/// pub struct ApplicationSettings;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let settings = ApplicationSettings::new();</span>
-<span class="doccomment">/// let another_instance = ApplicationSettings::default();</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// **⚠️ IMPORTANT ⚠️**</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// `gio` needs to be in scope, so unless it&#39;s one of the direct crate</span>
-<span class="doccomment">/// dependencies, you need to import it because `gen_settings` is using</span>
-<span class="doccomment">/// it internally. For example:</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```rust,ignore</span>
-<span class="doccomment">/// use gtk::gio;</span>
-<span class="doccomment">/// ```</span>
+<span class="doccomment">/// ### Generated methods</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The procedural macro generates code for each key for following</span>
 <span class="doccomment">/// [`gio::Settings`] methods:</span>
@@ -252,6 +252,8 @@
 <span class="doccomment">/// * `connect_changed` -&gt; `connect_#key_changed`</span>
 <span class="doccomment">/// * `bind` -&gt; `bind_#key`</span>
 <span class="doccomment">/// * `create_action` -&gt; `create_#key_action`</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ### Known DBus types</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The setter and getter methods automatically sets the argument and</span>
 <span class="doccomment">/// return type for each key with the following mappings:</span>
@@ -266,25 +268,34 @@
 <span class="doccomment">/// | d              | `f64`          | `f64`          |</span>
 <span class="doccomment">/// | (ii)           | `(i32, i32`)   | `(i32, i32`)   |</span>
 <span class="doccomment">/// | as             | `&amp;[&amp;str]`      | `Vec&lt;String&gt;`  |</span>
+<span class="doccomment">/// | s *            | `&amp;str`         | `String`       |</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// \* If the schema&#39;s key of DBus type `s` has no choice</span>
+<span class="doccomment">/// specified, the argument and return type specified</span>
+<span class="doccomment">/// above would be true. Otherwise, it will generate an</span>
+<span class="doccomment">/// enum, like described below, and use it as argument</span>
+<span class="doccomment">/// and return type instead of `&amp;str` and `String`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The code would fail to compile if the dbus type name is not</span>
 <span class="doccomment">/// included above. However, it is possible to skip generating a</span>
-<span class="doccomment">/// specific key or DBus type name by using #[gen_settings_skip]</span>
-<span class="doccomment">/// or define a custom argument and return type using #[gen_settings_define]</span>
-<span class="doccomment">/// as long as the type implements [`ToVariant`](gio::glib::ToVariant)</span>
-<span class="doccomment">/// for argument type and [`FromVariant`](gio::glib::FromVariant)</span>
-<span class="doccomment">/// for the return type. Usage would be further explained in the</span>
-<span class="doccomment">/// next section.</span>
+<span class="doccomment">/// specific key or DBus type name by using `#[gen_settings_skip]`</span>
+<span class="doccomment">/// or define a custom argument and return type using `#[gen_settings_define]`.</span>
+<span class="doccomment">/// Usage would be further explained in the following sections.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ### Enums and Flags</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Furthermore, it will automatically generate enums or flags</span>
 <span class="doccomment">/// if specified in the GSchema file. If it is an enum, it would</span>
-<span class="doccomment">/// generate a normal Rust enum with the variants of the nicks as</span>
-<span class="doccomment">/// defined converted to pascal case. The enum would implement</span>
-<span class="doccomment">/// both [`ToVariant`](gio::glib::ToVariant) and</span>
-<span class="doccomment">/// [`FromVariant`](gio::glib::FromVariant). On the other hand,</span>
-<span class="doccomment">/// if it is a flag, it would generate bitflags same as the bitflags</span>
-<span class="doccomment">/// generated by the [`bitflags`](gio::glib::bitflags::bitflags)</span>
-<span class="doccomment">/// macro.</span>
+<span class="doccomment">/// generated a normal Rust enum with each enum variant nick</span>
+<span class="doccomment">/// specified in the GSchema converted to pascal case. The enum</span>
+<span class="doccomment">/// would implement both [`ToVariant`](gio::glib::ToVariant) and</span>
+<span class="doccomment">/// [`FromVariant`](gio::glib::FromVariant), and also [`Clone`],</span>
+<span class="doccomment">/// [`Hash`], [`PartialEq`], [`Eq`], [`PartialOrd`], [`Ord`]. On</span>
+<span class="doccomment">/// the other hand, if it is a flag, it would generate bitflags</span>
+<span class="doccomment">/// same as the bitflags generated by the</span>
+<span class="doccomment">/// [`bitflags`](gio::glib::bitflags::bitflags) macro with each</span>
+<span class="doccomment">/// flags nick specified in the GSchema converted to screaming</span>
+<span class="doccomment">/// snake case.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The generated types, enum or bitflags, would be present in the</span>
 <span class="doccomment">/// same scope of where the generated settings struct is defined.</span>
@@ -339,11 +350,34 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// settings.set_string_tuple((&quot;hi&quot;, &quot;hi2&quot;));</span>
 <span class="doccomment">/// assert_eq!(settings.string_tuple(), (&quot;hi&quot;.into(), &quot;hi2&quot;.into()));</span>
-<span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If you somehow don&#39;t want an enum argument and return types. You</span>
+<span class="doccomment">/// can also use this to override that behavior.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Note: The type has to implement both [`ToVariant`](gio::glib::ToVariant)</span>
 <span class="doccomment">/// and [`FromVariant`](gio::glib::FromVariant) or it would fail to compile.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ### Default trait</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The schema id can be specified as an attribute, which makes it</span>
+<span class="doccomment">/// implement [`Default`] and `new` constructor without arguments.</span>
+<span class="doccomment">/// Otherwise, it won&#39;t implement [`Default`] and would require the</span>
+<span class="doccomment">/// schema id as an argument in the constructor as shown in the</span>
+<span class="doccomment">/// example above.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```rust,ignore</span>
+<span class="doccomment">/// use gsettings_macro::gen_settings;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// #[gen_settings(</span>
+<span class="doccomment">///     file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;,</span>
+<span class="doccomment">///     id = &quot;io.github.seadve.test&quot;</span>
+<span class="doccomment">/// )]</span>
+<span class="doccomment">/// pub struct ApplicationSettings;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let settings = ApplicationSettings::new();</span>
+<span class="doccomment">/// let another_instance = ApplicationSettings::default();</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">proc_macro_attribute</span>]</span>
 <span class="attribute">#[<span class="ident">proc_macro_error</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gen_settings</span>(<span class="ident">attr</span>: <span class="ident">TokenStream</span>, <span class="ident">item</span>: <span class="ident">TokenStream</span>) -&gt; <span class="ident">TokenStream</span> {
