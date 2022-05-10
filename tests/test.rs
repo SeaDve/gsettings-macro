@@ -9,7 +9,7 @@ fn setup_schema() {
         let schema_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/tests");
 
         let output = Command::new("glib-compile-schemas")
-            .args(&[schema_dir])
+            .arg(schema_dir)
             .output()
             .unwrap();
 
