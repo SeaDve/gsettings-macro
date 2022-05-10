@@ -1,11 +1,144 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Needs `gio` in scope."><meta name="keywords" content="rust, rustlang, rust-lang, gen_settings"><title>gen_settings in gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../dark.css" disabled><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../storage.js"></script><script src="../crates.js"></script><script defer src="../main.js"></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro for easy [`gio::Settings`] key access."><meta name="keywords" content="rust, rustlang, rust-lang, gen_settings"><title>gen_settings in gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../dark.css" disabled><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../storage.js"></script><script src="../crates.js"></script><script defer src="../main.js"></script>
     <noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../favicon.svg"></head><body class="rustdoc attr"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../gsettings_macro/index.html"><div class="logo-container"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></div>
         </a><h2 class="location"></h2>
     </nav>
     <nav class="sidebar"><a class="sidebar-logo" href="../gsettings_macro/index.html"><div class="logo-container"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></div>
         </a><div class="sidebar-elems"><h2 class="location"><a href="index.html">In gsettings_macro</a></h2><div id="sidebar-vars" data-name="gen_settings" data-ty="attr" data-relpath=""></div><script defer src="sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
-    <h1 class="fqn"><span class="in-band">Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#13">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust attr"><code>#[gen_settings]</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Needs <code>gio</code> in scope.</p>
-<p>Not specifying the id in the attribute will require the id in the [<code>new</code>] constructor.
-Additionally, it will not implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a>.</p>
+    <h1 class="fqn"><span class="in-band">Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#170">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust attr"><code>#[gen_settings]</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for easy [<code>gio::Settings</code>] key access.</p>
+<h4 id="example"><a href="#example">Example</a></h4>
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
+
+<span class="attribute">#[<span class="ident">gen_settings</span>(<span class="ident">file</span> <span class="op">=</span> <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ApplicationSettings</span>;
+
+<span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="ident">ApplicationSettings::new</span>(<span class="string">&quot;io.github.seadve.test&quot;</span>);
+
+<span class="comment">// `i` DBus type</span>
+<span class="ident">settings</span>.<span class="ident">set_window_width</span>(<span class="number">100</span>);
+<span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">window_width</span>(), <span class="number">100</span>)
+
+<span class="comment">// enums</span>
+<span class="ident">settings</span>.<span class="ident">set_alert_sound</span>(<span class="ident">AlertSound::Glass</span>);
+<span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">alert_sound</span>(), <span class="ident">AlertSound::Glass</span>);;
+
+<span class="comment">// bitflags</span>
+<span class="ident">settings</span>.<span class="ident">set_space_style</span>(<span class="ident">SpaceStyle::BEFORE_COLON</span> <span class="op">|</span> <span class="ident">SpaceStyle::BEFORE_COMMA</span>);
+<span class="macro">assert_eq!</span>(
+    <span class="ident">settings</span>.<span class="ident">space_style</span>(),
+    <span class="ident">SpaceStyle::BEFORE_COLON</span> <span class="op">|</span> <span class="ident">SpaceStyle::BEFORE_COMMA</span>
+);</code></pre></div>
+<p>Note: The file path is relative to the project root or where the
+<code>Cargo.toml</code> file is located.</p>
+<p>The schema id can be specified as an attribute, which makes it
+implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and <code>new</code> constructor without arguments.
+Otherwise, it won’t implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and would require the
+schema id as an argument in the constructor as shown in the
+example above.</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
+
+<span class="attribute">#[<span class="ident">gen_settings</span>(
+    <span class="ident">file</span> <span class="op">=</span> <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>,
+    <span class="ident">id</span> <span class="op">=</span> <span class="string">&quot;io.github.seadve.test
+)]
+pub struct ApplicationSettings;
+
+let settings = ApplicationSettings::new();
+let another_instance = ApplicationSettings::default();</span></code></pre></div>
+<p><strong>⚠️ IMPORTANT ⚠️</strong></p>
+<p><code>gio</code> needs to be in scope, so unless it’s one of the direct crate
+dependencies, you need to import it because <code>gen_settings</code> is using
+it internally. For example:</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gtk::gio</span>;</code></pre></div>
+<p>The procedural macro generates code for each key for following
+[<code>gio::Settings</code>] methods:</p>
+<ul>
+<li><code>set</code> -&gt; <code>set_#key</code>, which panics when writing in a readonly
+key, and <code>try_set_#key</code>, which behaves the same as the original method.</li>
+<li><code>get</code> -&gt; <code>get_#key</code></li>
+<li><code>connect_changed</code> -&gt; <code>connect_#key_changed</code></li>
+<li><code>bind</code> -&gt; <code>bind_#key</code></li>
+<li><code>create_action</code> -&gt; <code>create_#key_action</code></li>
+</ul>
+<p>The setter and getter methods automatically sets the argument and
+return type for each key with the following mappings:</p>
+<div><table><thead><tr><th>DBus type name</th><th>argument type</th><th>return type</th></tr></thead><tbody>
+<tr><td>b</td><td><code>bool</code></td><td><code>bool</code></td></tr>
+<tr><td>i</td><td><code>i32</code></td><td><code>i32</code></td></tr>
+<tr><td>u</td><td><code>u32</code></td><td><code>u32</code></td></tr>
+<tr><td>x</td><td><code>i64</code></td><td><code>i64</code></td></tr>
+<tr><td>t</td><td><code>u64</code></td><td><code>u64</code></td></tr>
+<tr><td>d</td><td><code>f64</code></td><td><code>f64</code></td></tr>
+<tr><td>(ii)</td><td><code>(i32, i32</code>)</td><td><code>(i32, i32</code>)</td></tr>
+<tr><td>as</td><td><code>&amp;[&amp;str]</code></td><td><code>Vec&lt;String&gt;</code></td></tr>
+</tbody></table>
+</div>
+<p>The code would fail to compile if the dbus type name is not
+included above. However, it is possible to skip generating a
+specific key or DBus type name by using #[gen_settings_skip]
+or define a custom argument and return type using #[gen_settings_define]
+as long as the type implements <a href="gio::glib::ToVariant"><code>ToVariant</code></a>
+for argument type and <a href="gio::glib::FromVariant"><code>FromVariant</code></a>
+for the return type. Usage would be further explained in the
+next section.</p>
+<p>Furthermore, it will automatically generate enums or flags
+if specified in the GSchema file. If it is an enum, it would
+generate a normal Rust enum with the variants of the nicks as
+defined converted to pascal case. The enum would implement
+both <a href="gio::glib::ToVariant"><code>ToVariant</code></a> and
+<a href="gio::glib::FromVariant"><code>FromVariant</code></a>. On the other hand,
+if it is a flag, it would generate bitflags same as the bitflags
+generated by the <a href="gio::glib::bitflags::bitflags"><code>bitflags</code></a>
+macro.</p>
+<p>The generated types, enum or bitflags, would be present in the
+same scope of where the generated settings struct is defined.</p>
+<h4 id="skipping-generating-code"><a href="#skipping-generating-code">Skipping generating code</a></h4>
+<p>This would be helpful if you want to have full control
+with the key without the macro intervening.</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
+
+<span class="attribute">#[<span class="ident">gen_settings</span>(
+    <span class="ident">file</span> <span class="op">=</span> <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>,
+    <span class="ident">id</span> <span class="op">=</span> <span class="string">&quot;io.github.seadve.test&quot;</span>
+)]</span>
+<span class="comment">// Skip generating code for keys with DBus type `(ss)`</span>
+<span class="attribute">#[<span class="ident">gen_settings_skip</span>(<span class="ident">signature</span> <span class="op">=</span> <span class="string">&quot;(ss)&quot;</span>)]</span>
+<span class="comment">// Skip generating code for keys with name `some-key-name`</span>
+<span class="attribute">#[<span class="ident">gen_settings_skip</span>(<span class="ident">key_name</span> <span class="op">=</span> <span class="string">&quot;some-key-name&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Settings</span>;
+
+<span class="kw">impl</span> <span class="ident">Settings</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_some_key_name</span>(<span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">std::path::Path</span>) {
+        <span class="comment">// some code here</span>
+    }
+}</code></pre></div>
+<h4 id="defining-custom-types"><a href="#defining-custom-types">Defining custom types</a></h4>
+<div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
+
+<span class="kw">use</span> <span class="ident">std::path</span>{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+
+<span class="attribute">#[<span class="ident">gen_settings</span>(<span class="ident">file</span> <span class="op">=</span> <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>)]</span>
+<span class="comment">// Define custom argument and return type for keys with type `(ss)`</span>
+<span class="attribute">#[<span class="ident">gen_settings_define</span>(
+    <span class="ident">signature</span> <span class="op">=</span> <span class="string">&quot;(ss)&quot;</span>,
+    <span class="ident">arg_type</span> <span class="op">=</span> <span class="string">&quot;(&amp;str, &amp;str)&quot;</span>,
+    <span class="ident">ret_type</span> <span class="op">=</span> <span class="string">&quot;(String, String)&quot;</span>
+)]</span>
+<span class="comment">// Define custom argument and return type for key with name `cache-dir`</span>
+<span class="attribute">#[<span class="ident">gen_settings_define</span>(<span class="ident">key_name</span> <span class="op">=</span> <span class="string">&quot;cache-dir&quot;</span>, <span class="ident">arg_type</span> <span class="op">=</span> <span class="string">&quot;&amp;Path&quot;</span>, <span class="ident">ret_type</span> <span class="op">=</span> <span class="string">&quot;PathBuf&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SomeAppSettings</span>;
+
+<span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="ident">Settings::new</span>(<span class="string">&quot;io.github.seadve.test&quot;</span>);
+
+<span class="ident">settings</span>.<span class="ident">set_cache_dir</span>(<span class="ident">Path::new</span>(<span class="string">&quot;/some_dir&quot;</span>));
+<span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">cache_dir</span>(), <span class="ident">PathBuf::from</span>(<span class="string">&quot;/some_dir&quot;</span>));
+
+<span class="ident">settings</span>.<span class="ident">set_string_tuple</span>((<span class="string">&quot;hi&quot;</span>, <span class="string">&quot;hi2&quot;</span>));
+<span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">string_tuple</span>(), (<span class="string">&quot;hi&quot;</span>.<span class="ident">into</span>(), <span class="string">&quot;hi2&quot;</span>.<span class="ident">into</span>()));
+</code></pre></div>
+<p>Note: The type has to implement both <a href="gio::glib::ToVariant"><code>ToVariant</code></a>
+and <a href="gio::glib::FromVariant"><code>FromVariant</code></a> or it would fail to compile.</p>
 </div></details></section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../" data-current-crate="gsettings_macro" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
 </body></html>
