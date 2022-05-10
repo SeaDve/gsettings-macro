@@ -282,7 +282,7 @@ impl ToTokens for SettingsStruct {
     }
 }
 
-pub fn impl_gen_settings(
+pub fn gen_settings(
     attr: proc_macro::TokenStream,
     item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
