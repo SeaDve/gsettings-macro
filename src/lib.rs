@@ -142,7 +142,7 @@ use proc_macro_error::proc_macro_error;
 /// ```rust,ignore
 /// use gsettings_macro::gen_settings;
 ///
-/// use std::path{Path, PathBuf};
+/// use std::path::{Path, PathBuf};
 ///
 /// #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
 /// // Define custom argument and return types for keys with type `(ss)`
@@ -155,7 +155,7 @@ use proc_macro_error::proc_macro_error;
 /// #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
 /// pub struct SomeAppSettings;
 ///
-/// let settings = Settings::new("io.github.seadve.test");
+/// let settings = SomeAppSettings::new("io.github.seadve.test");
 ///
 /// settings.set_cache_dir(Path::new("/some_dir"));
 /// assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir"));
@@ -163,6 +163,9 @@ use proc_macro_error::proc_macro_error;
 /// settings.set_string_tuple(("hi", "hi2"));
 /// assert_eq!(settings.string_tuple(), ("hi".into(), "hi2".into()));
 /// ```
+///
+/// The type specified in `arg_type` and `ret_type` has to be on scope or
+/// you can specify the full path.
 ///
 /// If you somehow don't want an enum argument and return types for `s` DBus
 /// type code with choices. You can also use this to override that behavior.
