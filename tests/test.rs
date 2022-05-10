@@ -36,7 +36,7 @@ fn setup_schema() {
 fn setter_and_getter_func() {
     setup_schema();
 
-    #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
+    #[gen_settings(file = "tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_skip(signature = "(ss)")]
     #[gen_settings_skip(signature = "ay")]
     pub struct Settings;
