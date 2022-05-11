@@ -18,6 +18,8 @@ generated methods. This would be beneficial if you tools like
 ```rust
 use gsettings_macro::gen_settings;
 
+use std::path::{Path, PathBuf};
+
 #[gen_settings(
     file = "./tests/io.github.seadve.test.gschema.xml",
     id = "io.github.seadve.test"
