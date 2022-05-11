@@ -40,7 +40,7 @@ use proc_macro_error::proc_macro_error;
 ///
 /// // enums
 /// settings.set_alert_sound(AlertSound::Glass);
-/// assert_eq!(settings.alert_sound(), AlertSound::Glass);;
+/// assert_eq!(settings.alert_sound(), AlertSound::Glass);
 ///
 /// // bitflags
 /// settings.set_space_style(SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA);

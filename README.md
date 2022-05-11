@@ -6,92 +6,71 @@
 
 Macro for easy GSettings key access
 
-The main purpose of this is to reduce the risk of mistyping a key and
-reduce boilerplate rust code. Furthermore, the summary and the default
-of the value is included in the documentation of the getter and setter
-function. This would be helpful if you use `rust-analyzer` and would
-encourage documenting GSchema keys.
+The main purpose is to reduce the risk of mistyping a key, using
+the wrong method to access values, inputing incorrect values,
+and reduce boilerplate Rust code. Additionally, the summary and
+the default of the value are included in the documentation of each
+generated methods. This would be beneficial if you tools like
+[`rust-analyzer`](https://rust-analyzer.github.io/).
 
-Schema like the following
-
-```xml
-<schemalist>
-    <schema path="/io/github/seadve/test/" id="io.github.seadve.test">
-        <key name="is-maximized" type="b">
-            <default>false</default>
-            <summary>Window maximized behaviour</summary>
-            <description></description>
-        </key>
-        <key name="theme" type="s">
-            <default>"light"</default>
-            <summary>Current theme</summary>
-            <description></description>
-        </key>
-        <key name="invalid-words" type="as">
-            <default>[]</default>
-            <summary>Contains invalid words</summary>
-            <description></description>
-        </key>
-        <key name="window-width" type="i">
-            <default>600</default>
-            <summary>Window width</summary>
-            <description>Window width</description>
-        </key>
-        <key name="preferred-audio-source" type="s">
-            <choices>
-                <choice value="microphone"/>
-                <choice value="desktop-audio"/>
-            </choices>
-            <default>"microphone"</default>
-            <summary>Preferred audio source to use in recording audio</summary>
-            <description></description>
-        </key>
-    </schema>
-</schemalist>
-```
-
-could be accessed with
+## Example
 
 ```rust
-use gio::prelude::*;
+use gsettings_macro::gen_settings;
 
-#[gsettings_macro::gen_settings(
-    file = "./examples/test.gschema.xml",
+#[gen_settings(
+    file = "./tests/io.github.seadve.test.gschema.xml",
     id = "io.github.seadve.test"
 )]
-pub struct Settings;
+#[gen_settings_define(
+    key_name = "cache-dir",
+    arg_type = "&Path",
+    ret_type = "PathBuf"
+)]
+#[gen_settings_skip(signature = "ay")]
+pub struct ApplicationSettings;
 
-let settings = Settings::new();
+let settings = ApplicationSettings::default();
 
-settings.set_is_maximized(true);
-assert!(settings.is_maximized());
+// `i` DBus type
+settings.set_window_width(100);
+assert_eq!(settings.window_width(), 100)
 
-settings.set_theme("dark");
-assert_eq!(settings.theme(), "dark");
+// enums
+settings.set_alert_sound(AlertSound::Glass);
+assert_eq!(settings.alert_sound(), AlertSound::Glass);
 
-settings.set_invalid_words(&["invalid", "words"]);
-assert_eq!(settings.invalid_words(), vec!["invalid", "words"]);
-
-settings.set_window_width(30_000);
-assert_eq!(settings.window_width(), 30_000);
-
-settings.set_preferred_audio_source(PreferredAudioSource::DesktopAudio);
+// bitflags
+settings.set_space_style(SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA);
 assert_eq!(
-    settings.preferred_audio_source(),
-    PreferredAudioSource::DesktopAudio
+    settings.space_style(),
+    SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA
 );
+
+// customly defined
+settings.set_cache_dir(Path::new("/some_dir/"));
+assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir/"));
 ```
 
-## Usage
+For more examples and detailed information see the
+[documentation](https://seadve.github.io/gsettings-macro/gsettings_macro/attr.gen_settings.html).
 
-```
-gsettings-macro = "0.1.0"
-```
+## Generated methods
+
+The procedural macro generates code for each key for following
+`gio::Settings` methods:
+
+* `set` -> `set_#key`, which panics when writing in a readonly
+key, and `try_set_#key`, which behaves the same as the original method.
+* `get` -> `get_#key`
+* `connect_changed` -> `connect_#key_changed`
+* `bind` -> `bind_#key`
+* `create_action` -> `create_#key_action`
 
 ## Known issues
 
 * Not updating when the gschema file is modified
-  * Use hacks like `include_str!`
+* Use hacks like `include_str!`
 
 ## Todos
 
