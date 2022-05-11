@@ -340,6 +340,31 @@ fn bitflag() {
 
 #[test]
 #[serial_test::serial]
+fn bitflag_value() {
+    setup_schema();
+
+    #[gen_settings(
+        file = "./tests/io.github.seadve.test.gschema.xml",
+        id = "io.github.seadve.test"
+    )]
+    #[gen_settings_skip(signature = "(ss)")]
+    #[gen_settings_skip(signature = "ay")]
+    pub struct Settings;
+
+    assert_eq!(SpaceStyle::BEFORE_COLON.bits, 1);
+    assert_eq!(SpaceStyle::BEFORE_SEMICOLON.bits, 4);
+    assert_eq!(SpaceStyle::BEFORE_COMMA.bits, 2);
+
+    assert_eq!(SpaceStyle::from_bits(1).unwrap(), SpaceStyle::BEFORE_COLON);
+    assert_eq!(
+        SpaceStyle::from_bits(4).unwrap(),
+        SpaceStyle::BEFORE_SEMICOLON
+    );
+    assert_eq!(SpaceStyle::from_bits(2).unwrap(), SpaceStyle::BEFORE_COMMA)
+}
+
+#[test]
+#[serial_test::serial]
 fn id_defined_in_macro() {
     setup_schema();
 
