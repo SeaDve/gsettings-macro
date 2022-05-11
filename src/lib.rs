@@ -194,9 +194,9 @@ use proc_macro_error::proc_macro_error;
 /// let another_instance = ApplicationSettings::default();
 /// ```
 ///
-/// [`Settings`]: https://docs.rs/gio/0.15/gio/struct.Settings.html
-/// [`ToVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.ToVariant.html
-/// [`FromVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.FromVariant.html
+/// [`gio::Settings`]: https://docs.rs/gio/0.15/gio/struct.Settings.html
+/// [`glib::ToVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.ToVariant.html
+/// [`glib::FromVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.FromVariant.html
 /// [`bitflags`]: https://docs.rs/bitflags/1.0/bitflags/macro.bitflags.html
 #[proc_macro_attribute]
 #[proc_macro_error]
