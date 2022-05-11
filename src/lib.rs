@@ -11,8 +11,8 @@ use proc_macro_error::proc_macro_error;
 /// the wrong method to access values, inputing incorrect values,
 /// and reduce boilerplate Rust code. Additionally, the summary and
 /// the default of the value is included in the documentation of each
-/// generated methods. This would be helpful if you use documentation
-/// hovers, encouraging GSchema keys documentation.
+/// generated methods. This would be helpful if you tools like
+/// [`rust-analyzer`](https://rust-analyzer.github.io/).
 ///
 /// **⚠️ IMPORTANT ⚠️**
 ///
