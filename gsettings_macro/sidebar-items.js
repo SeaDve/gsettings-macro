@@ -1,1 +1,1 @@
-initSidebarItems({"attr":[["gen_settings","Macro for easy [`gio::Settings`] key access."]]});
+initSidebarItems({"attr":[["gen_settings","Macro for easy `gio::Settings` key access."]]});
