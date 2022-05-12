@@ -131,6 +131,7 @@
 <span id="126">126</span>
 <span id="127">127</span>
 <span id="128">128</span>
+<span id="129">129</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
 
 <span class="kw">use</span> <span class="ident">proc_macro_error::abort_call_site</span>;
@@ -155,6 +156,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EnumValues</span> {
     <span class="kw">pub</span> <span class="ident">nick</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">value</span>: <span class="ident">i32</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
