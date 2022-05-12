@@ -10,7 +10,7 @@ pub fn key_generator(key: &SchemaKey) -> KeyGenerator<'_> {
             &choices
                 .choices
                 .iter()
-                .map(|choice| choice.value.as_str())
+                .map(|choice| (choice.value.as_str(), None))
                 .collect::<Vec<_>>(),
         );
         KeyGenerator::new(

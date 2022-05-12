@@ -9,7 +9,7 @@ pub fn key_generator<'a>(key: &'a SchemaKey, enum_: &SchemaEnum) -> KeyGenerator
         &enum_
             .values
             .iter()
-            .map(|choice| choice.nick.as_str())
+            .map(|value| (value.nick.as_str(), Some(value.value)))
             .collect::<Vec<_>>(),
     );
     KeyGenerator::new(key, Context::new_with_aux(&enum_name, enum_token_stream))

@@ -22,6 +22,7 @@ pub struct Enum {
 #[derive(Debug, Deserialize)]
 pub struct EnumValues {
     pub nick: String,
+    pub value: i32,
 }
 
 #[derive(Debug, Deserialize)]

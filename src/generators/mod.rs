@@ -284,19 +284,40 @@ impl Context {
     }
 }
 
-/// Creates an enum with given name and variant names. It implements
+/// Creates an enum with given name and (variant name, variant value) tuple. It implements
 /// [`FromVariant`](gio::glib::FromVariant), [`ToVariant`](gio::glib::ToVariant),
 /// and [`StaticVariantType`](gio::glib::StaticVariantType).
 ///
 /// The input names are converted to pascal case
-fn new_variant_enum(name: &str, variant_names: &[&str]) -> proc_macro2::TokenStream {
+fn new_variant_enum(name: &str, variants: &[(&str, Option<i32>)]) -> proc_macro2::TokenStream {
     use heck::ToPascalCase;
     use syn::spanned::Spanned;
 
+    let variant_names = variants
+        .iter()
+        .map(|(variant_name, _)| variant_name)
+        .collect::<Vec<_>>();
+
     let variant_idents = variant_names
         .iter()
-        .map(|variant| Ident::new(&variant.to_pascal_case(), variant.span()))
+        .map(|variant_name| Ident::new(&variant_name.to_pascal_case(), variant_name.span()))
         .collect::<Vec<_>>();
+
+    let variant_arms =
+        variants
+            .iter()
+            .zip(variant_idents.iter())
+            .map(|((_, variant_value), variant_ident)| {
+                if let Some(variant_value) = variant_value {
+                    quote! {
+                        #variant_ident = #variant_value
+                    }
+                } else {
+                    quote! {
+                        #variant_ident
+                    }
+                }
+            });
 
     let from_variant_arms =
         variant_names
@@ -323,8 +344,9 @@ fn new_variant_enum(name: &str, variant_names: &[&str]) -> proc_macro2::TokenStr
 
     quote! {
         #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+        #[repr(i32)]
         pub enum #ident {
-            #(#variant_idents),*
+            #(#variant_arms),*
         }
 
         impl gio::glib::StaticVariantType for #ident {

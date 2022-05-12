@@ -308,6 +308,24 @@ fn enumeration() {
 
 #[test]
 #[serial_test::serial]
+fn enumeration_value() {
+    setup_schema();
+
+    #[gen_settings(
+        file = "./tests/io.github.seadve.test.gschema.xml",
+        id = "io.github.seadve.test"
+    )]
+    #[gen_settings_skip(signature = "(ss)")]
+    #[gen_settings_skip(signature = "ay")]
+    pub struct Settings;
+
+    assert_eq!(AlertSound::Bark as i32, 0);
+    assert_eq!(AlertSound::Glass as i32, 2);
+    assert_eq!(AlertSound::Drip as i32, 1);
+}
+
+#[test]
+#[serial_test::serial]
 fn bitflag() {
     setup_schema();
 

@@ -2,9 +2,8 @@
 <schemalist>
     <enum id="io.github.seadve.AlertSound">
         <value nick="bark" value="0"/>
-        <value nick="drip" value="1"/>
         <value nick="glass" value="2"/>
-        <value nick="sonar" value="3"/>
+        <value nick="drip" value="1"/>
     </enum>
     <flags id="io.github.seadve.SpacesStyle">
         <value nick="before-colon" value="1"/>
