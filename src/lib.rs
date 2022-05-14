@@ -7,8 +7,8 @@ use proc_macro_error::proc_macro_error;
 
 /// Macro for easy [`gio::Settings`] key access.
 ///
-/// The main purpose is to reduce the risk of mistyping a key, using
-/// the wrong method to access values, inputing incorrect values,
+/// The macro's main purpose is to reduce the risk of mistyping a key,
+/// using the wrong method to access values, inputing incorrect values,
 /// and reduce boilerplate Rust code. Additionally, the summary and
 /// the default of the value are included in the documentation of each
 /// generated methods. This would be beneficial if you tools like
@@ -65,7 +65,7 @@ use proc_macro_error::proc_macro_error;
 /// * `bind` -> `bind_#key`
 /// * `create_action` -> `create_#key_action`
 ///
-/// ### Known DBus types
+/// ### Known DBus type codes
 ///
 /// The setter and getter methods has the following argument and
 /// return type, depending on the key's DBus type code specified.
@@ -82,7 +82,7 @@ use proc_macro_error::proc_macro_error;
 /// | as             | `&[&str]`      | `Vec<String>`  |
 /// | s *            | `&str`         | `String`       |
 ///
-/// \* If the schema's key of DBus type `s` has no choice
+/// \* If the schema's key of DBus type code `s` has no choice
 /// specified, the argument and return types specified
 /// above would be true. Otherwise, it will generate an
 /// enum, like described in the next section, and use it as argument
