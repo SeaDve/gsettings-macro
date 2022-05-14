@@ -219,8 +219,8 @@
 
 <span class="doccomment">/// Macro for easy [`gio::Settings`] key access.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The main purpose is to reduce the risk of mistyping a key, using</span>
-<span class="doccomment">/// the wrong method to access values, inputing incorrect values,</span>
+<span class="doccomment">/// The macro&#39;s main purpose is to reduce the risk of mistyping a key,</span>
+<span class="doccomment">/// using the wrong method to access values, inputing incorrect values,</span>
 <span class="doccomment">/// and reduce boilerplate Rust code. Additionally, the summary and</span>
 <span class="doccomment">/// the default of the value are included in the documentation of each</span>
 <span class="doccomment">/// generated methods. This would be beneficial if you tools like</span>
@@ -277,7 +277,7 @@
 <span class="doccomment">/// * `bind` -&gt; `bind_#key`</span>
 <span class="doccomment">/// * `create_action` -&gt; `create_#key_action`</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ### Known DBus types</span>
+<span class="doccomment">/// ### Known DBus type codes</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The setter and getter methods has the following argument and</span>
 <span class="doccomment">/// return type, depending on the key&#39;s DBus type code specified.</span>
@@ -294,7 +294,7 @@
 <span class="doccomment">/// | as             | `&amp;[&amp;str]`      | `Vec&lt;String&gt;`  |</span>
 <span class="doccomment">/// | s *            | `&amp;str`         | `String`       |</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// \* If the schema&#39;s key of DBus type `s` has no choice</span>
+<span class="doccomment">/// \* If the schema&#39;s key of DBus type code `s` has no choice</span>
 <span class="doccomment">/// specified, the argument and return types specified</span>
 <span class="doccomment">/// above would be true. Otherwise, it will generate an</span>
 <span class="doccomment">/// enum, like described in the next section, and use it as argument</span>
