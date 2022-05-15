@@ -68,7 +68,7 @@ use proc_macro_error::proc_macro_error;
 /// ### Known DBus type codes
 ///
 /// The setter and getter methods has the following argument and
-/// return type, depending on the key's DBus type code specified.
+/// return type, depending on the key's DBus type code.
 ///
 /// | DBus type code | argument type  | return type    |
 /// | -------------- | -------------- | -------------- |
@@ -82,9 +82,9 @@ use proc_macro_error::proc_macro_error;
 /// | as             | `&[&str]`      | `Vec<String>`  |
 /// | s *            | `&str`         | `String`       |
 ///
-/// \* If the schema's key of DBus type code `s` has no choice
-/// specified, the argument and return types specified
-/// above would be true. Otherwise, it will generate an
+/// \* If the key of DBus type code `s` has no choice
+/// specified in the GSchema, the argument and return types stated
+/// in the table would be true. Otherwise, it will generate an
 /// enum, like described in the next section, and use it as argument
 /// and return type, instead of `&str` and `String` respectively.
 ///

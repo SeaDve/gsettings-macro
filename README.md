@@ -72,9 +72,9 @@ key, and `try_set_#key`, which behaves the same as the original method.
 ## Known issues
 
 * Not updating when the gschema file is modified
-* Use hacks like `include_str!`
+  * Use hacks like `include_str!`
 
 ## Todos
 
-* Add usage documentation
 * Add `bind_#key writable`, `default_#key_value`, `user_#key_value`, `reset_#key`, `connect_#key_writable_changed` variants
+* The generated enums and bitflags should have identical visibility with the generated `gio::Settings` wrapper struct.
