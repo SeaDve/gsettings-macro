@@ -54,7 +54,7 @@ key, and <code>try_set_#key</code>, which behaves the same as the original metho
 </ul>
 <h4 id="known-dbus-type-codes"><a href="#known-dbus-type-codes">Known DBus type codes</a></h4>
 <p>The setter and getter methods has the following argument and
-return type, depending on the key’s DBus type code specified.</p>
+return type, depending on the key’s DBus type code.</p>
 <div><table><thead><tr><th>DBus type code</th><th>argument type</th><th>return type</th></tr></thead><tbody>
 <tr><td>b</td><td><code>bool</code></td><td><code>bool</code></td></tr>
 <tr><td>i</td><td><code>i32</code></td><td><code>i32</code></td></tr>
@@ -67,9 +67,9 @@ return type, depending on the key’s DBus type code specified.</p>
 <tr><td>s *</td><td><code>&amp;str</code></td><td><code>String</code></td></tr>
 </tbody></table>
 </div>
-<p>* If the schema’s key of DBus type code <code>s</code> has no choice
-specified, the argument and return types specified
-above would be true. Otherwise, it will generate an
+<p>* If the key of DBus type code <code>s</code> has no choice
+specified in the GSchema, the argument and return types stated
+in the table would be true. Otherwise, it will generate an
 enum, like described in the next section, and use it as argument
 and return type, instead of <code>&amp;str</code> and <code>String</code> respectively.</p>
 <p>The code would fail to compile if the DBus type code is not
