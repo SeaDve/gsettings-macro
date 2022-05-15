@@ -107,9 +107,8 @@ use proc_macro_error::proc_macro_error;
 /// nick specified in the GSchema converted to screaming snake case as
 /// a const flag.
 ///
-/// The generated types, enum or bitflags, would be public and
-/// present in the same scope of where the generated settings
-/// struct is defined.
+/// The generated types, enum or bitflags, would have the same
+/// visibility and scope with the generated struct.
 ///
 /// ### Skipping generating code
 ///

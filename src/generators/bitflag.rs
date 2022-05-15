@@ -4,15 +4,26 @@ use syn::{spanned::Spanned, Ident};
 
 use super::{Context, KeyGenerator, SchemaFlag, SchemaKey};
 
-pub fn key_generator<'a>(key: &'a SchemaKey, flag: &SchemaFlag) -> KeyGenerator<'a> {
+pub fn key_generator<'a>(
+    key: &'a SchemaKey,
+    flag: &SchemaFlag,
+    aux_visibility: syn::Visibility,
+) -> KeyGenerator<'a> {
     let flag_name = key.name.to_pascal_case();
     KeyGenerator::new(
         key,
-        Context::new_with_aux(&flag_name, bitflag_token_stream(&flag_name, flag)),
+        Context::new_with_aux(
+            &flag_name,
+            bitflag_token_stream(&flag_name, flag, aux_visibility),
+        ),
     )
 }
 
-fn bitflag_token_stream(name: &str, flag: &SchemaFlag) -> proc_macro2::TokenStream {
+fn bitflag_token_stream(
+    name: &str,
+    flag: &SchemaFlag,
+    visibility: syn::Visibility,
+) -> proc_macro2::TokenStream {
     let value_idents = flag
         .values
         .iter()
@@ -58,7 +69,7 @@ fn bitflag_token_stream(name: &str, flag: &SchemaFlag) -> proc_macro2::TokenStre
 
     quote! {
         gio::glib::bitflags::bitflags! {
-            pub struct #ident: u32 {
+            #visibility struct #ident: u32 {
                 #(#flags_arms)*
             }
         }

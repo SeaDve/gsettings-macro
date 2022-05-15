@@ -330,7 +330,7 @@ pub fn gen_settings(
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
     for key in &schema.keys {
-        match key_generators.get(key) {
+        match key_generators.get(key, settings_struct.vis.clone()) {
             GetResult::Skip => (),
             GetResult::Some(generator) => {
                 keys_token_stream.extend(generator.to_token_stream());

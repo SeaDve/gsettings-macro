@@ -398,3 +398,28 @@ fn id_defined_in_macro() {
 
     assert_eq!(Settings::default().schema_id(), Settings::new().schema_id());
 }
+
+#[test]
+#[serial_test::serial]
+fn private_struct() {
+    setup_schema();
+
+    mod inner {
+        use gsettings_macro::gen_settings;
+
+        #[gen_settings(
+            file = "./tests/io.github.seadve.test.gschema.xml",
+            id = "io.github.seadve.test"
+        )]
+        #[gen_settings_skip(signature = "(ss)")]
+        #[gen_settings_skip(signature = "ay")]
+        struct Settings;
+    }
+
+    // TODO: Use `trybuild` to test if these would cause failed compilation
+    //
+    // use inner::AlertSound;
+    // use inner::PreferredAudioSource;
+    // use inner::Settings;
+    // use inner::SpaceStyle;
+}

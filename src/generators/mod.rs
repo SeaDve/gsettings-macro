@@ -91,7 +91,7 @@ impl<'a> KeyGenerators<'a> {
         }
     }
 
-    pub fn get(&'a self, key: &'a SchemaKey) -> GetResult<'a> {
+    pub fn get(&'a self, key: &'a SchemaKey, aux_visibility: syn::Visibility) -> GetResult<'a> {
         let key_signature = key.signature();
 
         if self.key_name_skips.contains(&key.name) {
@@ -112,7 +112,7 @@ impl<'a> KeyGenerators<'a> {
 
         match key_signature {
             SchemaKeySignature::Type(type_) => match type_.as_str() {
-                "s" => GetResult::Some(string::key_generator(key)),
+                "s" => GetResult::Some(string::key_generator(key, aux_visibility)),
                 _ => GetResult::Unknown,
             },
             SchemaKeySignature::Enum(ref enum_name) => GetResult::Some(enumeration::key_generator(
@@ -120,12 +120,14 @@ impl<'a> KeyGenerators<'a> {
                 self.enums.get(enum_name).unwrap_or_else(|| {
                     abort_call_site!("expected an enum definition for `{}`", enum_name)
                 }),
+                aux_visibility,
             )),
             SchemaKeySignature::Flag(ref flag_name) => GetResult::Some(bitflag::key_generator(
                 key,
                 self.flags.get(flag_name).unwrap_or_else(|| {
                     abort_call_site!("expected a flag definition for `{}`", flag_name)
                 }),
+                aux_visibility,
             )),
         }
     }
@@ -289,7 +291,11 @@ impl Context {
 /// and [`StaticVariantType`](gio::glib::StaticVariantType).
 ///
 /// The input names are converted to pascal case
-fn new_variant_enum(name: &str, variants: &[(&str, Option<i32>)]) -> proc_macro2::TokenStream {
+fn new_variant_enum(
+    name: &str,
+    variants: &[(&str, Option<i32>)],
+    visibility: syn::Visibility,
+) -> proc_macro2::TokenStream {
     use heck::ToPascalCase;
     use syn::spanned::Spanned;
 
@@ -345,7 +351,7 @@ fn new_variant_enum(name: &str, variants: &[(&str, Option<i32>)]) -> proc_macro2
     quote! {
         #[derive(Clone, Copy, PartialEq, Eq, Debug)]
         #[repr(i32)]
-        pub enum #ident {
+        #visibility enum #ident {
             #(#variant_arms),*
         }
 
