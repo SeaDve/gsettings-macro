@@ -209,7 +209,6 @@
 <span id="204">204</span>
 <span id="205">205</span>
 <span id="206">206</span>
-<span id="207">207</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">generators</span>;
 <span class="kw">mod</span> <span class="ident">imp</span>;
 <span class="kw">mod</span> <span class="ident">schema</span>;
@@ -319,9 +318,8 @@
 <span class="doccomment">/// nick specified in the GSchema converted to screaming snake case as</span>
 <span class="doccomment">/// a const flag.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The generated types, enum or bitflags, would be public and</span>
-<span class="doccomment">/// present in the same scope of where the generated settings</span>
-<span class="doccomment">/// struct is defined.</span>
+<span class="doccomment">/// The generated types, enum or bitflags, would have the same</span>
+<span class="doccomment">/// visibility and scope with the generated struct.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Skipping generating code</span>
 <span class="doccomment">///</span>

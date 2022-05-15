@@ -378,6 +378,12 @@
 <span id="373">373</span>
 <span id="374">374</span>
 <span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">bitflag</span>;
 <span class="kw">mod</span> <span class="ident">enumeration</span>;
 <span class="kw">mod</span> <span class="ident">string</span>;
@@ -471,7 +477,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SchemaKey</span>) -&gt; <span class="ident">GetResult</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SchemaKey</span>, <span class="ident">aux_visibility</span>: <span class="ident">syn::Visibility</span>) -&gt; <span class="ident">GetResult</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">key_signature</span> <span class="op">=</span> <span class="ident">key</span>.<span class="ident">signature</span>();
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">key_name_skips</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>.<span class="ident">name</span>) {
@@ -492,7 +498,7 @@
 
         <span class="kw">match</span> <span class="ident">key_signature</span> {
             <span class="ident">SchemaKeySignature::Type</span>(<span class="ident">type_</span>) =&gt; <span class="kw">match</span> <span class="ident">type_</span>.<span class="ident">as_str</span>() {
-                <span class="string">&quot;s&quot;</span> =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">string::key_generator</span>(<span class="ident">key</span>)),
+                <span class="string">&quot;s&quot;</span> =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">string::key_generator</span>(<span class="ident">key</span>, <span class="ident">aux_visibility</span>)),
                 <span class="kw">_</span> =&gt; <span class="ident">GetResult::Unknown</span>,
             },
             <span class="ident">SchemaKeySignature::Enum</span>(<span class="kw-2">ref</span> <span class="ident">enum_name</span>) =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">enumeration::key_generator</span>(
@@ -500,12 +506,14 @@
                 <span class="self">self</span>.<span class="ident">enums</span>.<span class="ident">get</span>(<span class="ident">enum_name</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
                     <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected an enum definition for `{}`&quot;</span>, <span class="ident">enum_name</span>)
                 }),
+                <span class="ident">aux_visibility</span>,
             )),
             <span class="ident">SchemaKeySignature::Flag</span>(<span class="kw-2">ref</span> <span class="ident">flag_name</span>) =&gt; <span class="ident">GetResult::Some</span>(<span class="ident">bitflag::key_generator</span>(
                 <span class="ident">key</span>,
                 <span class="self">self</span>.<span class="ident">flags</span>.<span class="ident">get</span>(<span class="ident">flag_name</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
                     <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected a flag definition for `{}`&quot;</span>, <span class="ident">flag_name</span>)
                 }),
+                <span class="ident">aux_visibility</span>,
             )),
         }
     }
@@ -669,7 +677,11 @@
 <span class="doccomment">/// and [`StaticVariantType`](gio::glib::StaticVariantType).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The input names are converted to pascal case</span>
-<span class="kw">fn</span> <span class="ident">new_variant_enum</span>(<span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">variants</span>: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>)]) -&gt; <span class="ident">proc_macro2::TokenStream</span> {
+<span class="kw">fn</span> <span class="ident">new_variant_enum</span>(
+    <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
+    <span class="ident">variants</span>: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>)],
+    <span class="ident">visibility</span>: <span class="ident">syn::Visibility</span>,
+) -&gt; <span class="ident">proc_macro2::TokenStream</span> {
     <span class="kw">use</span> <span class="ident">heck::ToPascalCase</span>;
     <span class="kw">use</span> <span class="ident">syn::spanned::Spanned</span>;
 
@@ -725,7 +737,7 @@
     <span class="macro">quote!</span> {
         <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Debug</span>)]</span>
         <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">i32</span>)]</span>
-        <span class="kw">pub</span> <span class="kw">enum</span> #<span class="ident">ident</span> {
+        #<span class="ident">visibility</span> <span class="kw">enum</span> #<span class="ident">ident</span> {
             #(#<span class="ident">variant_arms</span>),<span class="op">*</span>
         }
 
