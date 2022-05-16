@@ -11,7 +11,7 @@ categories = ["api-bindings"]
 edition = "2021"
 readme = "README.md"
 license = "MPL-2.0"
-exclude = ["/.github/*", "/examples/*"]
+exclude = ["/.github/*", "/tests/*"]
 
 [lib]
 proc-macro = true
