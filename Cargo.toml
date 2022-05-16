@@ -10,7 +10,7 @@ keywords = ["gtk", "gio", "glib", "settings", "macro"]
 categories = ["api-bindings"]
 edition = "2021"
 readme = "README.md"
-license = "GPL-3.0-or-later"
+license = "MPL-2.0"
 exclude = ["/.github/*", "/examples/*"]
 
 [lib]
