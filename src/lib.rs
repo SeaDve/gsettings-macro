@@ -178,7 +178,7 @@ use proc_macro_error::proc_macro_error;
 /// Otherwise, it won't implement [`Default`] and would require the
 /// schema id as an argument in the constructor.
 ///
-/// The following is an example of defining the attribute in the macro:
+/// The following is an example of defining the `id` attribute in the macro:
 ///
 /// ```rust,ignore
 /// use gsettings_macro::gen_settings;
