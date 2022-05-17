@@ -155,12 +155,36 @@ impl<'a> KeyGenerator<'a> {
     fn func_docs(&self) -> proc_macro2::TokenStream {
         let mut stream = proc_macro2::TokenStream::new();
 
-        if let Some(ref summary) = self.key.summary {
-            if !summary.is_empty() {
-                stream.extend(quote! {
-                    #[doc = #summary]
-                });
-            }
+        let has_summary = self
+            .key
+            .summary
+            .as_ref()
+            .map_or(false, |summary| !summary.is_empty());
+
+        let has_description = self
+            .key
+            .description
+            .as_ref()
+            .map_or(false, |description| !description.is_empty());
+
+        if has_summary {
+            let summary = self.key.summary.as_ref().unwrap();
+            stream.extend(quote! {
+                #[doc = #summary]
+            });
+        }
+
+        if has_summary && has_description {
+            stream.extend(quote! {
+                #[doc = ""]
+            });
+        }
+
+        if has_description {
+            let description = self.key.description.as_ref().unwrap();
+            stream.extend(quote! {
+                #[doc = #description]
+            });
         }
 
         let default_docs = format!("default: {}", self.key.default);
@@ -171,23 +195,23 @@ impl<'a> KeyGenerator<'a> {
 
         // only needed for numerical types
         if let Some(ref range) = self.key.range {
-            let min_is_some = range.min.as_ref().map_or(false, |min| !min.is_empty());
-            let max_is_some = range.max.as_ref().map_or(false, |max| !max.is_empty());
+            let has_min = range.min.as_ref().map_or(false, |min| !min.is_empty());
+            let has_max = range.max.as_ref().map_or(false, |max| !max.is_empty());
 
-            if min_is_some || max_is_some {
+            if has_min || has_max {
                 stream.extend(quote! {
                     #[doc = ""]
                 });
             }
             let mut range_docs = String::new();
-            if min_is_some {
+            if has_min {
                 range_docs.push_str(&format!("min: {}", range.min.as_ref().unwrap()));
             }
-            if min_is_some && max_is_some {
+            if has_min && has_max {
                 range_docs.push(';');
                 range_docs.push(' ');
             }
-            if max_is_some {
+            if has_max {
                 range_docs.push_str(&format!("max: {}", range.max.as_ref().unwrap()));
             }
             stream.extend(quote! {

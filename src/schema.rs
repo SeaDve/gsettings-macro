@@ -55,6 +55,7 @@ pub struct Key {
     pub name: String,
     pub default: String,
     pub summary: Option<String>,
+    pub description: Option<String>,
     pub choices: Option<Choices>,
     pub range: Option<Range>,
 }

@@ -50,7 +50,7 @@
             <range min="1" max="10"/>
             <default>6.3</default>
             <summary>Volume</summary>
-            <description>Volume</description>
+            <description>Recommended maximum is 8</description>
         </key>
         <key name="preferred-audio-source" type="s">
             <choices>
