@@ -12,7 +12,7 @@ use proc_macro_error::proc_macro_error;
 /// and reduce boilerplate Rust code. Additionally, the summary, the
 /// description, and the default of the value are included in the
 /// documentation of each generated methods. This would be beneficial
-/// if you tools like [`rust-analyzer`](https://rust-analyzer.github.io/).
+/// if you use tools like [`rust-analyzer`](https://rust-analyzer.github.io/).
 ///
 /// **⚠️ IMPORTANT ⚠️**
 ///
