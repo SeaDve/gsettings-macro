@@ -7,10 +7,10 @@
     <h1 class="fqn"><span class="in-band">Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#203">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust attr"><code>#[gen_settings]</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for easy <a href="https://docs.rs/gio/0.15/gio/struct.Settings.html"><code>gio::Settings</code></a> key access.</p>
 <p>The macro’s main purpose is to reduce the risk of mistyping a key,
 using the wrong method to access values, inputing incorrect values,
-and reduce boilerplate Rust code. Additionally, the summary and
-the default of the value are included in the documentation of each
-generated methods. This would be beneficial if you tools like
-<a href="https://rust-analyzer.github.io/"><code>rust-analyzer</code></a>.</p>
+and reduce boilerplate Rust code. Additionally, the summary, the
+description, and the default of the value are included in the
+documentation of each generated methods. This would be beneficial
+if you tools like <a href="https://rust-analyzer.github.io/"><code>rust-analyzer</code></a>.</p>
 <p><strong>⚠️ IMPORTANT ⚠️</strong></p>
 <p><code>gio</code> needs to be in scope, so unless it’s one of the direct crate
 dependencies, you need to import it because <code>gen_settings</code> is using
@@ -145,7 +145,7 @@ and <a href="gio::glib::FromVariant"><code>FromVariant</code></a> or it would fa
 <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and create a <code>new</code> constructor without arguments.
 Otherwise, it won’t implement <a href="https://doc.rust-lang.org/1.60.0/core/default/trait.Default.html" title="Default"><code>Default</code></a> and would require the
 schema id as an argument in the constructor.</p>
-<p>The following is an example of defining the attribute in the macro:</p>
+<p>The following is an example of defining the <code>id</code> attribute in the macro:</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore"><code><span class="kw">use</span> <span class="ident">gsettings_macro::gen_settings</span>;
 
