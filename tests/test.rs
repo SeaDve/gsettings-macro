@@ -155,7 +155,8 @@ fn other_func() {
     let n_application_id_notify_calls = Rc::new(Cell::new(0));
 
     let n_theme_changed_calls_clone = Rc::clone(&n_theme_changed_calls);
-    settings.connect_theme_changed(move |_| {
+    settings.connect_theme_changed(move |settings| {
+        assert_ne!(settings.theme(), "some.initial.theme");
         n_theme_changed_calls_clone.set(n_theme_changed_calls_clone.get() + 1);
     });
 

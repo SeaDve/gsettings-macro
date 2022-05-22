@@ -237,9 +237,9 @@ impl quote::ToTokens for KeyGenerator<'_> {
 
         tokens.extend(quote! {
             #func_docs
-            pub fn #connect_changed_func_ident(&self, f: impl Fn(&gio::Settings) + 'static) -> gio::glib::SignalHandlerId {
+            pub fn #connect_changed_func_ident(&self, f: impl Fn(&Self) + 'static) -> gio::glib::SignalHandlerId {
                 gio::prelude::SettingsExt::connect_changed(&self.0, Some(#key_name), move |settings, _| {
-                    f(settings)
+                    f(&Self(settings.clone()))
                 })
             }
 
