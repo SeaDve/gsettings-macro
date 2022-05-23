@@ -239,7 +239,7 @@ impl quote::ToTokens for KeyGenerator<'_> {
             #func_docs
             pub fn #connect_changed_func_ident(&self, f: impl Fn(&Self) + 'static) -> gio::glib::SignalHandlerId {
                 gio::prelude::SettingsExt::connect_changed(&self.0, Some(#key_name), move |settings, _| {
-                    f(&Self(settings.clone()))
+                    f(&Self(gio::Settings::clone(settings)))
                 })
             }
 
