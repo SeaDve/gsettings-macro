@@ -649,7 +649,7 @@
             #<span class="ident">func_docs</span>
             <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">connect_changed_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>) <span class="op">+</span> <span class="lifetime">&#39;static</span>) -&gt; <span class="ident">gio::glib::SignalHandlerId</span> {
                 <span class="ident">gio::prelude::SettingsExt::connect_changed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, <span class="prelude-val">Some</span>(#<span class="ident">key_name</span>), <span class="kw">move</span> <span class="op">|</span><span class="ident">settings</span>, <span class="kw">_</span><span class="op">|</span> {
-                    <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>(<span class="ident">settings</span>.<span class="ident">clone</span>()))
+                    <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="self">Self</span>(<span class="ident">gio::Settings::clone</span>(<span class="ident">settings</span>)))
                 })
             }
 
