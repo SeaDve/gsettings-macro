@@ -4,7 +4,7 @@
 [![crates.io](https://img.shields.io/crates/v/gsettings-macro)](https://crates.io/crates/gsettings-macro)
 [![CI](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml/badge.svg)](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml)
 
-Macro for easy GSettings key access
+Macro for typesafe GSettings key access
 
 The macro's main purpose is to reduce the risk of mistyping a key,
 using the wrong method to access values, inputing incorrect values,
