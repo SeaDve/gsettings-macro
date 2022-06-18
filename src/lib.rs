@@ -5,7 +5,7 @@ mod schema;
 use proc_macro::TokenStream;
 use proc_macro_error::proc_macro_error;
 
-/// Macro for easy [`gio::Settings`] key access.
+/// Macro for typesafe [`gio::Settings`] key access.
 ///
 /// The macro's main purpose is to reduce the risk of mistyping a key,
 /// using the wrong method to access values, inputing incorrect values,
