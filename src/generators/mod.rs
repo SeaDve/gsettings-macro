@@ -9,6 +9,8 @@ use quote::{format_ident, quote};
 use std::collections::{HashMap, HashSet};
 use syn::Ident;
 
+use std::fmt::Write;
+
 use crate::schema::{
     Enum as SchemaEnum, Flag as SchemaFlag, Key as SchemaKey, KeySignature as SchemaKeySignature,
 };
@@ -205,14 +207,14 @@ impl<'a> KeyGenerator<'a> {
             }
             let mut range_docs = String::new();
             if has_min {
-                range_docs.push_str(&format!("min: {}", range.min.as_ref().unwrap()));
+                write!(range_docs, "min: {}", range.min.as_ref().unwrap()).unwrap();
             }
             if has_min && has_max {
                 range_docs.push(';');
                 range_docs.push(' ');
             }
             if has_max {
-                range_docs.push_str(&format!("max: {}", range.max.as_ref().unwrap()));
+                write!(range_docs, "max: {}", range.max.as_ref().unwrap()).unwrap();
             }
             stream.extend(quote! {
                 #[doc = #range_docs]
