@@ -36,7 +36,7 @@ use proc_macro_error::proc_macro_error;
 ///
 /// // `i` DBus type
 /// settings.set_window_width(100);
-/// assert_eq!(settings.window_width(), 100)
+/// assert_eq!(settings.window_width(), 100);
 ///
 /// // enums
 /// settings.set_alert_sound(AlertSound::Glass);
