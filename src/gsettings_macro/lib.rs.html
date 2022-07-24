@@ -209,6 +209,7 @@
 <span id="204">204</span>
 <span id="205">205</span>
 <span id="206">206</span>
+<span id="207">207</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">generators</span>;
 <span class="kw">mod</span> <span class="ident">imp</span>;
 <span class="kw">mod</span> <span class="ident">schema</span>;
@@ -220,14 +221,14 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The macro&#39;s main purpose is to reduce the risk of mistyping a key,</span>
 <span class="doccomment">/// using the wrong method to access values, inputing incorrect values,</span>
-<span class="doccomment">/// and reduce boilerplate Rust code. Additionally, the summary, the</span>
+<span class="doccomment">/// and reduce boilerplate. Additionally, the summary, the</span>
 <span class="doccomment">/// description, and the default of the value are included in the</span>
 <span class="doccomment">/// documentation of each generated methods. This would be beneficial</span>
 <span class="doccomment">/// if you use tools like [`rust-analyzer`](https://rust-analyzer.github.io/).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// **⚠️ IMPORTANT ⚠️**</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// `gio` needs to be in scope, so unless it&#39;s one of the direct crate</span>
+<span class="doccomment">/// `gio` needs to be in scope, so unless it is one of the direct crate</span>
 <span class="doccomment">/// dependencies, you need to import it because `gen_settings` is using</span>
 <span class="doccomment">/// it internally. For example:</span>
 <span class="doccomment">///</span>
@@ -266,8 +267,8 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Generated methods</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The procedural macro generates code for each key for following</span>
-<span class="doccomment">/// [`gio::Settings`] methods:</span>
+<span class="doccomment">/// The procedural macro generates the following [`gio::Settings`] methods</span>
+<span class="doccomment">/// for each key in the schema:</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// * `set` -&gt; `set_#key`, which panics when writing in a readonly</span>
 <span class="doccomment">/// key, and `try_set_#key`, which behaves the same as the original method.</span>
@@ -278,10 +279,10 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Known DBus type codes</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The setter and getter methods has the following argument and</span>
+<span class="doccomment">/// The setter and getter methods has the following parameter and</span>
 <span class="doccomment">/// return type, depending on the key&#39;s DBus type code.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// | DBus type code | argument type  | return type    |</span>
+<span class="doccomment">/// | DBus type code | parameter type | return type    |</span>
 <span class="doccomment">/// | -------------- | -------------- | -------------- |</span>
 <span class="doccomment">/// | b              | `bool`         | `bool`         |</span>
 <span class="doccomment">/// | i              | `i32`          | `i32`          |</span>
@@ -293,21 +294,22 @@
 <span class="doccomment">/// | as             | `&amp;[&amp;str]`      | `Vec&lt;String&gt;`  |</span>
 <span class="doccomment">/// | s *            | `&amp;str`         | `String`       |</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// \* If the key of DBus type code `s` has no choice</span>
-<span class="doccomment">/// specified in the GSchema, the argument and return types stated</span>
-<span class="doccomment">/// in the table would be true. Otherwise, it will generate an</span>
-<span class="doccomment">/// enum, like described in the next section, and use it as argument</span>
-<span class="doccomment">/// and return type, instead of `&amp;str` and `String` respectively.</span>
+<span class="doccomment">/// \* If the key of DBus type code `s` has no `choice` attribute</span>
+<span class="doccomment">/// specified in the GSchema, the parameter and return types stated</span>
+<span class="doccomment">/// in the table would be applied. Otherwise, it will generate an</span>
+<span class="doccomment">/// enum, like described in the next section, and use it as the parameter</span>
+<span class="doccomment">/// and return types, instead of `&amp;str` and `String` respectively.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The code would fail to compile if the DBus type code is not</span>
-<span class="doccomment">/// included above. However, it is possible to skip generating a</span>
-<span class="doccomment">/// specific key or DBus type code by using `#[gen_settings_skip]`</span>
-<span class="doccomment">/// or define a custom argument and return types using `#[gen_settings_define]`.</span>
-<span class="doccomment">/// Usage would be further explained in the following sections.</span>
+<span class="doccomment">/// It will not compile if the DBus type code is not defined above.</span>
+<span class="doccomment">/// However, it is possible to explicitly skip generating methods</span>
+<span class="doccomment">/// for a specific key or DBus type code using the attribute</span>
+<span class="doccomment">/// `#[gen_settings_skip]`, or define a custom parameter and return</span>
+<span class="doccomment">/// types using `#[gen_settings_define]` attribute. The usage of</span>
+<span class="doccomment">/// the latter will be further explained in the following sections.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ### Enums and Flags</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// It will also automatically generate enums or flags. If it is</span>
+<span class="doccomment">/// The macro will also automatically generate enums or flags. If it is</span>
 <span class="doccomment">/// an enum, it would generated a normal Rust enum with each nick</span>
 <span class="doccomment">/// specified in the GSchema converted to pascal case as an enum variant.</span>
 <span class="doccomment">/// The enum would implement both [`ToVariant`](gio::glib::ToVariant)</span>
@@ -321,7 +323,7 @@
 <span class="doccomment">/// The generated types, enum or bitflags, would have the same</span>
 <span class="doccomment">/// visibility and scope with the generated struct.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ### Skipping generating code</span>
+<span class="doccomment">/// ### Skipping methods generation</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This would be helpful if you want to have full control</span>
 <span class="doccomment">/// with the key without the macro intervening. For example:</span>
@@ -333,9 +335,9 @@
 <span class="doccomment">///     file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;,</span>
 <span class="doccomment">///     id = &quot;io.github.seadve.test&quot;</span>
 <span class="doccomment">/// )]</span>
-<span class="doccomment">/// // Skip generating code for keys with DBus type `(ss)`</span>
+<span class="doccomment">/// // Skip generating methods for keys with DBus type `(ss)`</span>
 <span class="doccomment">/// #[gen_settings_skip(signature = &quot;(ss)&quot;)]</span>
-<span class="doccomment">/// // Skip generating code for keys with name `some-key-name`</span>
+<span class="doccomment">/// // Skip generating methods for the key of name `some-key-name`</span>
 <span class="doccomment">/// #[gen_settings_skip(key_name = &quot;some-key-name&quot;)]</span>
 <span class="doccomment">/// pub struct Settings;</span>
 <span class="doccomment">///</span>
@@ -354,13 +356,13 @@
 <span class="doccomment">/// use std::path::{Path, PathBuf};</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[gen_settings(file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;)]</span>
-<span class="doccomment">/// // Define custom argument and return types for keys with type `(ss)`</span>
+<span class="doccomment">/// // Define custom parameter and return types for keys with type `(ss)`</span>
 <span class="doccomment">/// #[gen_settings_define(</span>
 <span class="doccomment">///     signature = &quot;(ss)&quot;,</span>
 <span class="doccomment">///     arg_type = &quot;(&amp;str, &amp;str)&quot;,</span>
 <span class="doccomment">///     ret_type = &quot;(String, String)&quot;</span>
 <span class="doccomment">/// )]</span>
-<span class="doccomment">/// // Define custom argument and return types for key with name `cache-dir`</span>
+<span class="doccomment">/// // Define custom parameter and return types for key with name `cache-dir`</span>
 <span class="doccomment">/// #[gen_settings_define(key_name = &quot;cache-dir&quot;, arg_type = &quot;&amp;Path&quot;, ret_type = &quot;PathBuf&quot;)]</span>
 <span class="doccomment">/// pub struct SomeAppSettings;</span>
 <span class="doccomment">///</span>
@@ -376,7 +378,7 @@
 <span class="doccomment">/// The type specified in `arg_type` and `ret_type` has to be on scope or</span>
 <span class="doccomment">/// you can specify the full path.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// If you somehow don&#39;t want an enum argument and return types for `s` DBus</span>
+<span class="doccomment">/// If you somehow do not want an enum parameter and return types for `s` DBus</span>
 <span class="doccomment">/// type code with choices. You can also use this to override that behavior.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Note: The type has to implement both [`ToVariant`](gio::glib::ToVariant)</span>
@@ -385,9 +387,9 @@
 <span class="doccomment">/// ### Default trait</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The schema id can be specified as an attribute, making it implement</span>
-<span class="doccomment">/// [`Default`] and create a `new` constructor without arguments.</span>
-<span class="doccomment">/// Otherwise, it won&#39;t implement [`Default`] and would require the</span>
-<span class="doccomment">/// schema id as an argument in the constructor.</span>
+<span class="doccomment">/// [`Default`] and create a `new` constructor without parameters.</span>
+<span class="doccomment">/// Otherwise, it will not implement [`Default`] and would require the</span>
+<span class="doccomment">/// schema id as an parameter in the the constructor or the `new` method.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The following is an example of defining the `id` attribute in the macro:</span>
 <span class="doccomment">///</span>
@@ -416,5 +418,5 @@
     <span class="ident">imp::gen_settings</span>(<span class="ident">attr</span>, <span class="ident">item</span>)
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gsettings_macro" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="gsettings_macro" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.1 (e092d0b6b 2022-07-16)" ></div>
 </body></html>
