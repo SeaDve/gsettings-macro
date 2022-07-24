@@ -9,14 +9,14 @@ use proc_macro_error::proc_macro_error;
 ///
 /// The macro's main purpose is to reduce the risk of mistyping a key,
 /// using the wrong method to access values, inputing incorrect values,
-/// and reduce boilerplate Rust code. Additionally, the summary, the
+/// and reduce boilerplate. Additionally, the summary, the
 /// description, and the default of the value are included in the
 /// documentation of each generated methods. This would be beneficial
 /// if you use tools like [`rust-analyzer`](https://rust-analyzer.github.io/).
 ///
 /// **⚠️ IMPORTANT ⚠️**
 ///
-/// `gio` needs to be in scope, so unless it's one of the direct crate
+/// `gio` needs to be in scope, so unless it is one of the direct crate
 /// dependencies, you need to import it because `gen_settings` is using
 /// it internally. For example:
 ///
@@ -55,8 +55,8 @@ use proc_macro_error::proc_macro_error;
 ///
 /// ### Generated methods
 ///
-/// The procedural macro generates code for each key for following
-/// [`gio::Settings`] methods:
+/// The procedural macro generates the following [`gio::Settings`] methods
+/// for each key in the schema:
 ///
 /// * `set` -> `set_#key`, which panics when writing in a readonly
 /// key, and `try_set_#key`, which behaves the same as the original method.
@@ -67,10 +67,10 @@ use proc_macro_error::proc_macro_error;
 ///
 /// ### Known DBus type codes
 ///
-/// The setter and getter methods has the following argument and
+/// The setter and getter methods has the following parameter and
 /// return type, depending on the key's DBus type code.
 ///
-/// | DBus type code | argument type  | return type    |
+/// | DBus type code | parameter type | return type    |
 /// | -------------- | -------------- | -------------- |
 /// | b              | `bool`         | `bool`         |
 /// | i              | `i32`          | `i32`          |
@@ -82,21 +82,22 @@ use proc_macro_error::proc_macro_error;
 /// | as             | `&[&str]`      | `Vec<String>`  |
 /// | s *            | `&str`         | `String`       |
 ///
-/// \* If the key of DBus type code `s` has no choice
-/// specified in the GSchema, the argument and return types stated
-/// in the table would be true. Otherwise, it will generate an
-/// enum, like described in the next section, and use it as argument
-/// and return type, instead of `&str` and `String` respectively.
+/// \* If the key of DBus type code `s` has no `choice` attribute
+/// specified in the GSchema, the parameter and return types stated
+/// in the table would be applied. Otherwise, it will generate an
+/// enum, like described in the next section, and use it as the parameter
+/// and return types, instead of `&str` and `String` respectively.
 ///
-/// The code would fail to compile if the DBus type code is not
-/// included above. However, it is possible to skip generating a
-/// specific key or DBus type code by using `#[gen_settings_skip]`
-/// or define a custom argument and return types using `#[gen_settings_define]`.
-/// Usage would be further explained in the following sections.
+/// It will not compile if the DBus type code is not defined above.
+/// However, it is possible to explicitly skip generating methods
+/// for a specific key or DBus type code using the attribute
+/// `#[gen_settings_skip]`, or define a custom parameter and return
+/// types using `#[gen_settings_define]` attribute. The usage of
+/// the latter will be further explained in the following sections.
 ///
 /// ### Enums and Flags
 ///
-/// It will also automatically generate enums or flags. If it is
+/// The macro will also automatically generate enums or flags. If it is
 /// an enum, it would generated a normal Rust enum with each nick
 /// specified in the GSchema converted to pascal case as an enum variant.
 /// The enum would implement both [`ToVariant`](gio::glib::ToVariant)
@@ -110,7 +111,7 @@ use proc_macro_error::proc_macro_error;
 /// The generated types, enum or bitflags, would have the same
 /// visibility and scope with the generated struct.
 ///
-/// ### Skipping generating code
+/// ### Skipping methods generation
 ///
 /// This would be helpful if you want to have full control
 /// with the key without the macro intervening. For example:
@@ -122,9 +123,9 @@ use proc_macro_error::proc_macro_error;
 ///     file = "./tests/io.github.seadve.test.gschema.xml",
 ///     id = "io.github.seadve.test"
 /// )]
-/// // Skip generating code for keys with DBus type `(ss)`
+/// // Skip generating methods for keys with DBus type `(ss)`
 /// #[gen_settings_skip(signature = "(ss)")]
-/// // Skip generating code for keys with name `some-key-name`
+/// // Skip generating methods for the key of name `some-key-name`
 /// #[gen_settings_skip(key_name = "some-key-name")]
 /// pub struct Settings;
 ///
@@ -143,13 +144,13 @@ use proc_macro_error::proc_macro_error;
 /// use std::path::{Path, PathBuf};
 ///
 /// #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
-/// // Define custom argument and return types for keys with type `(ss)`
+/// // Define custom parameter and return types for keys with type `(ss)`
 /// #[gen_settings_define(
 ///     signature = "(ss)",
 ///     arg_type = "(&str, &str)",
 ///     ret_type = "(String, String)"
 /// )]
-/// // Define custom argument and return types for key with name `cache-dir`
+/// // Define custom parameter and return types for key with name `cache-dir`
 /// #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
 /// pub struct SomeAppSettings;
 ///
@@ -165,7 +166,7 @@ use proc_macro_error::proc_macro_error;
 /// The type specified in `arg_type` and `ret_type` has to be on scope or
 /// you can specify the full path.
 ///
-/// If you somehow don't want an enum argument and return types for `s` DBus
+/// If you somehow do not want an enum parameter and return types for `s` DBus
 /// type code with choices. You can also use this to override that behavior.
 ///
 /// Note: The type has to implement both [`ToVariant`](gio::glib::ToVariant)
@@ -174,9 +175,9 @@ use proc_macro_error::proc_macro_error;
 /// ### Default trait
 ///
 /// The schema id can be specified as an attribute, making it implement
-/// [`Default`] and create a `new` constructor without arguments.
-/// Otherwise, it won't implement [`Default`] and would require the
-/// schema id as an argument in the constructor.
+/// [`Default`] and create a `new` constructor without parameters.
+/// Otherwise, it will not implement [`Default`] and would require the
+/// schema id as an parameter in the the constructor or the `new` method.
 ///
 /// The following is an example of defining the `id` attribute in the macro:
 ///
