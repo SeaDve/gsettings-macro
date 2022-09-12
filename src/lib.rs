@@ -60,10 +60,10 @@ use proc_macro_error::proc_macro_error;
 ///
 /// * `set` -> `set_${key}`, which panics when writing in a readonly
 /// key, and `try_set_${key}`, which behaves the same as the original method.
-/// * `get` -> `get_${key}`
+/// * `get` -> `${key}`
 /// * `connect_changed` -> `connect_${key}_changed`
 /// * `bind` -> `bind_${key}`
-/// * `create_action` -> `create_#key_action`
+/// * `create_action` -> `create_${key}_action`
 /// * `default_value` -> `${key}_default_value`
 ///
 /// ### Known DBus type codes
