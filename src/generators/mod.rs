@@ -258,6 +258,7 @@ impl quote::ToTokens for KeyGenerator<'_> {
 
         let setter_func_ident = format_ident!("set_{}", getter_func_ident);
         let try_setter_func_ident = format_ident!("try_set_{}", getter_func_ident);
+        let default_value_func_ident = format_ident!("{}_default_value", getter_func_ident);
 
         let get_type = syn::parse_str::<syn::Type>(&self.context.ret_type)
             .unwrap_or_else(|_| panic!("Invalid type `{}`", &self.context.ret_type));
@@ -278,6 +279,11 @@ impl quote::ToTokens for KeyGenerator<'_> {
             #func_docs
             pub fn #getter_func_ident(&self) -> #get_type {
                 gio::prelude::SettingsExtManual::get(&self.0, #key_name)
+            }
+
+            #func_docs
+            pub fn #default_value_func_ident(&self) -> #get_type {
+                gio::glib::Variant::get(&gio::prelude::SettingsExt::default_value(&self.0, #key_name).unwrap()).unwrap()
             }
         });
     }

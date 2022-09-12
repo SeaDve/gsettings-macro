@@ -130,6 +130,48 @@ fn create_action_func() {
 
 #[test]
 #[serial_test::serial]
+fn default_value_func() {
+    #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
+    #[gen_settings_define(
+        signature = "(ss)",
+        arg_type = "(&str, &str)",
+        ret_type = "(String, String)"
+    )]
+    #[gen_settings_define(
+        key_name = "cache-dir",
+        arg_type = "&std::path::Path",
+        ret_type = "std::path::PathBuf"
+    )]
+    pub struct Settings;
+
+    let settings = Settings::new("io.github.seadve.test");
+    assert!(!settings.is_maximized_default_value());
+    assert_eq!(settings.theme_default_value(), "light");
+    assert_eq!(settings.invalid_words_default_value(), Vec::<String>::new());
+    assert_eq!(settings.window_width_default_value(), 600);
+    assert_eq!(settings.window_height_default_value(), 400);
+    assert_eq!(settings.window_width_64_default_value(), 600);
+    assert_eq!(settings.window_height_64_default_value(), 400);
+    assert_eq!(settings.volume_default_value(), 6.3);
+    assert_eq!(
+        settings.preferred_audio_source_default_value(),
+        PreferredAudioSource::Microphone
+    );
+    assert_eq!(settings.dimensions_default_value(), (10, 10));
+    assert_eq!(
+        settings.string_tuple_default_value(),
+        ("string".to_string(), "another one".to_string())
+    );
+    assert_eq!(
+        settings.cache_dir_default_value(),
+        std::path::PathBuf::from("/tmp/cache_dir/")
+    );
+    assert_eq!(settings.alert_sound_default_value(), AlertSound::Bark);
+    assert_eq!(settings.space_style_default_value(), SpaceStyle::empty());
+}
+
+#[test]
+#[serial_test::serial]
 fn other_func() {
     setup_schema();
 
