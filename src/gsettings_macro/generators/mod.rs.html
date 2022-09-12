@@ -411,6 +411,12 @@
 <span id="405">405</span>
 <span id="406">406</span>
 <span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
 </pre><pre class="rust"><code><span class="kw">mod</span> <span class="ident">bitflag</span>;
 <span class="kw">mod</span> <span class="ident">enumeration</span>;
 <span class="kw">mod</span> <span class="ident">string</span>;
@@ -671,6 +677,7 @@
 
         <span class="kw">let</span> <span class="ident">setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
         <span class="kw">let</span> <span class="ident">try_setter_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;try_set_{}&quot;</span>, <span class="ident">getter_func_ident</span>);
+        <span class="kw">let</span> <span class="ident">default_value_func_ident</span> <span class="op">=</span> <span class="macro">format_ident!</span>(<span class="string">&quot;{}_default_value&quot;</span>, <span class="ident">getter_func_ident</span>);
 
         <span class="kw">let</span> <span class="ident">get_type</span> <span class="op">=</span> <span class="ident">syn::parse_str</span>::<span class="op">&lt;</span><span class="ident">syn::Type</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">ret_type</span>)
             .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">context</span>.<span class="ident">ret_type</span>));
@@ -691,6 +698,11 @@
             #<span class="ident">func_docs</span>
             <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">getter_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; #<span class="ident">get_type</span> {
                 <span class="ident">gio::prelude::SettingsExtManual::get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>)
+            }
+
+            #<span class="ident">func_docs</span>
+            <span class="kw">pub</span> <span class="kw">fn</span> #<span class="ident">default_value_func_ident</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; #<span class="ident">get_type</span> {
+                <span class="ident">gio::glib::Variant::get</span>(<span class="kw-2">&amp;</span><span class="ident">gio::prelude::SettingsExt::default_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #<span class="ident">key_name</span>).<span class="ident">unwrap</span>()).<span class="ident">unwrap</span>()
             }
         });
     }
