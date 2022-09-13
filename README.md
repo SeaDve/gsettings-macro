@@ -59,15 +59,16 @@ For more examples and detailed information see the
 
 ## Generated methods
 
-The procedural macro generates code for each key for following
-`gio::Settings` methods:
+The procedural macro generates the following [`gio::Settings`] methods
+for each key in the schema:
 
-* `set` -> `set_#key`, which panics when writing in a readonly
-key, and `try_set_#key`, which behaves the same as the original method.
-* `get` -> `get_#key`
-* `connect_changed` -> `connect_#key_changed`
-* `bind` -> `bind_#key`
-* `create_action` -> `create_#key_action`
+* `set` -> `set_${key}`, which panics when writing in a readonly
+key, and `try_set_${key}`, which behaves the same as the original method.
+* `get` -> `${key}`
+* `connect_changed` -> `connect_${key}_changed`
+* `bind` -> `bind_${key}`
+* `create_action` -> `create_${key}_action`
+* `default_value` -> `${key}_default_value`
 
 ## Known issues
 
