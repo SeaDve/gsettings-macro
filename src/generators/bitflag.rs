@@ -87,7 +87,7 @@ fn bitflag_token_stream(
                 for string in variant.get::<Vec<String>>()? {
                     match string.as_str() {
                         #(#from_variant_arms),*,
-                        _ => panic!("invalid string `{}` for  {}", string, #name_pascal_case),
+                        _ => return None,
                     }
                 }
 

@@ -1,6 +1,17 @@
+use gio::{
+    glib::{FromVariant, StaticVariantType, ToVariant, VariantTy},
+    prelude::*,
+};
 use gsettings_macro::gen_settings;
 
-use std::{env, process::Command, sync::Once};
+use std::{
+    cell::Cell,
+    env,
+    path::{Path, PathBuf},
+    process::Command,
+    rc::Rc,
+    sync::Once,
+};
 
 static INIT: Once = Once::new();
 
@@ -82,19 +93,13 @@ fn setter_and_getter_func() {
 fn create_action_func() {
     setup_schema();
 
-    use gio::prelude::ActionExt;
-
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_define(
         signature = "(ss)",
         arg_type = "(&str, &str)",
         ret_type = "(String, String)"
     )]
-    #[gen_settings_define(
-        key_name = "cache-dir",
-        arg_type = "&std::path::Path",
-        ret_type = "std::path::PathBuf"
-    )]
+    #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
     pub struct SomeAppSettings;
 
     let settings = SomeAppSettings::new("io.github.seadve.test");
@@ -137,11 +142,7 @@ fn default_value_func() {
         arg_type = "(&str, &str)",
         ret_type = "(String, String)"
     )]
-    #[gen_settings_define(
-        key_name = "cache-dir",
-        arg_type = "&std::path::Path",
-        ret_type = "std::path::PathBuf"
-    )]
+    #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
     pub struct Settings;
 
     let settings = Settings::new("io.github.seadve.test");
@@ -164,7 +165,7 @@ fn default_value_func() {
     );
     assert_eq!(
         settings.cache_dir_default_value(),
-        std::path::PathBuf::from("/tmp/cache_dir/")
+        PathBuf::from("/tmp/cache_dir/")
     );
     assert_eq!(settings.alert_sound_default_value(), AlertSound::Bark);
     assert_eq!(settings.space_style_default_value(), SpaceStyle::empty());
@@ -174,10 +175,6 @@ fn default_value_func() {
 #[serial_test::serial]
 fn other_func() {
     setup_schema();
-
-    use std::{cell::Cell, rc::Rc};
-
-    use gio::prelude::ApplicationExt;
 
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_skip(signature = "(ss)")]
@@ -253,8 +250,6 @@ fn custom_define_signature() {
 fn custom_define_key_name() {
     setup_schema();
 
-    use std::path::{Path, PathBuf};
-
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_define(key_name = "cache-dir", arg_type = "&Path", ret_type = "PathBuf")]
     #[gen_settings_skip(signature = "(ss)")]
@@ -269,8 +264,6 @@ fn custom_define_key_name() {
 #[serial_test::serial]
 fn overlapping_define() {
     setup_schema();
-
-    use std::path::{Path, PathBuf};
 
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_define(signature = "ay", arg_type = "&OsStr", ret_type = "OsString")]
@@ -287,8 +280,6 @@ fn overlapping_define() {
 #[serial_test::serial]
 fn string_choice_enum() {
     setup_schema();
-
-    use gio::glib::{FromVariant, StaticVariantType, ToVariant};
 
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_skip(signature = "(ss)")]
@@ -382,6 +373,8 @@ fn bitflag() {
 
     let settings = Settings::new();
 
+    assert_eq!(SpaceStyle::static_variant_type(), VariantTy::STRING_ARRAY);
+
     assert_eq!(settings.space_style(), SpaceStyle::empty());
 
     settings.set_space_style(SpaceStyle::BEFORE_COLON);
@@ -421,15 +414,31 @@ fn bitflag_value() {
         SpaceStyle::from_bits(4).unwrap(),
         SpaceStyle::BEFORE_SEMICOLON
     );
-    assert_eq!(SpaceStyle::from_bits(2).unwrap(), SpaceStyle::BEFORE_COMMA)
+    assert_eq!(SpaceStyle::from_bits(2).unwrap(), SpaceStyle::BEFORE_COMMA);
+
+    assert_eq!(
+        SpaceStyle::from_variant(&["before-comma", "before-colon"].to_variant()),
+        Some(SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA)
+    );
+    assert_eq!(
+        SpaceStyle::from_variant(&["before-comma", "invalid"].to_variant()),
+        None
+    );
+
+    assert_eq!(
+        SpaceStyle::BEFORE_COLON.to_variant(),
+        ["before-colon"].to_variant()
+    );
+    assert_eq!(
+        (SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_SEMICOLON).to_variant(),
+        ["before-colon", "before-semicolon"].to_variant()
+    );
 }
 
 #[test]
 #[serial_test::serial]
 fn id_defined_in_macro() {
     setup_schema();
-
-    use gio::prelude::SettingsExt;
 
     #[gen_settings(
         file = "./tests/io.github.seadve.test.gschema.xml",
