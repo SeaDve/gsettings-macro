@@ -69,6 +69,7 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 * `bind` -> `bind_${key}`
 * `create_action` -> `create_${key}_action`
 * `default_value` -> `${key}_default_value`
+* `reset` -> `reset_${key}`
 
 ## Known issues
 
@@ -80,4 +81,4 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 
 * Remove serde dependency
 * Add way to map setter and getters value
-* Add `bind_#key writable`, `user_#key_value`, `reset_#key`, `connect_#key_writable_changed` variants
+* Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants

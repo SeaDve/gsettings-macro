@@ -65,6 +65,7 @@ use proc_macro_error::proc_macro_error;
 /// * `bind` -> `bind_${key}`
 /// * `create_action` -> `create_${key}_action`
 /// * `default_value` -> `${key}_default_value`
+/// * `reset` -> `reset_${key}`
 ///
 /// ### Known DBus type codes
 ///

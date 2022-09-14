@@ -135,6 +135,26 @@ fn create_action_func() {
 
 #[test]
 #[serial_test::serial]
+fn reset_func() {
+    setup_schema();
+
+    #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
+    #[gen_settings_skip(signature = "(ss)")]
+    #[gen_settings_skip(signature = "ay")]
+    pub struct SomeAppSettings;
+
+    let settings = SomeAppSettings::new("io.github.seadve.test");
+    assert_eq!(settings.alert_sound_default_value(), AlertSound::Bark);
+
+    settings.set_alert_sound(AlertSound::Drip);
+    assert_eq!(settings.alert_sound(), AlertSound::Drip);
+
+    settings.reset_alert_sound();
+    assert_eq!(settings.alert_sound(), AlertSound::Bark);
+}
+
+#[test]
+#[serial_test::serial]
 fn default_value_func() {
     #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
     #[gen_settings_define(

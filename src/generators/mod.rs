@@ -234,6 +234,7 @@ impl quote::ToTokens for KeyGenerator<'_> {
         let connect_changed_func_ident = format_ident!("connect_{}_changed", getter_func_ident);
         let bind_func_ident = format_ident!("bind_{}", getter_func_ident);
         let create_action_func_ident = format_ident!("create_{}_action", getter_func_ident);
+        let reset_func_ident = format_ident!("reset_{}", getter_func_ident);
 
         let func_docs = self.func_docs();
 
@@ -253,6 +254,11 @@ impl quote::ToTokens for KeyGenerator<'_> {
             #func_docs
             pub fn #create_action_func_ident(&self) -> gio::Action {
                 gio::prelude::SettingsExt::create_action(&self.0, #key_name)
+            }
+
+            #func_docs
+            pub fn #reset_func_ident(&self) {
+                gio::prelude::SettingsExt::reset(&self.0, #key_name);
             }
         });
 
