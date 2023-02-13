@@ -1,3 +1,4 @@
-var sourcesIndex = {};
-sourcesIndex["gsettings_macro"] = {"name":"","dirs":[{"name":"generators","files":["bitflag.rs","enumeration.rs","mod.rs","string.rs"]}],"files":["imp.rs","lib.rs","schema.rs"]};
+var sourcesIndex = JSON.parse('{\
+"gsettings_macro":["",[["generators",[],["bitflag.rs","enumeration.rs","mod.rs","string.rs"]]],["imp.rs","lib.rs","schema.rs"]]\
+}');
 createSourceSidebar();
