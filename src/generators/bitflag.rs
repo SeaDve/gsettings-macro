@@ -104,5 +104,11 @@ fn bitflag_token_stream(
                 gio::glib::ToVariant::to_variant(&string_array)
             }
         }
+
+        impl std::convert::From<#ident> for gio::glib::Variant {
+            fn from(this: #ident) -> gio::glib::Variant {
+                gio::glib::ToVariant::to_variant(&this)
+            }
+        }
     }
 }

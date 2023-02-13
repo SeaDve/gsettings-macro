@@ -415,5 +415,11 @@ fn new_variant_enum(
                 }
             }
         }
+
+        impl std::convert::From<#ident> for gio::glib::Variant {
+            fn from(this: #ident) -> gio::glib::Variant {
+                gio::glib::ToVariant::to_variant(&this)
+            }
+        }
     }
 }
