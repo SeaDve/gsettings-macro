@@ -24,6 +24,7 @@ quote = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 quick-xml = { version = "0.26", features = ["serialize"] }
 syn = "1.0"
+deluxe = "0.4.0"
 
 [dev-dependencies]
 gio = "0.17"

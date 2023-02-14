@@ -15,7 +15,7 @@ use crate::schema::{
     Enum as SchemaEnum, Flag as SchemaFlag, Key as SchemaKey, KeySignature as SchemaKeySignature,
 };
 
-pub enum Override {
+pub enum OverrideType {
     Define { arg_type: String, ret_type: String },
     Skip,
 }
@@ -64,14 +64,17 @@ impl<'a> KeyGenerators<'a> {
 
     /// Add contexts that has higher priority than default, but lower than
     /// key_name overrides
-    pub fn add_signature_overrides(&mut self, overrides: HashMap<SchemaKeySignature, Override>) {
+    pub fn add_signature_overrides(
+        &mut self,
+        overrides: HashMap<SchemaKeySignature, OverrideType>,
+    ) {
         for (signature, item) in overrides {
             match item {
-                Override::Define { arg_type, ret_type } => {
+                OverrideType::Define { arg_type, ret_type } => {
                     self.signatures
                         .insert(signature, Context::new_dissimilar(&arg_type, &ret_type));
                 }
-                Override::Skip => {
+                OverrideType::Skip => {
                     self.signature_skips.insert(signature);
                 }
             }
@@ -79,14 +82,14 @@ impl<'a> KeyGenerators<'a> {
     }
 
     /// Add contexts that has higher priority than both default and signature overrides.
-    pub fn add_key_name_overrides(&mut self, overrides: HashMap<String, Override>) {
+    pub fn add_key_name_overrides(&mut self, overrides: HashMap<String, OverrideType>) {
         for (key_name, item) in overrides {
             match item {
-                Override::Define { arg_type, ret_type } => {
+                OverrideType::Define { arg_type, ret_type } => {
                     self.key_names
                         .insert(key_name, Context::new_dissimilar(&arg_type, &ret_type));
                 }
-                Override::Skip => {
+                OverrideType::Skip => {
                     self.key_name_skips.insert(key_name);
                 }
             }

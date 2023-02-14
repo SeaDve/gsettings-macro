@@ -82,4 +82,3 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 * Remove serde dependency
 * Add way to map setter and getters value
 * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
-* Use [deluxe](https://github.com/jf2048/deluxe)

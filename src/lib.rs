@@ -1,9 +1,74 @@
 mod generators;
-mod imp;
 mod schema;
 
-use proc_macro::TokenStream;
-use proc_macro_error::proc_macro_error;
+use deluxe::SpannedValue;
+use proc_macro_error::{abort, emit_call_site_error, emit_error, emit_warning, proc_macro_error};
+use quote::{quote, ToTokens};
+use syn::{
+    parse::{Parse, ParseStream},
+    spanned::Spanned,
+    Token,
+};
+
+use std::{collections::HashMap, fs::File, io::BufReader};
+
+use crate::{
+    generators::{GetResult, KeyGenerators, OverrideType},
+    schema::{KeySignature as SchemaKeySignature, SchemaList},
+};
+
+#[derive(deluxe::ParseMetaItem)]
+struct GenSettings {
+    file: SpannedValue<String>,
+    id: Option<SpannedValue<String>>,
+}
+
+#[derive(deluxe::ParseAttributes)]
+struct GenSettingsDefine {
+    signature: Option<SpannedValue<String>>,
+    key_name: Option<SpannedValue<String>>,
+    arg_type: SpannedValue<String>,
+    ret_type: SpannedValue<String>,
+}
+
+#[derive(deluxe::ParseAttributes)]
+struct GenSettingsSkip {
+    signature: Option<SpannedValue<String>>,
+    key_name: Option<SpannedValue<String>>,
+}
+
+struct SettingsStruct {
+    attrs: Vec<syn::Attribute>,
+    vis: syn::Visibility,
+    struct_token: Token![struct],
+    ident: syn::Ident,
+    semi_token: Token![;],
+}
+
+impl Parse for SettingsStruct {
+    fn parse(input: ParseStream) -> syn::parse::Result<Self> {
+        Ok(Self {
+            attrs: input.call(syn::Attribute::parse_outer)?,
+            vis: input.parse()?,
+            struct_token: input.parse()?,
+            ident: input.parse()?,
+            semi_token: input.parse()?,
+        })
+    }
+}
+
+impl ToTokens for SettingsStruct {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        self.vis.to_tokens(tokens);
+        self.struct_token.to_tokens(tokens);
+        self.ident.to_tokens(tokens);
+
+        let field: syn::FieldsUnnamed = syn::parse_quote!((gio::Settings));
+        field.to_tokens(tokens);
+
+        self.semi_token.to_tokens(tokens);
+    }
+}
 
 /// Macro for typesafe [`gio::Settings`] key access.
 ///
@@ -204,6 +269,251 @@ use proc_macro_error::proc_macro_error;
 /// [`bitflags`]: https://docs.rs/bitflags/1.0/bitflags/macro.bitflags.html
 #[proc_macro_attribute]
 #[proc_macro_error]
-pub fn gen_settings(attr: TokenStream, item: TokenStream) -> TokenStream {
-    imp::gen_settings(attr, item)
+pub fn gen_settings(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let GenSettings {
+        file: file_attr,
+        id: id_attr,
+    } = match deluxe::parse2(attr.into()) {
+        Ok(gen_settings) => gen_settings,
+        Err(err) => return err.to_compile_error().into(),
+    };
+    let file_attr_span = file_attr.span();
+    let schema_file_path = SpannedValue::into_inner(file_attr);
+
+    // Parse schema list
+    let schema_file = File::open(&schema_file_path).unwrap_or_else(|err| {
+        abort!(file_attr_span, "failed to open schema file: {}", err);
+    });
+    let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
+        .unwrap_or_else(|err| abort!(file_attr_span, "failed to parse schema file: {}", err));
+
+    // Get first schema
+    let mut schemas = schema_list.schemas;
+    if schemas.len() > 1 {
+        emit_warning!(file_attr_span, "this macro only supports a single schema");
+    }
+    let schema = schemas
+        .pop()
+        .unwrap_or_else(|| abort!(file_attr_span, "schema file must have a single schema"));
+
+    // Get schema id
+    let schema_id = if let Some(id_attr) = id_attr {
+        let id_attr_span = id_attr.span();
+        let schema_id = SpannedValue::into_inner(id_attr);
+
+        if schema.id != schema_id {
+            emit_error!(
+                id_attr_span,
+                "id does not match the one specified in the schema file"
+            );
+        }
+
+        Some(schema_id)
+    } else {
+        None
+    };
+
+    let settings_struct = syn::parse_macro_input!(item as SettingsStruct);
+
+    // Parse overrides
+    let known_signatures = schema
+        .keys
+        .iter()
+        .map(|key| key.signature())
+        .collect::<Vec<_>>();
+    let known_key_names = schema
+        .keys
+        .iter()
+        .map(|key| key.name.as_str())
+        .collect::<Vec<_>>();
+    let mut signature_overrides = HashMap::new();
+    let mut key_name_overrides = HashMap::new();
+    for attr in &settings_struct.attrs {
+        let (signature, key_name, override_type) = if attr.path.is_ident("gen_settings_define") {
+            let GenSettingsDefine {
+                signature,
+                key_name,
+                arg_type,
+                ret_type,
+            } = match deluxe::parse_attributes::<_, GenSettingsDefine>(attr) {
+                Ok(gen_settings) => gen_settings,
+                Err(err) => {
+                    emit_error!(attr.span(), err);
+                    continue;
+                }
+            };
+
+            (
+                signature,
+                key_name,
+                OverrideType::Define {
+                    arg_type: SpannedValue::into_inner(arg_type),
+                    ret_type: SpannedValue::into_inner(ret_type),
+                },
+            )
+        } else if attr.path.is_ident("gen_settings_skip") {
+            let GenSettingsSkip {
+                signature,
+                key_name,
+            } = match deluxe::parse_attributes::<_, GenSettingsSkip>(attr) {
+                Ok(gen_settings) => gen_settings,
+                Err(err) => {
+                    emit_error!(attr.span(), err);
+                    continue;
+                }
+            };
+
+            (signature, key_name, OverrideType::Skip)
+        } else {
+            emit_error!(
+                attr.span(),
+                "expected `#[gen_settings_define( .. )]` or `#[gen_settings_skip( .. )]`"
+            );
+            continue;
+        };
+
+        match (signature, key_name) {
+            (Some(_), Some(_)) => {
+                emit_error!(
+                    attr.span(),
+                    "cannot specify both `signature` and `key_name`"
+                )
+            }
+            (None, None) => {
+                emit_error!(attr.span(), "must specify either `signature` or `key_name`")
+            }
+            (Some(signature), None) => {
+                let signature_span = signature.span();
+                let signature_str = SpannedValue::into_inner(signature);
+                let signature_type = SchemaKeySignature::Type(signature_str);
+
+                if !known_signatures.contains(&signature_type) {
+                    emit_error!(signature_span, "useless define for this signature");
+                }
+
+                if signature_overrides.get(&signature_type).is_some() {
+                    emit_error!(signature_span, "duplicate override",);
+                }
+
+                signature_overrides.insert(signature_type, override_type);
+            }
+            (None, Some(key_name)) => {
+                let key_name_span = key_name.span();
+                let key_name_str = SpannedValue::into_inner(key_name);
+
+                if !known_key_names.contains(&key_name_str.as_str()) {
+                    emit_error!(key_name_span, "key_name not found in the schema");
+                }
+
+                if key_name_overrides.get(&key_name_str).is_some() {
+                    emit_error!(key_name_span, "duplicate override");
+                }
+
+                key_name_overrides.insert(key_name_str, override_type);
+            }
+        }
+    }
+
+    // Generate keys
+    let enums = schema_list
+        .enums
+        .iter()
+        .map(|enum_| (enum_.id.to_string(), enum_))
+        .collect::<HashMap<_, _>>();
+    let flags = schema_list
+        .flags
+        .iter()
+        .map(|flag| (flag.id.to_string(), flag))
+        .collect::<HashMap<_, _>>();
+    let mut key_generators = KeyGenerators::with_defaults(enums, flags);
+    key_generators.add_signature_overrides(signature_overrides);
+    key_generators.add_key_name_overrides(key_name_overrides);
+
+    // Generate code
+    let mut aux_token_stream = proc_macro2::TokenStream::new();
+    let mut keys_token_stream = proc_macro2::TokenStream::new();
+
+    for key in &schema.keys {
+        match key_generators.get(key, settings_struct.vis.clone()) {
+            GetResult::Skip => (),
+            GetResult::Some(generator) => {
+                keys_token_stream.extend(generator.to_token_stream());
+
+                if let Some(aux) = generator.auxiliary() {
+                    aux_token_stream.extend(aux);
+                }
+            }
+            GetResult::Unknown => {
+                emit_call_site_error!(
+                    "unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`",
+                    &key.signature(),
+                    &key.name,
+                )
+            }
+        }
+    }
+
+    let constructor_token_stream = if let Some(ref schema_id) = schema_id {
+        quote! {
+            pub fn new() -> Self {
+                Self(gio::Settings::new(#schema_id))
+            }
+        }
+    } else {
+        quote! {
+            pub fn new(schema_id: &str) -> Self {
+                Self(gio::Settings::new(schema_id))
+            }
+        }
+    };
+
+    let struct_ident = &settings_struct.ident;
+
+    let mut expanded = quote! {
+        #aux_token_stream
+
+        #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
+        #settings_struct
+
+        impl #struct_ident {
+            #constructor_token_stream
+
+            #keys_token_stream
+        }
+
+        impl std::ops::Deref for #struct_ident {
+            type Target = gio::Settings;
+
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+
+        impl std::ops::DerefMut for #struct_ident {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.0
+            }
+        }
+
+        impl std::fmt::Debug for #struct_ident {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                std::fmt::Debug::fmt(&self.0, f)
+            }
+        }
+    };
+
+    if schema_id.is_some() {
+        expanded.extend(quote! {
+            impl Default for #struct_ident {
+                fn default() -> Self {
+                    Self::new()
+                }
+            }
+        });
+    }
+
+    expanded.into()
 }

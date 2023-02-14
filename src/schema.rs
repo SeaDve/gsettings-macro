@@ -42,6 +42,7 @@ pub struct FlagValues {
 pub struct Schema {
     #[serde(rename = "key")]
     pub keys: Vec<Key>,
+    pub id: String,
 }
 
 #[derive(Debug, Deserialize)]
@@ -106,7 +107,7 @@ impl Key {
             (None, Some(enum_id), None) => KeySignature::Enum(enum_id.to_string()),
             (None, None, Some(flag_id)) => KeySignature::Flag(flag_id.to_string()),
             _ => abort_call_site!(
-                "expected one of `type`, `enum` or `flags` specified attribute on key"
+                "expected one of `type`, `enum` or `flags` specified attribute on key in the schema"
             ),
         }
     }
