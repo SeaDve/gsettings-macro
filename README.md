@@ -79,6 +79,7 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 
 ## Todos
 
+* Use `quote_spanned` where applicable
 * Remove serde dependency
 * Add way to map setter and getters value
 * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
