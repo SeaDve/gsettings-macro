@@ -129,6 +129,17 @@
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
 </pre><pre class="rust"><code><span class="kw">use </span>serde::Deserialize;
 
 <span class="kw">use </span>proc_macro_error::abort_call_site;
@@ -145,46 +156,54 @@
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Enum {
-    <span class="kw">pub </span>id: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@id&quot;</span>)]
+    </span><span class="kw">pub </span>id: String,
     <span class="attr">#[serde(rename = <span class="string">&quot;value&quot;</span>)]
     </span><span class="kw">pub </span>values: Vec&lt;EnumValues&gt;,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>EnumValues {
-    <span class="kw">pub </span>nick: String,
-    <span class="kw">pub </span>value: i32,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@nick&quot;</span>)]
+    </span><span class="kw">pub </span>nick: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@value&quot;</span>)]
+    </span><span class="kw">pub </span>value: i32,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Flag {
-    <span class="kw">pub </span>id: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@id&quot;</span>)]
+    </span><span class="kw">pub </span>id: String,
     <span class="attr">#[serde(rename = <span class="string">&quot;value&quot;</span>)]
     </span><span class="kw">pub </span>values: Vec&lt;FlagValues&gt;,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>FlagValues {
-    <span class="kw">pub </span>nick: String,
-    <span class="kw">pub </span>value: u32,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@nick&quot;</span>)]
+    </span><span class="kw">pub </span>nick: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@value&quot;</span>)]
+    </span><span class="kw">pub </span>value: u32,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Schema {
     <span class="attr">#[serde(rename = <span class="string">&quot;key&quot;</span>)]
     </span><span class="kw">pub </span>keys: Vec&lt;Key&gt;,
-    <span class="kw">pub </span>id: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@id&quot;</span>)]
+    </span><span class="kw">pub </span>id: String,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Key {
-    <span class="attr">#[serde(rename = <span class="string">&quot;type&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;@type&quot;</span>)]
     </span>type_: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;enum&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;@enum&quot;</span>)]
     </span>enum_id: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[serde(rename = <span class="string">&quot;flags&quot;</span>)]
+    <span class="attr">#[serde(rename = <span class="string">&quot;@flags&quot;</span>)]
     </span>flag_id: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="kw">pub </span>name: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@name&quot;</span>)]
+    </span><span class="kw">pub </span>name: String,
     <span class="kw">pub </span>default: String,
     <span class="kw">pub </span>summary: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>description: <span class="prelude-ty">Option</span>&lt;String&gt;,
@@ -246,7 +265,8 @@
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Choice {
-    <span class="kw">pub </span>value: String,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@value&quot;</span>)]
+    </span><span class="kw">pub </span>value: String,
 }
 
 <span class="attr">#[derive(Debug, Deserialize)]
@@ -257,8 +277,10 @@
 
 <span class="attr">#[derive(Debug, Deserialize)]
 </span><span class="kw">pub struct </span>Range {
-    <span class="kw">pub </span>max: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="kw">pub </span>min: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@max&quot;</span>)]
+    </span><span class="kw">pub </span>max: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="attr">#[serde(rename = <span class="string">&quot;@min&quot;</span>)]
+    </span><span class="kw">pub </span>min: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
