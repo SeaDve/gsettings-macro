@@ -925,7 +925,7 @@
                 }
 
                 <span class="kw">if </span>signature_overrides.get(<span class="kw-2">&amp;</span>signature_type).is_some() {
-                    <span class="macro">emit_error!</span>(signature_span, <span class="string">&quot;duplicate override&quot;</span>,);
+                    <span class="macro">emit_error!</span>(signature_span, <span class="string">&quot;duplicate override&quot;</span>);
                 }
 
                 signature_overrides.insert(signature_type, override_type);
