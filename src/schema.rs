@@ -46,22 +46,22 @@ pub struct FlagValues {
 
 #[derive(Debug, Deserialize)]
 pub struct Schema {
-    #[serde(rename = "key")]
-    pub keys: Vec<Key>,
     #[serde(rename = "@id")]
     pub id: String,
+    #[serde(rename = "key")]
+    pub keys: Vec<Key>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Key {
+    #[serde(rename = "@name")]
+    pub name: String,
     #[serde(rename = "@type")]
     type_: Option<String>,
     #[serde(rename = "@enum")]
     enum_id: Option<String>,
     #[serde(rename = "@flags")]
     flag_id: Option<String>,
-    #[serde(rename = "@name")]
-    pub name: String,
     pub default: String,
     pub summary: Option<String>,
     pub description: Option<String>,
