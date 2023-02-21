@@ -426,6 +426,10 @@
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
 </pre><pre class="rust"><code><span class="kw">mod </span>bitflag;
 <span class="kw">mod </span>enumeration;
 <span class="kw">mod </span>string;
@@ -524,26 +528,30 @@
         }
     }
 
-    <span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaKey, aux_visibility: syn::Visibility) -&gt; GetResult&lt;<span class="lifetime">&#39;a</span>&gt; {
-        <span class="kw">let </span>key_signature = key.signature();
+    <span class="kw">pub fn </span>get(
+        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+        key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaKey,
+        aux_visibility: syn::Visibility,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;GetResult&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+        <span class="kw">let </span>key_signature = key.signature()<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="self">self</span>.key_name_skips.contains(<span class="kw-2">&amp;</span>key.name) {
-            <span class="kw">return </span>GetResult::Skip;
+            <span class="kw">return </span><span class="prelude-val">Some</span>(GetResult::Skip);
         }
 
         <span class="kw">if </span><span class="self">self</span>.signature_skips.contains(<span class="kw-2">&amp;</span>key_signature) {
-            <span class="kw">return </span>GetResult::Skip;
+            <span class="kw">return </span><span class="prelude-val">Some</span>(GetResult::Skip);
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(context) = <span class="self">self</span>.key_names.get(<span class="kw-2">&amp;</span>key.name) {
-            <span class="kw">return </span>GetResult::Some(KeyGenerator::new(key, context.clone()));
+            <span class="kw">return </span><span class="prelude-val">Some</span>(GetResult::Some(KeyGenerator::new(key, context.clone())));
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(context) = <span class="self">self</span>.signatures.get(<span class="kw-2">&amp;</span>key_signature) {
-            <span class="kw">return </span>GetResult::Some(KeyGenerator::new(key, context.clone()));
+            <span class="kw">return </span><span class="prelude-val">Some</span>(GetResult::Some(KeyGenerator::new(key, context.clone())));
         }
 
-        <span class="kw">match </span>key_signature {
+        <span class="prelude-val">Some</span>(<span class="kw">match </span>key_signature {
             SchemaKeySignature::Type(type_) =&gt; <span class="kw">match </span>type_.as_str() {
                 <span class="string">&quot;s&quot; </span>=&gt; GetResult::Some(string::key_generator(key, aux_visibility)),
                 <span class="kw">_ </span>=&gt; GetResult::Unknown,
@@ -562,7 +570,7 @@
                 }),
                 aux_visibility,
             )),
-        }
+        })
     }
 
     <span class="kw">fn </span>insert_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, signature: <span class="kw-2">&amp;</span>str, context: Context) {

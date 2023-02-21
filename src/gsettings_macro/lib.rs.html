@@ -517,6 +517,13 @@
 <a href="#517" id="517">517</a>
 <a href="#518" id="518">518</a>
 <a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
 </pre><pre class="rust"><code><span class="kw">mod </span>generators;
 <span class="kw">mod </span>schema;
 
@@ -841,7 +848,11 @@
     </span><span class="kw">let </span>known_signatures = schema
         .keys
         .iter()
-        .map(|key| key.signature())
+        .map(|key| {
+            key.signature().unwrap_or_else(|| {
+                <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;expected one of `type`, `enum` or `flags` specified attribute on key `{}` in the schema&quot;</span>, key.name);
+            })
+        })
         .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
     <span class="kw">let </span>known_key_names = schema
         .keys
@@ -956,7 +967,10 @@
     <span class="kw">let </span><span class="kw-2">mut </span>keys_token_stream = proc_macro2::TokenStream::new();
 
     <span class="kw">for </span>key <span class="kw">in </span><span class="kw-2">&amp;</span>schema.keys {
-        <span class="kw">match </span>key_generators.get(key, settings_struct.vis.clone()) {
+        <span class="kw">match </span>key_generators
+            .get(key, settings_struct.vis.clone())
+            .unwrap()
+        {
             GetResult::Skip =&gt; (),
             GetResult::Some(generator) =&gt; {
                 keys_token_stream.extend(generator.to_token_stream());
@@ -968,7 +982,7 @@
             GetResult::Unknown =&gt; {
                 <span class="macro">emit_call_site_error!</span>(
                     <span class="string">&quot;unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`&quot;</span>,
-                    <span class="kw-2">&amp;</span>key.signature(),
+                    <span class="kw-2">&amp;</span>key.signature().unwrap(),
                     <span class="kw-2">&amp;</span>key.name,
                 )
             }
