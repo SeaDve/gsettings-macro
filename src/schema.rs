@@ -14,6 +14,7 @@ pub struct SchemaList {
 
 #[derive(Debug, Deserialize)]
 pub struct Enum {
+    #[serde(rename = "@id")]
     pub id: String,
     #[serde(rename = "value")]
     pub values: Vec<EnumValues>,
@@ -21,12 +22,15 @@ pub struct Enum {
 
 #[derive(Debug, Deserialize)]
 pub struct EnumValues {
+    #[serde(rename = "@nick")]
     pub nick: String,
+    #[serde(rename = "@value")]
     pub value: i32,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Flag {
+    #[serde(rename = "@id")]
     pub id: String,
     #[serde(rename = "value")]
     pub values: Vec<FlagValues>,
@@ -34,7 +38,9 @@ pub struct Flag {
 
 #[derive(Debug, Deserialize)]
 pub struct FlagValues {
+    #[serde(rename = "@nick")]
     pub nick: String,
+    #[serde(rename = "@value")]
     pub value: u32,
 }
 
@@ -42,17 +48,19 @@ pub struct FlagValues {
 pub struct Schema {
     #[serde(rename = "key")]
     pub keys: Vec<Key>,
+    #[serde(rename = "@id")]
     pub id: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Key {
-    #[serde(rename = "type")]
+    #[serde(rename = "@type")]
     type_: Option<String>,
-    #[serde(rename = "enum")]
+    #[serde(rename = "@enum")]
     enum_id: Option<String>,
-    #[serde(rename = "flags")]
+    #[serde(rename = "@flags")]
     flag_id: Option<String>,
+    #[serde(rename = "@name")]
     pub name: String,
     pub default: String,
     pub summary: Option<String>,
@@ -115,6 +123,7 @@ impl Key {
 
 #[derive(Debug, Deserialize)]
 pub struct Choice {
+    #[serde(rename = "@value")]
     pub value: String,
 }
 
@@ -126,6 +135,8 @@ pub struct Choices {
 
 #[derive(Debug, Deserialize)]
 pub struct Range {
+    #[serde(rename = "@max")]
     pub max: Option<String>,
+    #[serde(rename = "@min")]
     pub min: Option<String>,
 }
