@@ -399,7 +399,7 @@ pub fn gen_settings(
                 }
 
                 if signature_overrides.get(&signature_type).is_some() {
-                    emit_error!(signature_span, "duplicate override",);
+                    emit_error!(signature_span, "duplicate override");
                 }
 
                 signature_overrides.insert(signature_type, override_type);
