@@ -96,26 +96,30 @@ impl<'a> KeyGenerators<'a> {
         }
     }
 
-    pub fn get(&'a self, key: &'a SchemaKey, aux_visibility: syn::Visibility) -> GetResult<'a> {
-        let key_signature = key.signature();
+    pub fn get(
+        &'a self,
+        key: &'a SchemaKey,
+        aux_visibility: syn::Visibility,
+    ) -> Option<GetResult<'a>> {
+        let key_signature = key.signature()?;
 
         if self.key_name_skips.contains(&key.name) {
-            return GetResult::Skip;
+            return Some(GetResult::Skip);
         }
 
         if self.signature_skips.contains(&key_signature) {
-            return GetResult::Skip;
+            return Some(GetResult::Skip);
         }
 
         if let Some(context) = self.key_names.get(&key.name) {
-            return GetResult::Some(KeyGenerator::new(key, context.clone()));
+            return Some(GetResult::Some(KeyGenerator::new(key, context.clone())));
         }
 
         if let Some(context) = self.signatures.get(&key_signature) {
-            return GetResult::Some(KeyGenerator::new(key, context.clone()));
+            return Some(GetResult::Some(KeyGenerator::new(key, context.clone())));
         }
 
-        match key_signature {
+        Some(match key_signature {
             SchemaKeySignature::Type(type_) => match type_.as_str() {
                 "s" => GetResult::Some(string::key_generator(key, aux_visibility)),
                 _ => GetResult::Unknown,
@@ -134,7 +138,7 @@ impl<'a> KeyGenerators<'a> {
                 }),
                 aux_visibility,
             )),
-        }
+        })
     }
 
     fn insert_type(&mut self, signature: &str, context: Context) {

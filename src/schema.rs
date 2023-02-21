@@ -1,7 +1,5 @@
 use serde::Deserialize;
 
-use proc_macro_error::abort_call_site;
-
 #[derive(Debug, Deserialize)]
 pub struct SchemaList {
     #[serde(rename = "enum", default)]
@@ -69,33 +67,11 @@ pub struct Key {
     pub range: Option<Range>,
 }
 
+#[derive(PartialEq, Eq, Hash)]
 pub enum KeySignature {
     Type(String),
     Enum(String),
     Flag(String),
-}
-
-impl PartialEq for KeySignature {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Self::Type(l0), Self::Type(r0)) => l0 == r0,
-            (Self::Enum(l0), Self::Enum(r0)) => l0 == r0,
-            (Self::Flag(l0), Self::Flag(r0)) => l0 == r0,
-            _ => false,
-        }
-    }
-}
-
-impl Eq for KeySignature {}
-
-impl std::hash::Hash for KeySignature {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        match self {
-            KeySignature::Type(type_) => type_.hash(state),
-            KeySignature::Enum(enum_) => enum_.hash(state),
-            KeySignature::Flag(flag) => flag.hash(state),
-        }
-    }
 }
 
 impl std::fmt::Display for KeySignature {
@@ -109,14 +85,12 @@ impl std::fmt::Display for KeySignature {
 }
 
 impl Key {
-    pub fn signature(&self) -> KeySignature {
+    pub fn signature(&self) -> Option<KeySignature> {
         match (&self.type_, &self.enum_id, &self.flag_id) {
-            (Some(type_name), None, None) => KeySignature::Type(type_name.to_string()),
-            (None, Some(enum_id), None) => KeySignature::Enum(enum_id.to_string()),
-            (None, None, Some(flag_id)) => KeySignature::Flag(flag_id.to_string()),
-            _ => abort_call_site!(
-                "expected one of `type`, `enum` or `flags` specified attribute on key in the schema"
-            ),
+            (Some(type_name), None, None) => Some(KeySignature::Type(type_name.to_string())),
+            (None, Some(enum_id), None) => Some(KeySignature::Enum(enum_id.to_string())),
+            (None, None, Some(flag_id)) => Some(KeySignature::Flag(flag_id.to_string())),
+            _ => None,
         }
     }
 }

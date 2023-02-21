@@ -322,7 +322,11 @@ pub fn gen_settings(
     let known_signatures = schema
         .keys
         .iter()
-        .map(|key| key.signature())
+        .map(|key| {
+            key.signature().unwrap_or_else(|| {
+                abort!(file_attr_span, "expected one of `type`, `enum` or `flags` specified attribute on key `{}` in the schema", key.name);
+            })
+        })
         .collect::<Vec<_>>();
     let known_key_names = schema
         .keys
@@ -437,7 +441,10 @@ pub fn gen_settings(
     let mut keys_token_stream = proc_macro2::TokenStream::new();
 
     for key in &schema.keys {
-        match key_generators.get(key, settings_struct.vis.clone()) {
+        match key_generators
+            .get(key, settings_struct.vis.clone())
+            .unwrap()
+        {
             GetResult::Skip => (),
             GetResult::Some(generator) => {
                 keys_token_stream.extend(generator.to_token_stream());
@@ -449,7 +456,7 @@ pub fn gen_settings(
             GetResult::Unknown => {
                 emit_call_site_error!(
                     "unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`",
-                    &key.signature(),
+                    &key.signature().unwrap(),
                     &key.name,
                 )
             }
