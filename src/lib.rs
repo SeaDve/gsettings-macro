@@ -85,13 +85,13 @@ impl ToTokens for SettingsStruct {
 /// dependencies, you need to import it because `gen_settings` is using
 /// it internally. For example:
 ///
-/// ```rust,ignore
+/// ```ignore
 /// use gtk::gio;
 /// ```
 ///
 /// ### Example
 ///
-/// ```rust,ignore
+/// ```ignore
 /// use gsettings_macro::gen_settings;
 ///
 /// #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
@@ -183,7 +183,7 @@ impl ToTokens for SettingsStruct {
 /// This would be helpful if you want to have full control
 /// with the key without the macro intervening. For example:
 ///
-/// ```rust,ignore
+/// ```ignore
 /// use gsettings_macro::gen_settings;
 ///
 /// #[gen_settings(
@@ -205,7 +205,7 @@ impl ToTokens for SettingsStruct {
 ///
 /// ### Defining custom types
 ///
-/// ```rust,ignore
+/// ```ignore
 /// use gsettings_macro::gen_settings;
 ///
 /// use std::path::{Path, PathBuf};
@@ -248,7 +248,7 @@ impl ToTokens for SettingsStruct {
 ///
 /// The following is an example of defining the `id` attribute in the macro:
 ///
-/// ```rust,ignore
+/// ```ignore
 /// use gsettings_macro::gen_settings;
 ///
 /// #[gen_settings(
