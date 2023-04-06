@@ -1,5 +1,5 @@
 use gio::{
-    glib::{FromVariant, StaticVariantType, ToVariant, VariantTy},
+    glib::{self, FromVariant, StaticVariantType, ToVariant, VariantTy},
     prelude::*,
 };
 use gsettings_macro::gen_settings;
@@ -477,6 +477,7 @@ fn private_struct() {
     setup_schema();
 
     mod inner {
+        use gio::glib;
         use gsettings_macro::gen_settings;
 
         #[gen_settings(

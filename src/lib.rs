@@ -81,12 +81,12 @@ impl ToTokens for SettingsStruct {
 ///
 /// **⚠️ IMPORTANT ⚠️**
 ///
-/// `gio` needs to be in scope, so unless it is one of the direct crate
-/// dependencies, you need to import it because `gen_settings` is using
-/// it internally. For example:
+/// Both `gio` and `glib` need to be in scope, so unless they are direct crate
+/// dependencies, you need to import them because `gen_settings` is using
+/// them internally. For example:
 ///
 /// ```ignore
-/// use gtk::gio;
+/// use gtk::{gio, glib};
 /// ```
 ///
 /// ### Example
@@ -336,7 +336,7 @@ pub fn gen_settings(
     let mut signature_overrides = HashMap::new();
     let mut key_name_overrides = HashMap::new();
     for attr in &settings_struct.attrs {
-        let (signature, key_name, override_type) = if attr.path.is_ident("gen_settings_define") {
+        let (signature, key_name, override_type) = if attr.path().is_ident("gen_settings_define") {
             let GenSettingsDefine {
                 signature,
                 key_name,
@@ -358,7 +358,7 @@ pub fn gen_settings(
                     ret_type: SpannedValue::into_inner(ret_type),
                 },
             )
-        } else if attr.path.is_ident("gen_settings_skip") {
+        } else if attr.path().is_ident("gen_settings_skip") {
             let GenSettingsSkip {
                 signature,
                 key_name,
@@ -482,7 +482,8 @@ pub fn gen_settings(
     let mut expanded = quote! {
         #aux_token_stream
 
-        #[derive(Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
+        #[derive(Clone, Hash, PartialEq, Eq, gio::glib::ValueDelegate)]
+        #[value_delegate(nullable)]
         #settings_struct
 
         impl #struct_ident {
