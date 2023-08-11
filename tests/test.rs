@@ -425,9 +425,9 @@ fn bitflag_value() {
     #[gen_settings_skip(signature = "ay")]
     pub struct Settings;
 
-    assert_eq!(SpaceStyle::BEFORE_COLON.bits, 1);
-    assert_eq!(SpaceStyle::BEFORE_SEMICOLON.bits, 4);
-    assert_eq!(SpaceStyle::BEFORE_COMMA.bits, 2);
+    assert_eq!(SpaceStyle::BEFORE_COLON.bits(), 1);
+    assert_eq!(SpaceStyle::BEFORE_SEMICOLON.bits(), 4);
+    assert_eq!(SpaceStyle::BEFORE_COMMA.bits(), 2);
 
     assert_eq!(SpaceStyle::from_bits(1).unwrap(), SpaceStyle::BEFORE_COLON);
     assert_eq!(

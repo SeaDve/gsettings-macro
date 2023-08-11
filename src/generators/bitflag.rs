@@ -69,6 +69,7 @@ fn bitflag_token_stream(
 
     quote! {
         gio::glib::bitflags::bitflags! {
+            #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
             #visibility struct #ident: u32 {
                 #(#flags_arms)*
             }
