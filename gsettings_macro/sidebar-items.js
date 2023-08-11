@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":[["gen_settings","Macro for typesafe `gio::Settings` key access."]]};
+window.SIDEBAR_ITEMS = {"attr":["gen_settings"]};
