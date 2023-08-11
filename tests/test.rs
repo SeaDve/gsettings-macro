@@ -469,6 +469,10 @@ fn id_defined_in_macro() {
     pub struct Settings;
 
     assert_eq!(Settings::default().schema_id(), Settings::new().schema_id());
+    assert_eq!(
+        Settings::default().schema_id().as_deref(),
+        Some("io.github.seadve.test")
+    );
 }
 
 #[test]
