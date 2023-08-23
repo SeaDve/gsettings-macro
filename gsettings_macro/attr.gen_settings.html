@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro for typesafe `gio::Settings` key access."><title>gen_settings in gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.1 (eb26296b5 2023-08-03)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../static.files/storage-62ce34ea385b278a.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc attr"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><div class="sidebar-elems"><h2><a href="index.html">In gsettings_macro</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#271">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>#[gen_settings]</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for typesafe <a href="https://docs.rs/gio/0.15/gio/struct.Settings.html"><code>gio::Settings</code></a> key access.</p>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Macro for typesafe `gio::Settings` key access."><title>gen_settings in gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.1 (eb26296b5 2023-08-03)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../static.files/storage-62ce34ea385b278a.js"></script><script defer src="sidebar-items.js"></script><script defer src="../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc attr"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><div class="sidebar-elems"><h2><a href="index.html">In gsettings_macro</a></h2></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Attribute Macro <a href="index.html">gsettings_macro</a>::<wbr><a class="attr" href="#">gen_settings</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#271">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>#[gen_settings]</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Macro for typesafe <a href="https://docs.rs/gio/latest/gio/struct.Settings.html"><code>gio::Settings</code></a> key access.</p>
 <p>The macro’s main purpose is to reduce the risk of mistyping a key,
 using the wrong method to access values, inputing incorrect values,
-and reduce boilerplate. Additionally, the summary, the
+and to reduce boilerplate. Additionally, the summary, the
 description, and the default of the value are included in the
 documentation of each generated methods. This would be beneficial
 if you use tools like <a href="https://rust-analyzer.github.io/"><code>rust-analyzer</code></a>.</p>
@@ -19,7 +19,7 @@ them internally. For example:</p>
 
 <span class="kw">let </span>settings = ApplicationSettings::new(<span class="string">&quot;io.github.seadve.test&quot;</span>);
 
-<span class="comment">// `i` DBus type
+<span class="comment">// `i` D-Bus type
 </span>settings.set_window_width(<span class="number">100</span>);
 <span class="macro">assert_eq!</span>(settings.window_width(), <span class="number">100</span>);
 
@@ -36,7 +36,7 @@ them internally. For example:</p>
 <p>Note: The file path is relative to the project root or where the
 <code>Cargo.toml</code> file is located.</p>
 <h4 id="generated-methods"><a href="#generated-methods">Generated methods</a></h4>
-<p>The procedural macro generates the following <a href="https://docs.rs/gio/0.15/gio/struct.Settings.html"><code>gio::Settings</code></a> methods
+<p>The procedural macro generates the following <a href="https://docs.rs/gio/latest/gio/struct.Settings.html"><code>gio::Settings</code></a> methods
 for each key in the schema:</p>
 <ul>
 <li><code>set</code> -&gt; <code>set_${key}</code>, which panics when writing in a readonly
@@ -48,10 +48,10 @@ key, and <code>try_set_${key}</code>, which behaves the same as the original met
 <li><code>default_value</code> -&gt; <code>${key}_default_value</code></li>
 <li><code>reset</code> -&gt; <code>reset_${key}</code></li>
 </ul>
-<h4 id="known-dbus-type-codes"><a href="#known-dbus-type-codes">Known DBus type codes</a></h4>
+<h4 id="known-d-bus-type-signatures"><a href="#known-d-bus-type-signatures">Known D-Bus type signatures</a></h4>
 <p>The setter and getter methods has the following parameter and
-return type, depending on the key’s DBus type code.</p>
-<div><table><thead><tr><th>DBus type code</th><th>parameter type</th><th>return type</th></tr></thead><tbody>
+return type, depending on the key’s type signature.</p>
+<div><table><thead><tr><th>Type Signature</th><th>Parameter Type</th><th>Return Type</th></tr></thead><tbody>
 <tr><td>b</td><td><code>bool</code></td><td><code>bool</code></td></tr>
 <tr><td>i</td><td><code>i32</code></td><td><code>i32</code></td></tr>
 <tr><td>u</td><td><code>u32</code></td><td><code>u32</code></td></tr>
@@ -63,14 +63,14 @@ return type, depending on the key’s DBus type code.</p>
 <tr><td>s *</td><td><code>&amp;str</code></td><td><code>String</code></td></tr>
 </tbody></table>
 </div>
-<p>* If the key of DBus type code <code>s</code> has no <code>choice</code> attribute
+<p>* If the key of type signature <code>s</code> has no <code>choice</code> attribute
 specified in the GSchema, the parameter and return types stated
 in the table would be applied. Otherwise, it will generate an
 enum, like described in the next section, and use it as the parameter
 and return types, instead of <code>&amp;str</code> and <code>String</code> respectively.</p>
-<p>It will not compile if the DBus type code is not defined above.
+<p>It will not compile if the type signature is not defined above.
 However, it is possible to explicitly skip generating methods
-for a specific key or DBus type code using the attribute
+for a specific key or type signature using the attribute
 <code>#[gen_settings_skip]</code>, or define a custom parameter and return
 types using <code>#[gen_settings_define]</code> attribute. The usage of
 the latter will be further explained in the following sections.</p>
@@ -82,7 +82,7 @@ The enum would implement both <a href="gio::glib::ToVariant"><code>ToVariant</co
 and <a href="gio::glib::FromVariant"><code>FromVariant</code></a>, <a href="https://doc.rust-lang.org/1.71.1/core/clone/trait.Clone.html" title="trait core::clone::Clone"><code>Clone</code></a>,
 <a href="https://doc.rust-lang.org/1.71.1/core/hash/macros/derive.Hash.html" title="derive core::hash::macros::Hash"><code>Hash</code></a>, <a href="https://doc.rust-lang.org/1.71.1/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq"><code>PartialEq</code></a>, <a href="https://doc.rust-lang.org/1.71.1/core/cmp/trait.Eq.html" title="trait core::cmp::Eq"><code>Eq</code></a>, <a href="https://doc.rust-lang.org/1.71.1/core/cmp/trait.PartialOrd.html" title="trait core::cmp::PartialOrd"><code>PartialOrd</code></a>, and <a href="https://doc.rust-lang.org/1.71.1/core/cmp/trait.Ord.html" title="trait core::cmp::Ord"><code>Ord</code></a>. On
 the other hand, if it is a flag, it would generate bitflags
-same as the bitflags generated by the <a href="https://docs.rs/bitflags/1.0/bitflags/macro.bitflags.html"><code>bitflags</code></a> macro with each
+same as the bitflags generated by the <a href="https://docs.rs/bitflags/latest/bitflags/macro.bitflags.html"><code>bitflags</code></a> macro with each
 nick specified in the GSchema converted to screaming snake case as
 a const flag.</p>
 <p>The generated types, enum or bitflags, would have the same
@@ -97,7 +97,7 @@ with the key without the macro intervening. For example:</p>
     file = <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>,
     id = <span class="string">&quot;io.github.seadve.test&quot;
 </span>)]
-</span><span class="comment">// Skip generating methods for keys with DBus type `(ss)`
+</span><span class="comment">// Skip generating methods for keys with type signature `(ss)`
 </span><span class="attr">#[gen_settings_skip(signature = <span class="string">&quot;(ss)&quot;</span>)]
 </span><span class="comment">// Skip generating methods for the key of name `some-key-name`
 </span><span class="attr">#[gen_settings_skip(key_name = <span class="string">&quot;some-key-name&quot;</span>)]
@@ -105,8 +105,8 @@ with the key without the macro intervening. For example:</p>
 
 <span class="kw">impl </span>Settings {
     <span class="kw">pub fn </span>set_some_key_name(value: <span class="kw-2">&amp;</span>std::path::Path) {
-        <span class="comment">// some code here
-    </span>}
+        ...
+    }
 }</code></pre></div>
 <h4 id="defining-custom-types"><a href="#defining-custom-types">Defining custom types</a></h4>
 <div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>gsettings_macro::gen_settings;
@@ -133,8 +133,8 @@ settings.set_string_tuple((<span class="string">&quot;hi&quot;</span>, <span cla
 <span class="macro">assert_eq!</span>(settings.string_tuple(), (<span class="string">&quot;hi&quot;</span>.into(), <span class="string">&quot;hi2&quot;</span>.into()));</code></pre></div>
 <p>The type specified in <code>arg_type</code> and <code>ret_type</code> has to be on scope or
 you can specify the full path.</p>
-<p>If you somehow do not want an enum parameter and return types for <code>s</code> DBus
-type code with choices. You can also use this to override that behavior.</p>
+<p>If you somehow do not want an enum parameter and return types for <code>s</code>
+type signature with choices. You can also use this to override that behavior.</p>
 <p>Note: The type has to implement both <a href="gio::glib::ToVariant"><code>ToVariant</code></a>
 and <a href="gio::glib::FromVariant"><code>FromVariant</code></a> or it would fail to compile.</p>
 <h4 id="default-trait"><a href="#default-trait">Default trait</a></h4>
