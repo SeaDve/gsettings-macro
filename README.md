@@ -7,11 +7,11 @@
 Macro for typesafe GSettings key access
 
 The macro's main purpose is to reduce the risk of mistyping a key,
-using the wrong method to access values, inputing incorrect values,
-and reduce boilerplate. Additionally, the summary, the
-description, and the default of the value are included in the
-documentation of each generated methods. This would be beneficial
-if you use tools like [`rust-analyzer`](https://rust-analyzer.github.io/).
+using the wrong method to access values, inputting incorrect values,
+and to reduce boilerplate. Additionally, the summary, description,
+and default value are included in the documentation of each generated
+method. This would be beneficial if you use tools like
+[`rust-analyzer`](https://rust-analyzer.github.io/).
 
 ## Example
 
