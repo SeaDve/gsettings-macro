@@ -74,7 +74,7 @@ impl ToTokens for SettingsStruct {
 ///
 /// The macro's main purpose is to reduce the risk of mistyping a key,
 /// using the wrong method to access values, inputing incorrect values,
-/// and reduce boilerplate. Additionally, the summary, the
+/// and to reduce boilerplate. Additionally, the summary, the
 /// description, and the default of the value are included in the
 /// documentation of each generated methods. This would be beneficial
 /// if you use tools like [`rust-analyzer`](https://rust-analyzer.github.io/).
@@ -99,7 +99,7 @@ impl ToTokens for SettingsStruct {
 ///
 /// let settings = ApplicationSettings::new("io.github.seadve.test");
 ///
-/// // `i` DBus type
+/// // `i` D-Bus type
 /// settings.set_window_width(100);
 /// assert_eq!(settings.window_width(), 100);
 ///
@@ -132,32 +132,32 @@ impl ToTokens for SettingsStruct {
 /// * `default_value` -> `${key}_default_value`
 /// * `reset` -> `reset_${key}`
 ///
-/// ### Known DBus type codes
+/// ### Known D-Bus type signatures
 ///
 /// The setter and getter methods has the following parameter and
-/// return type, depending on the key's DBus type code.
+/// return type, depending on the key's type signature.
 ///
-/// | DBus type code | parameter type | return type    |
-/// | -------------- | -------------- | -------------- |
-/// | b              | `bool`         | `bool`         |
-/// | i              | `i32`          | `i32`          |
-/// | u              | `u32`          | `u32`          |
-/// | x              | `i64`          | `i64`          |
-/// | t              | `u64`          | `u64`          |
-/// | d              | `f64`          | `f64`          |
-/// | (ii)           | `(i32, i32`)   | `(i32, i32`)   |
-/// | as             | `&[&str]`      | `Vec<String>`  |
-/// | s *            | `&str`         | `String`       |
+/// | Type Signature | Parameter Type | Return Type   |
+/// | -------------- | -------------- | ------------- |
+/// | b              | `bool`         | `bool`        |
+/// | i              | `i32`          | `i32`         |
+/// | u              | `u32`          | `u32`         |
+/// | x              | `i64`          | `i64`         |
+/// | t              | `u64`          | `u64`         |
+/// | d              | `f64`          | `f64`         |
+/// | (ii)           | `(i32, i32`)   | `(i32, i32`)  |
+/// | as             | `&[&str]`      | `Vec<String>` |
+/// | s *            | `&str`         | `String`      |
 ///
-/// \* If the key of DBus type code `s` has no `choice` attribute
+/// \* If the key of type signature `s` has no `choice` attribute
 /// specified in the GSchema, the parameter and return types stated
 /// in the table would be applied. Otherwise, it will generate an
 /// enum, like described in the next section, and use it as the parameter
 /// and return types, instead of `&str` and `String` respectively.
 ///
-/// It will not compile if the DBus type code is not defined above.
+/// It will not compile if the type signature is not defined above.
 /// However, it is possible to explicitly skip generating methods
-/// for a specific key or DBus type code using the attribute
+/// for a specific key or type signature using the attribute
 /// `#[gen_settings_skip]`, or define a custom parameter and return
 /// types using `#[gen_settings_define]` attribute. The usage of
 /// the latter will be further explained in the following sections.
@@ -190,7 +190,7 @@ impl ToTokens for SettingsStruct {
 ///     file = "./tests/io.github.seadve.test.gschema.xml",
 ///     id = "io.github.seadve.test"
 /// )]
-/// // Skip generating methods for keys with DBus type `(ss)`
+/// // Skip generating methods for keys with type signature `(ss)`
 /// #[gen_settings_skip(signature = "(ss)")]
 /// // Skip generating methods for the key of name `some-key-name`
 /// #[gen_settings_skip(key_name = "some-key-name")]
@@ -198,7 +198,7 @@ impl ToTokens for SettingsStruct {
 ///
 /// impl Settings {
 ///     pub fn set_some_key_name(value: &std::path::Path) {
-///         // some code here
+///         ...
 ///     }
 /// }
 /// ```
@@ -233,8 +233,8 @@ impl ToTokens for SettingsStruct {
 /// The type specified in `arg_type` and `ret_type` has to be on scope or
 /// you can specify the full path.
 ///
-/// If you somehow do not want an enum parameter and return types for `s` DBus
-/// type code with choices. You can also use this to override that behavior.
+/// If you somehow do not want an enum parameter and return types for `s`
+/// type signature with choices. You can also use this to override that behavior.
 ///
 /// Note: The type has to implement both [`ToVariant`](gio::glib::ToVariant)
 /// and [`FromVariant`](gio::glib::FromVariant) or it would fail to compile.
@@ -263,10 +263,10 @@ impl ToTokens for SettingsStruct {
 /// let another_instance = ApplicationSettings::default();
 /// ```
 ///
-/// [`gio::Settings`]: https://docs.rs/gio/0.15/gio/struct.Settings.html
-/// [`gio::glib::ToVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.ToVariant.html
-/// [`gio::glib::FromVariant`]: https://docs.rs/glib/0.15/glib/variant/trait.FromVariant.html
-/// [`bitflags`]: https://docs.rs/bitflags/1.0/bitflags/macro.bitflags.html
+/// [`gio::Settings`]: https://docs.rs/gio/latest/gio/struct.Settings.html
+/// [`gio::glib::ToVariant`]: https://docs.rs/glib/latest/glib/variant/trait.ToVariant.html
+/// [`gio::glib::FromVariant`]: https://docs.rs/glib/latest/glib/variant/trait.FromVariant.html
+/// [`bitflags`]: https://docs.rs/bitflags/latest/bitflags/macro.bitflags.html
 #[proc_macro_attribute]
 #[proc_macro_error]
 pub fn gen_settings(

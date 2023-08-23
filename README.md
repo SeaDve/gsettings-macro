@@ -34,7 +34,7 @@ pub struct ApplicationSettings;
 
 let settings = ApplicationSettings::default();
 
-// `i` DBus type
+// `i` D-Bus type
 settings.set_window_width(100);
 assert_eq!(settings.window_width(), 100)
 
@@ -59,7 +59,7 @@ For more examples and detailed information see the
 
 ## Generated methods
 
-The procedural macro generates the following [`gio::Settings`] methods
+The procedural macro generates the following [`gio::Settings`](https://docs.rs/gio/latest/gio/struct.Settings.html) methods
 for each key in the schema:
 
 * `set` -> `set_${key}`, which panics when writing in a readonly
@@ -84,3 +84,4 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 * Add way to map setter and getters value
 * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
 * Add trybuild tests
+* Support for multiple schema
