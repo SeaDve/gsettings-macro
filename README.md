@@ -1,7 +1,8 @@
 # GSettings Macro
 
-[![docs](https://docs.rs/gsettings-macro/badge.svg)](https://docs.rs/gsettings-macro/)
+[![github](https://img.shields.io/badge/github-seadve/gsettings-macro)](https://github.com/SeaDve/gsettings-macro)
 [![crates.io](https://img.shields.io/crates/v/gsettings-macro)](https://crates.io/crates/gsettings-macro)
+[![docs](https://docs.rs/gsettings-macro/badge.svg)](https://docs.rs/gsettings-macro/)
 [![CI](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml/badge.svg)](https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml)
 
 Macro for typesafe GSettings key access
@@ -77,11 +78,8 @@ key, and `try_set_${key}`, which behaves the same as the original method.
   * Use hacks like `include_str!`
   * See https://github.com/rust-lang/rust/issues/73921 or https://github.com/rust-lang/rust/issues/55904
 
-## Todos
+## License
 
-* Use `quote_spanned` where applicable for better error propagation on generated code
-* Remove serde and deluxe dependencies
-* Add way to map setter and getters value
-* Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
-* Add trybuild tests
-* Support for multiple schema
+Copyright 2023 Dave Patrick Caberto
+
+This software is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at [this site](http://mozilla.org/MPL/2.0/).

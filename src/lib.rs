@@ -17,6 +17,14 @@ use crate::{
     schema::{KeySignature as SchemaKeySignature, SchemaList},
 };
 
+// TODO:
+// * Use `quote_spanned` where applicable for better error propagation on generated code
+// * Remove serde and deluxe dependencies
+// * Add way to map setter and getters value
+// * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
+// * Add trybuild tests
+// * Support for multiple schema
+
 #[derive(deluxe::ParseMetaItem)]
 struct GenSettings {
     file: SpannedValue<String>,
