@@ -1,1 +1,77 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `gsettings_macro` crate."><title>gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate gsettings_macro</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.1.19</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#attributes">Attribute Macros</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">gsettings_macro</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#1-527">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><h2 id="attributes" class="small-section-header"><a href="#attributes">Attribute Macros</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.gen_settings.html" title="attr gsettings_macro::gen_settings">gen_settings</a></div><div class="desc docblock-short">Macro for typesafe <a href="https://docs.rs/gio/latest/gio/struct.Settings.html"><code>gio::Settings</code></a> key access.</div></li></ul></section></div></main></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="GSettings Macro"><title>gsettings_macro - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-9bb858ba049f1f21.css" id="mainThemeStyle"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.1 (d5c2e9c34 2023-09-13)" data-channel="1.72.1" data-search-js="search-f6292fe389d70017.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ><script src="../static.files/storage-59fd9b8ccb335783.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-0795b7d26be81095.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../gsettings_macro/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate gsettings_macro</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.1.19</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#attributes">Attribute Macros</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">gsettings_macro</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/gsettings_macro/lib.rs.html#1-538">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="gsettings-macro"><a href="#gsettings-macro">GSettings Macro</a></h2>
+<p><a href="https://github.com/SeaDve/gsettings-macro"><img src="https://img.shields.io/badge/github-seadve/gsettings-macro" alt="github" /></a>
+<a href="https://crates.io/crates/gsettings-macro"><img src="https://img.shields.io/crates/v/gsettings-macro" alt="crates.io" /></a>
+<a href="https://docs.rs/gsettings-macro/"><img src="https://docs.rs/gsettings-macro/badge.svg" alt="docs" /></a>
+<a href="https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml"><img src="https://github.com/SeaDve/gsettings-macro/actions/workflows/ci.yml/badge.svg" alt="CI" /></a></p>
+<p>Macro for typesafe GSettings key access</p>
+<p>The macro’s main purpose is to reduce the risk of mistyping a key,
+using the wrong method to access values, inputting incorrect values,
+and to reduce boilerplate. Additionally, the summary, description,
+and default value are included in the documentation of each generated
+method. This would be beneficial if you use tools like
+<a href="https://rust-analyzer.github.io/"><code>rust-analyzer</code></a>.</p>
+<h3 id="example"><a href="#example">Example</a></h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>gsettings_macro::gen_settings;
+
+<span class="kw">use </span>std::path::{Path, PathBuf};
+
+<span class="attr">#[gen_settings(
+    file = <span class="string">&quot;./tests/io.github.seadve.test.gschema.xml&quot;</span>,
+    id = <span class="string">&quot;io.github.seadve.test&quot;
+</span>)]
+#[gen_settings_define(
+    key_name = <span class="string">&quot;cache-dir&quot;</span>,
+    arg_type = <span class="string">&quot;&amp;Path&quot;</span>,
+    ret_type = <span class="string">&quot;PathBuf&quot;
+</span>)]
+#[gen_settings_skip(signature = <span class="string">&quot;ay&quot;</span>)]
+</span><span class="kw">pub struct </span>ApplicationSettings;
+
+<span class="kw">let </span>settings = ApplicationSettings::default();
+
+<span class="comment">// `i` D-Bus type
+</span>settings.set_window_width(<span class="number">100</span>);
+<span class="macro">assert_eq!</span>(settings.window_width(), <span class="number">100</span>)
+
+<span class="comment">// enums
+</span>settings.set_alert_sound(AlertSound::Glass);
+<span class="macro">assert_eq!</span>(settings.alert_sound(), AlertSound::Glass);
+
+<span class="comment">// bitflags
+</span>settings.set_space_style(SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA);
+<span class="macro">assert_eq!</span>(
+    settings.space_style(),
+    SpaceStyle::BEFORE_COLON | SpaceStyle::BEFORE_COMMA
+);
+
+<span class="comment">// customly defined
+</span>settings.set_cache_dir(Path::new(<span class="string">&quot;/some_dir/&quot;</span>));
+<span class="macro">assert_eq!</span>(settings.cache_dir(), PathBuf::from(<span class="string">&quot;/some_dir/&quot;</span>));</code></pre></div>
+<p>For more examples and detailed information see the
+<a href="https://seadve.github.io/gsettings-macro/gsettings_macro/attr.gen_settings.html">documentation</a>.</p>
+<h3 id="generated-methods"><a href="#generated-methods">Generated methods</a></h3>
+<p>The procedural macro generates the following <a href="https://docs.rs/gio/latest/gio/struct.Settings.html"><code>gio::Settings</code></a> methods
+for each key in the schema:</p>
+<ul>
+<li><code>set</code> -&gt; <code>set_${key}</code>, which panics when writing in a readonly
+key, and <code>try_set_${key}</code>, which behaves the same as the original method.</li>
+<li><code>get</code> -&gt; <code>${key}</code></li>
+<li><code>connect_changed</code> -&gt; <code>connect_${key}_changed</code></li>
+<li><code>bind</code> -&gt; <code>bind_${key}</code></li>
+<li><code>create_action</code> -&gt; <code>create_${key}_action</code></li>
+<li><code>default_value</code> -&gt; <code>${key}_default_value</code></li>
+<li><code>reset</code> -&gt; <code>reset_${key}</code></li>
+</ul>
+<h3 id="known-issues"><a href="#known-issues">Known issues</a></h3>
+<ul>
+<li>Not updating when the gschema file is modified
+<ul>
+<li>Use hacks like <code>include_str!</code></li>
+<li>See <a href="https://github.com/rust-lang/rust/issues/73921">73921</a> or <a href="https://github.com/rust-lang/rust/issues/55904">55904</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="license"><a href="#license">License</a></h3>
+<p>Copyright 2023 Dave Patrick Caberto</p>
+<p>This software is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at <a href="http://mozilla.org/MPL/2.0/">this site</a>.</p>
+</div></details><h2 id="attributes" class="small-section-header"><a href="#attributes">Attribute Macros</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.gen_settings.html" title="attr gsettings_macro::gen_settings">gen_settings</a></div><div class="desc docblock-short">Macro for typesafe <a href="https://docs.rs/gio/latest/gio/struct.Settings.html"><code>gio::Settings</code></a> key access.</div></li></ul></section></div></main></body></html>
