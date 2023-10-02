@@ -11,7 +11,8 @@ and default value are included in the documentation of each generated
 method. This would be beneficial if you use tools like
 <a href="https://rust-analyzer.github.io/"><code>rust-analyzer</code></a>.</p>
 <h3 id="example"><a href="#example">Example</a></h3>
-<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>gsettings_macro::gen_settings;
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">use </span>gsettings_macro::gen_settings;
+<span class="kw">use </span>gio::glib;
 
 <span class="kw">use </span>std::path::{Path, PathBuf};
 
@@ -24,14 +25,14 @@ method. This would be beneficial if you use tools like
     arg_type = <span class="string">&quot;&amp;Path&quot;</span>,
     ret_type = <span class="string">&quot;PathBuf&quot;
 </span>)]
-#[gen_settings_skip(signature = <span class="string">&quot;ay&quot;</span>)]
+#[gen_settings_skip(signature = <span class="string">&quot;(ss)&quot;</span>)]
 </span><span class="kw">pub struct </span>ApplicationSettings;
 
 <span class="kw">let </span>settings = ApplicationSettings::default();
 
 <span class="comment">// `i` D-Bus type
 </span>settings.set_window_width(<span class="number">100</span>);
-<span class="macro">assert_eq!</span>(settings.window_width(), <span class="number">100</span>)
+<span class="macro">assert_eq!</span>(settings.window_width(), <span class="number">100</span>);
 
 <span class="comment">// enums
 </span>settings.set_alert_sound(AlertSound::Glass);
