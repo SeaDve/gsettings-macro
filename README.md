@@ -77,7 +77,7 @@ key, and `try_set_${key}`, which behaves the same as the original method.
 
 * Not updating when the gschema file is modified
   * Use hacks like `include_str!`
-  * See [73921](https://github.com/rust-lang/rust/issues/73921) or [55904](https://github.com/rust-lang/rust/issues/55904)
+  * See [#73921](https://github.com/rust-lang/rust/issues/73921) or [#55904](https://github.com/rust-lang/rust/issues/55904)
 
 ## License
 
