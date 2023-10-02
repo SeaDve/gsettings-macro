@@ -16,8 +16,9 @@ method. This would be beneficial if you use tools like
 
 ## Example
 
-```rust
+```rust,ignore
 use gsettings_macro::gen_settings;
+use gio::glib;
 
 use std::path::{Path, PathBuf};
 
@@ -30,14 +31,14 @@ use std::path::{Path, PathBuf};
     arg_type = "&Path",
     ret_type = "PathBuf"
 )]
-#[gen_settings_skip(signature = "ay")]
+#[gen_settings_skip(signature = "(ss)")]
 pub struct ApplicationSettings;
 
 let settings = ApplicationSettings::default();
 
 // `i` D-Bus type
 settings.set_window_width(100);
-assert_eq!(settings.window_width(), 100)
+assert_eq!(settings.window_width(), 100);
 
 // enums
 settings.set_alert_sound(AlertSound::Glass);
