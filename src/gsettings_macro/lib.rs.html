@@ -536,6 +536,7 @@
 <a href="#536" id="536">536</a>
 <a href="#537" id="537">537</a>
 <a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(rust_2018_idioms)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
@@ -562,6 +563,7 @@
 <span class="comment">// TODO:
 // * Use `quote_spanned` where applicable for better error propagation on generated code
 // * Remove serde and deluxe dependencies
+// * Improve enum generation (create enum based on its definition, instead of by key; also add doc alias for its id)
 // * Add way to map setter and getters value
 // * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
 // * Add trybuild tests
