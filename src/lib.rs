@@ -24,6 +24,7 @@ use crate::{
 // TODO:
 // * Use `quote_spanned` where applicable for better error propagation on generated code
 // * Remove serde and deluxe dependencies
+// * Improve enum generation (create enum based on its definition, instead of by key; also add doc alias for its id)
 // * Add way to map setter and getters value
 // * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
 // * Add trybuild tests
