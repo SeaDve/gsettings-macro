@@ -6,7 +6,7 @@ mod generators;
 mod schema;
 
 use deluxe::SpannedValue;
-use proc_macro_error::{abort, emit_call_site_error, emit_error, emit_warning, proc_macro_error};
+use proc_macro_error::{abort, emit_call_site_error, emit_error, proc_macro_error};
 use quote::{quote, ToTokens};
 use syn::{
     parse::{Parse, ParseStream},
@@ -304,14 +304,33 @@ pub fn gen_settings(
     let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
         .unwrap_or_else(|err| abort!(file_attr_span, "failed to parse schema file: {}", err));
 
-    // Get first schema
     let mut schemas = schema_list.schemas;
-    if schemas.len() > 1 {
-        emit_warning!(file_attr_span, "this macro only supports a single schema");
+    if schemas.len() == 0 {
+        abort!(file_attr_span, "schema file must have a single schema");
     }
-    let schema = schemas
-        .pop()
-        .unwrap_or_else(|| abort!(file_attr_span, "schema file must have a single schema"));
+    if schemas.len() > 1 && id_attr.is_none() {
+        abort!(
+            file_attr_span,
+            "schema file contains multiple schemas, specify one with `id`"
+        );
+    }
+
+    // Get the schema
+    let schema = if schemas.len() == 1 {
+        schemas.pop().unwrap()
+    } else {
+        let id_attr = id_attr.as_ref().unwrap_or_else(|| {
+            abort!(
+                file_attr_span,
+                "schema file contains multiple schemas, specify one with `id`"
+            )
+        });
+        let id_attr = SpannedValue::into_inner(id_attr.clone());
+        schemas
+            .into_iter()
+            .find(|schema| schema.id == id_attr)
+            .unwrap_or_else(|| abort!(file_attr_span, "schema with id `{}` not found", id_attr))
+    };
 
     // Get schema id
     let schema_id = if let Some(id_attr) = id_attr {
