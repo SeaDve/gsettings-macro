@@ -508,7 +508,7 @@ fn multiple_schemas() {
 
     #[gen_settings(
         file = "tests/io.github.seadve.test.multi.gschema.xml",
-        id = "io.github.seadve.test"
+        id = "io.github.seadve.test.multi"
     )]
     #[gen_settings_skip(signature = "(ss)")]
     #[gen_settings_skip(signature = "ay")]
@@ -536,7 +536,7 @@ fn multiple_schemas() {
 
     #[gen_settings(
         file = "tests/io.github.seadve.test.multi.gschema.xml",
-        id = "io.github.seadve.test.window-state"
+        id = "io.github.seadve.test.multi.window-state"
     )]
     pub struct WindowStateSettings;
     let window_settings = WindowStateSettings::default();
