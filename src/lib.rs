@@ -8,6 +8,7 @@ mod schema;
 use deluxe::SpannedValue;
 use proc_macro_error::{abort, emit_call_site_error, emit_error, proc_macro_error};
 use quote::{quote, ToTokens};
+use schema::Schema;
 use syn::{
     parse::{Parse, ParseStream},
     spanned::Spanned,
@@ -36,6 +37,8 @@ use crate::{
 struct GenSettings {
     file: SpannedValue<String>,
     id: Option<SpannedValue<String>>,
+    #[deluxe(default=true)]
+    default: bool
 }
 
 #[derive(deluxe::ParseAttributes)]
@@ -290,6 +293,7 @@ pub fn gen_settings(
     let GenSettings {
         file: file_attr,
         id: id_attr,
+        default: impl_default,
     } = match deluxe::parse2(attr.into()) {
         Ok(gen_settings) => gen_settings,
         Err(err) => return err.to_compile_error().into(),
@@ -304,32 +308,35 @@ pub fn gen_settings(
     let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
         .unwrap_or_else(|err| abort!(file_attr_span, "failed to parse schema file: {}", err));
 
-    let mut schemas = schema_list.schemas;
-    if schemas.len() == 0 {
-        abort!(file_attr_span, "schema file must have a single schema");
-    }
-    if schemas.len() > 1 && id_attr.is_none() {
-        abort!(
-            file_attr_span,
-            "schema file contains multiple schemas, specify one with `id`"
-        );
-    }
+    let schemas = schema_list.schemas;
 
     // Get the schema
-    let schema = if schemas.len() == 1 {
-        schemas.pop().unwrap()
-    } else {
-        let id_attr = id_attr.as_ref().unwrap_or_else(|| {
+    let schema = match &schemas[..] {
+        [] => {
+            abort!(file_attr_span, "schema file must have a single schema");
+        }
+        [schema] => {
+            schema
+        }
+        _schemas if id_attr.is_none()  => {
             abort!(
                 file_attr_span,
                 "schema file contains multiple schemas, specify one with `id`"
-            )
-        });
-        let id_attr = SpannedValue::into_inner(id_attr.clone());
-        schemas
-            .into_iter()
-            .find(|schema| schema.id == id_attr)
-            .unwrap_or_else(|| abort!(file_attr_span, "schema with id `{}` not found", id_attr))
+            );
+        }
+        schemas => {
+            let id_attr = id_attr.as_ref().unwrap_or_else(|| {
+                abort!(
+                    file_attr_span,
+                    "schema file contains multiple schemas, specify one with `id`"
+                )
+            });
+            let id_attr = SpannedValue::into_inner(id_attr.clone());
+            schemas
+                .into_iter()
+                .find(|schema| schema.id == id_attr)
+                .unwrap_or_else(|| abort!(file_attr_span, "schema with id `{}` not found", id_attr))
+        }
     };
 
     // Get schema id
@@ -496,7 +503,8 @@ pub fn gen_settings(
         }
     }
 
-    let constructor_token_stream = if let Some(ref schema_id) = schema_id {
+    let constructor_token_stream = if schema_id.is_some() && impl_default {
+        let schema_id = schema_id.as_ref().unwrap();
         quote! {
             pub fn new() -> Self {
                 Self(gio::Settings::new(#schema_id))
@@ -546,7 +554,7 @@ pub fn gen_settings(
         }
     };
 
-    if schema_id.is_some() {
+    if schema_id.is_some() && impl_default {
         expanded.extend(quote! {
             impl Default for #struct_ident {
                 fn default() -> Self {
