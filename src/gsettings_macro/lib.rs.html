@@ -835,7 +835,7 @@
     <span class="kw">let </span>schema_file_path = SpannedValue::into_inner(file_attr);
 
     <span class="comment">// Parse schema list
-    </span><span class="kw">let </span>schema_file = File::open(<span class="kw-2">&amp;</span>schema_file_path).unwrap_or_else(|err| {
+    </span><span class="kw">let </span>schema_file = File::open(schema_file_path).unwrap_or_else(|err| {
         <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;failed to open schema file: {}&quot;</span>, err);
     });
     <span class="kw">let </span>schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
