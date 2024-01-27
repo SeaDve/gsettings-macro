@@ -296,7 +296,7 @@ pub fn gen_settings(
     let schema_file_path = SpannedValue::into_inner(file_attr);
 
     // Parse schema list
-    let schema_file = File::open(&schema_file_path).unwrap_or_else(|err| {
+    let schema_file = File::open(schema_file_path).unwrap_or_else(|err| {
         abort!(file_attr_span, "failed to open schema file: {}", err);
     });
     let schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
