@@ -59,6 +59,9 @@ assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir/"));
 For more examples and detailed information see the
 [documentation](https://seadve.github.io/gsettings-macro/gsettings_macro/attr.gen_settings.html).
 
+There are also real-world examples of this library being used in [Mousai](https://github.com/SeaDve/Mousai)
+and [Kooha](https://github.com/SeaDve/Kooha), a music recognizer and a screen recorder application, respectively.
+
 ## Generated methods
 
 The procedural macro generates the following [`gio::Settings`](https://docs.rs/gio/latest/gio/struct.Settings.html) methods
