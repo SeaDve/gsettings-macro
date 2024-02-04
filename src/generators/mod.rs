@@ -332,8 +332,8 @@ impl Context {
 }
 
 /// Creates an enum with given name and (variant name, variant value) tuple. It implements
-/// [`FromVariant`](gio::glib::FromVariant), [`ToVariant`](gio::glib::ToVariant),
-/// and [`StaticVariantType`](gio::glib::StaticVariantType).
+/// [`FromVariant`](gio::glib::prelude::FromVariant), [`ToVariant`](gio::glib::prelude::ToVariant),
+/// and [`StaticVariantType`](gio::glib::prelude::StaticVariantType).
 ///
 /// The input names are converted to pascal case
 fn new_variant_enum(
@@ -386,7 +386,7 @@ fn new_variant_enum(
             .zip(variant_idents.iter())
             .map(|(variant_name, variant_ident)| {
                 quote! {
-                    Self::#variant_ident => gio::glib::ToVariant::to_variant(#variant_name)
+                    Self::#variant_ident => gio::glib::prelude::ToVariant::to_variant(#variant_name)
                 }
             });
 
@@ -400,13 +400,13 @@ fn new_variant_enum(
             #(#variant_arms),*
         }
 
-        impl gio::glib::StaticVariantType for #ident {
+        impl gio::glib::prelude::StaticVariantType for #ident {
             fn static_variant_type() -> std::borrow::Cow<'static, gio::glib::VariantTy> {
                 std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING)
             }
         }
 
-        impl gio::glib::FromVariant for #ident {
+        impl gio::glib::prelude::FromVariant for #ident {
             fn from_variant(variant: &gio::glib::Variant) -> Option<Self> {
                 match variant.get::<String>()?.as_str() {
                     #(#from_variant_arms),*,
@@ -415,7 +415,7 @@ fn new_variant_enum(
             }
         }
 
-        impl gio::glib::ToVariant for #ident {
+        impl gio::glib::prelude::ToVariant for #ident {
             fn to_variant(&self) -> gio::glib::Variant {
                 match self {
                     #(#to_variant_arms),*
@@ -425,7 +425,7 @@ fn new_variant_enum(
 
         impl std::convert::From<#ident> for gio::glib::Variant {
             fn from(this: #ident) -> gio::glib::Variant {
-                gio::glib::ToVariant::to_variant(&this)
+                gio::glib::prelude::ToVariant::to_variant(&this)
             }
         }
     }

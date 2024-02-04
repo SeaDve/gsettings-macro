@@ -27,5 +27,5 @@ syn = "2.0"
 deluxe = "0.5"
 
 [dev-dependencies]
-gio = "0.18"
+gio = "0.19"
 serial_test = "2.0"
