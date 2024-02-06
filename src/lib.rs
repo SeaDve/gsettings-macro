@@ -22,8 +22,10 @@ use crate::{
 };
 
 // TODO:
+// * Replace proc-macro-error dep with syn::Result
+// * Decouple enum and flags generation from key generation, make them standalone
 // * Use `quote_spanned` where applicable for better error propagation on generated code
-// * Remove serde and deluxe dependencies
+// * Remove serde and deluxe dependencies (consider using quick-xml directly or xmlserde)
 // * Improve enum generation (create enum based on its definition, instead of by key; also add doc alias for its id)
 // * Add way to map setter and getters value
 // * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
