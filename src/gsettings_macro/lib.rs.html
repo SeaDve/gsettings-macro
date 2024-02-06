@@ -537,6 +537,8 @@
 <a href="#537" id="537">537</a>
 <a href="#538" id="538">538</a>
 <a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(rust_2018_idioms)]
 #![deny(rustdoc::broken_intra_doc_links)]
 #![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
@@ -561,8 +563,10 @@
 };
 
 <span class="comment">// TODO:
+// * Replace proc-macro-error dep with syn::Result
+// * Decouple enum and flags generation from key generation, make them standalone
 // * Use `quote_spanned` where applicable for better error propagation on generated code
-// * Remove serde and deluxe dependencies
+// * Remove serde and deluxe dependencies (consider using quick-xml directly or xmlserde)
 // * Improve enum generation (create enum based on its definition, instead of by key; also add doc alias for its id)
 // * Add way to map setter and getters value
 // * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
