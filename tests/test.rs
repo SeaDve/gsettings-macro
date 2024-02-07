@@ -1,5 +1,5 @@
 use gio::{
-    glib::{self, FromVariant, StaticVariantType, ToVariant, VariantTy},
+    glib::{self, VariantTy},
     prelude::*,
 };
 use gsettings_macro::gen_settings;
