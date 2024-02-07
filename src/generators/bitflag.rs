@@ -75,13 +75,13 @@ fn bitflag_token_stream(
             }
         }
 
-        impl gio::glib::prelude::StaticVariantType for #ident {
+        impl gio::glib::variant::StaticVariantType for #ident {
             fn static_variant_type() -> std::borrow::Cow<'static, gio::glib::VariantTy> {
                 std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING_ARRAY)
             }
         }
 
-        impl gio::glib::prelude::FromVariant for #ident {
+        impl gio::glib::variant::FromVariant for #ident {
             fn from_variant(variant: &gio::glib::Variant) -> Option<Self> {
                 let mut this = Self::empty();
 
@@ -96,19 +96,19 @@ fn bitflag_token_stream(
             }
         }
 
-        impl gio::glib::prelude::ToVariant for #ident {
+        impl gio::glib::variant::ToVariant for #ident {
             fn to_variant(&self) -> gio::glib::Variant {
                 let mut string_array = Vec::new();
 
                 #(#to_variant_arms)*
 
-                gio::glib::prelude::ToVariant::to_variant(&string_array)
+                gio::glib::variant::ToVariant::to_variant(&string_array)
             }
         }
 
         impl std::convert::From<#ident> for gio::glib::Variant {
             fn from(this: #ident) -> gio::glib::Variant {
-                gio::glib::prelude::ToVariant::to_variant(&this)
+                gio::glib::variant::ToVariant::to_variant(&this)
             }
         }
     }
