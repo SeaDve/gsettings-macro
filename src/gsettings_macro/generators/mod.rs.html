@@ -764,8 +764,8 @@
 }
 
 <span class="doccomment">/// Creates an enum with given name and (variant name, variant value) tuple. It implements
-/// [`FromVariant`](gio::glib::FromVariant), [`ToVariant`](gio::glib::ToVariant),
-/// and [`StaticVariantType`](gio::glib::StaticVariantType).
+/// [`FromVariant`](gio::glib::prelude::FromVariant), [`ToVariant`](gio::glib::prelude::ToVariant),
+/// and [`StaticVariantType`](gio::glib::prelude::StaticVariantType).
 ///
 /// The input names are converted to pascal case
 </span><span class="kw">fn </span>new_variant_enum(
@@ -818,7 +818,7 @@
             .zip(variant_idents.iter())
             .map(|(variant_name, variant_ident)| {
                 <span class="macro">quote! </span>{
-                    <span class="self">Self</span>::#variant_ident =&gt; gio::glib::ToVariant::to_variant(#variant_name)
+                    <span class="self">Self</span>::#variant_ident =&gt; gio::glib::prelude::ToVariant::to_variant(#variant_name)
                 }
             });
 
@@ -832,13 +832,13 @@
             #(#variant_arms),*
         }
 
-        <span class="kw">impl </span>gio::glib::StaticVariantType <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::StaticVariantType <span class="kw">for </span>#ident {
             <span class="kw">fn </span>static_variant_type() -&gt; std::borrow::Cow&lt;<span class="lifetime">&#39;static</span>, gio::glib::VariantTy&gt; {
                 std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING)
             }
         }
 
-        <span class="kw">impl </span>gio::glib::FromVariant <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::FromVariant <span class="kw">for </span>#ident {
             <span class="kw">fn </span>from_variant(variant: <span class="kw-2">&amp;</span>gio::glib::Variant) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
                 <span class="kw">match </span>variant.get::&lt;String&gt;()<span class="question-mark">?</span>.as_str() {
                     #(#from_variant_arms),<span class="kw-2">*</span>,
@@ -847,7 +847,7 @@
             }
         }
 
-        <span class="kw">impl </span>gio::glib::ToVariant <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::ToVariant <span class="kw">for </span>#ident {
             <span class="kw">fn </span>to_variant(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; gio::glib::Variant {
                 <span class="kw">match </span><span class="self">self </span>{
                     #(#to_variant_arms),*
@@ -857,7 +857,7 @@
 
         <span class="kw">impl </span>std::convert::From&lt;#ident&gt; <span class="kw">for </span>gio::glib::Variant {
             <span class="kw">fn </span>from(this: #ident) -&gt; gio::glib::Variant {
-                gio::glib::ToVariant::to_variant(<span class="kw-2">&amp;</span>this)
+                gio::glib::prelude::ToVariant::to_variant(<span class="kw-2">&amp;</span>this)
             }
         }
     }

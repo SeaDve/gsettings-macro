@@ -190,13 +190,13 @@
             }
         }
 
-        <span class="kw">impl </span>gio::glib::StaticVariantType <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::StaticVariantType <span class="kw">for </span>#ident {
             <span class="kw">fn </span>static_variant_type() -&gt; std::borrow::Cow&lt;<span class="lifetime">&#39;static</span>, gio::glib::VariantTy&gt; {
                 std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING_ARRAY)
             }
         }
 
-        <span class="kw">impl </span>gio::glib::FromVariant <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::FromVariant <span class="kw">for </span>#ident {
             <span class="kw">fn </span>from_variant(variant: <span class="kw-2">&amp;</span>gio::glib::Variant) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>this = <span class="self">Self</span>::empty();
 
@@ -211,19 +211,19 @@
             }
         }
 
-        <span class="kw">impl </span>gio::glib::ToVariant <span class="kw">for </span>#ident {
+        <span class="kw">impl </span>gio::glib::prelude::ToVariant <span class="kw">for </span>#ident {
             <span class="kw">fn </span>to_variant(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; gio::glib::Variant {
                 <span class="kw">let </span><span class="kw-2">mut </span>string_array = Vec::new();
 
                 #(#to_variant_arms)*
 
-                gio::glib::ToVariant::to_variant(<span class="kw-2">&amp;</span>string_array)
+                gio::glib::prelude::ToVariant::to_variant(<span class="kw-2">&amp;</span>string_array)
             }
         }
 
         <span class="kw">impl </span>std::convert::From&lt;#ident&gt; <span class="kw">for </span>gio::glib::Variant {
             <span class="kw">fn </span>from(this: #ident) -&gt; gio::glib::Variant {
-                gio::glib::ToVariant::to_variant(<span class="kw-2">&amp;</span>this)
+                gio::glib::prelude::ToVariant::to_variant(<span class="kw-2">&amp;</span>this)
             }
         }
     }
