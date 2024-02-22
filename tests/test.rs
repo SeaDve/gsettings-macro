@@ -536,7 +536,8 @@ fn multiple_schemas() {
 
     #[gen_settings(
         file = "tests/io.github.seadve.test.multi.gschema.xml",
-        id = "io.github.seadve.test.multi.window-state"
+        id = "io.github.seadve.test.multi.window-state",
+        globals = false
     )]
     pub struct WindowStateSettings;
     let window_settings = WindowStateSettings::default();
@@ -556,7 +557,6 @@ fn multiple_schemas() {
     window_settings.set_window_height_64(30_000);
     assert_eq!(window_settings.window_height_64(), 30_000);
 }
-
 
 #[test]
 #[serial_test::serial]
@@ -595,7 +595,8 @@ fn multiple_schemas_no_default() {
     #[gen_settings(
         file = "tests/io.github.seadve.test.multi.gschema.xml",
         id = "io.github.seadve.test.multi.window-state",
-        default = false
+        default = false,
+        globals = false
     )]
     pub struct WindowStateSettings;
 

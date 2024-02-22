@@ -5,7 +5,7 @@
         <value nick="glass" value="2" />
         <value nick="drip" value="1" />
     </enum>
-    <flags id="io.github.seadve.multi.SpacesStyle">
+    <flags id="io.github.seadve.multi.SpaceStyle">
         <value nick="before-colon" value="1" />
         <value nick="before-semicolon" value="4" />
         <value nick="before-comma" value="2" />
@@ -62,7 +62,7 @@
             <summary>the sound to play on an alert</summary>
             <description></description>
         </key>
-        <key name="space-style" flags="io.github.seadve.multi.SpacesStyle">
+        <key name="space-style" flags="io.github.seadve.multi.SpaceStyle">
             <default>[]</default>
             <summary>style of space</summary>
             <description></description>

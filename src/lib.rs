@@ -6,9 +6,10 @@ mod generators;
 mod schema;
 
 use deluxe::SpannedValue;
+use generators::{bitflag_token_stream, enum_token_stream, type_name_from_id};
 use proc_macro_error::{abort, emit_call_site_error, emit_error, proc_macro_error};
 use quote::{quote, ToTokens};
-use schema::Schema;
+
 use syn::{
     parse::{Parse, ParseStream},
     spanned::Spanned,
@@ -24,21 +25,21 @@ use crate::{
 
 // TODO:
 // * Replace proc-macro-error dep with syn::Result
-// * Decouple enum and flags generation from key generation, make them standalone
 // * Use `quote_spanned` where applicable for better error propagation on generated code
 // * Remove serde and deluxe dependencies (consider using quick-xml directly or xmlserde)
 // * Improve enum generation (create enum based on its definition, instead of by key; also add doc alias for its id)
 // * Add way to map setter and getters value
 // * Add `bind_#key writable`, `user_#key_value`, `connect_#key_writable_changed` variants
 // * Add trybuild tests
-// * Support for multiple schema
 
 #[derive(deluxe::ParseMetaItem)]
 struct GenSettings {
     file: SpannedValue<String>,
     id: Option<SpannedValue<String>>,
-    #[deluxe(default=true)]
-    default: bool
+    #[deluxe(default = true)]
+    default: bool,
+    #[deluxe(default = true)]
+    globals: bool,
 }
 
 #[derive(deluxe::ParseAttributes)]
@@ -294,6 +295,7 @@ pub fn gen_settings(
         file: file_attr,
         id: id_attr,
         default: impl_default,
+        globals,
     } = match deluxe::parse2(attr.into()) {
         Ok(gen_settings) => gen_settings,
         Err(err) => return err.to_compile_error().into(),
@@ -315,10 +317,8 @@ pub fn gen_settings(
         [] => {
             abort!(file_attr_span, "schema file must have a single schema");
         }
-        [schema] => {
-            schema
-        }
-        _schemas if id_attr.is_none()  => {
+        [schema] => schema,
+        _schemas if id_attr.is_none() => {
             abort!(
                 file_attr_span,
                 "schema file contains multiple schemas, specify one with `id`"
@@ -333,7 +333,7 @@ pub fn gen_settings(
             });
             let id_attr = SpannedValue::into_inner(id_attr.clone());
             schemas
-                .into_iter()
+                .iter()
                 .find(|schema| schema.id == id_attr)
                 .unwrap_or_else(|| abort!(file_attr_span, "schema with id `{}` not found", id_attr))
         }
@@ -472,13 +472,38 @@ pub fn gen_settings(
         .iter()
         .map(|flag| (flag.id.to_string(), flag))
         .collect::<HashMap<_, _>>();
-    let mut key_generators = KeyGenerators::with_defaults(enums, flags);
+
+    let mut key_generators = KeyGenerators::with_defaults(enums.clone(), flags.clone());
     key_generators.add_signature_overrides(signature_overrides);
     key_generators.add_key_name_overrides(key_name_overrides);
 
     // Generate code
     let mut aux_token_stream = proc_macro2::TokenStream::new();
     let mut keys_token_stream = proc_macro2::TokenStream::new();
+
+    if globals {
+        for (id, enumeration) in enums {
+            let enum_type = type_name_from_id(&id);
+            aux_token_stream.extend(enum_token_stream(
+                &enum_type,
+                &enumeration
+                    .values
+                    .iter()
+                    .map(|value| (value.nick.as_str(), Some(value.value)))
+                    .collect::<Vec<_>>(),
+                settings_struct.vis.clone(),
+            ));
+        }
+
+        for (id, flag) in flags {
+            let flag_type = type_name_from_id(&id);
+            aux_token_stream.extend(bitflag_token_stream(
+                &flag_type,
+                flag,
+                settings_struct.vis.clone(),
+            ));
+        }
+    }
 
     for key in &schema.keys {
         match key_generators
