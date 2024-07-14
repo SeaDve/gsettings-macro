@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><title>lib.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../gsettings_macro/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -541,7 +541,7 @@
 <a href="#541" id="541">541</a>
 </pre></div><pre class="rust"><code><span class="attr">#![warn(rust_2018_idioms)]
 #![deny(rustdoc::broken_intra_doc_links)]
-#![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
+#![doc = <span class="macro">include_str!</span>(<span class="string">"../README.md"</span>)]
 
 </span><span class="kw">mod </span>generators;
 <span class="kw">mod </span>schema;
@@ -602,7 +602,7 @@
 }
 
 <span class="kw">impl </span>Parse <span class="kw">for </span>SettingsStruct {
-    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; syn::parse::Result&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">fn </span>parse(input: ParseStream&lt;<span class="lifetime">'_</span>&gt;) -&gt; syn::parse::Result&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             attrs: input.call(syn::Attribute::parse_outer)<span class="question-mark">?</span>,
             vis: input.parse()<span class="question-mark">?</span>,
@@ -628,7 +628,7 @@
 
 <span class="doccomment">/// Macro for typesafe [`gio::Settings`] key access.
 ///
-/// The macro&#39;s main purpose is to reduce the risk of mistyping a key,
+/// The macro's main purpose is to reduce the risk of mistyping a key,
 /// using the wrong method to access values, inputting incorrect values,
 /// and to reduce boilerplate. Additionally, the summary, description,
 /// and default value are included in the documentation of each generated
@@ -650,10 +650,10 @@
 /// ```ignore
 /// use gsettings_macro::gen_settings;
 ///
-/// #[gen_settings(file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;)]
+/// #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
 /// pub struct ApplicationSettings;
 ///
-/// let settings = ApplicationSettings::new(&quot;io.github.seadve.test&quot;);
+/// let settings = ApplicationSettings::new("io.github.seadve.test");
 ///
 /// // `i` D-Bus type
 /// settings.set_window_width(100);
@@ -691,7 +691,7 @@
 /// ### Known D-Bus type signatures
 ///
 /// The setter and getter methods has the following parameter and
-/// return type, depending on the key&#39;s type signature.
+/// return type, depending on the key's type signature.
 ///
 /// | Type Signature | Parameter Type | Return Type   |
 /// | -------------- | -------------- | ------------- |
@@ -742,13 +742,13 @@
 /// use gsettings_macro::gen_settings;
 ///
 /// #[gen_settings(
-///     file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;,
-///     id = &quot;io.github.seadve.test&quot;
+///     file = "./tests/io.github.seadve.test.gschema.xml",
+///     id = "io.github.seadve.test"
 /// )]
 /// // Skip generating methods for keys with type signature `(ss)`
-/// #[gen_settings_skip(signature = &quot;(ss)&quot;)]
+/// #[gen_settings_skip(signature = "(ss)")]
 /// // Skip generating methods for the key of name `some-key-name`
-/// #[gen_settings_skip(key_name = &quot;some-key-name&quot;)]
+/// #[gen_settings_skip(key_name = "some-key-name")]
 /// pub struct Settings;
 ///
 /// impl Settings {
@@ -765,24 +765,24 @@
 ///
 /// use std::path::{Path, PathBuf};
 ///
-/// #[gen_settings(file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;)]
+/// #[gen_settings(file = "./tests/io.github.seadve.test.gschema.xml")]
 /// // Define custom parameter and return types for keys with type `(ss)`
 /// #[gen_settings_define(
-///     signature = &quot;(ss)&quot;,
-///     arg_type = &quot;(&amp;str, &amp;str)&quot;,
-///     ret_type = &quot;(String, String)&quot;
+///     signature = "(ss)",
+///     arg_type = "(&amp;str, &amp;str)",
+///     ret_type = "(String, String)"
 /// )]
 /// // Define custom parameter and return types for key with name `cache-dir`
-/// #[gen_settings_define(key_name = &quot;cache-dir&quot;, arg_type = &quot;&amp;Path&quot;, ret_type = &quot;PathBuf&quot;)]
+/// #[gen_settings_define(key_name = "cache-dir", arg_type = "&amp;Path", ret_type = "PathBuf")]
 /// pub struct SomeAppSettings;
 ///
-/// let settings = SomeAppSettings::new(&quot;io.github.seadve.test&quot;);
+/// let settings = SomeAppSettings::new("io.github.seadve.test");
 ///
-/// settings.set_cache_dir(Path::new(&quot;/some_dir&quot;));
-/// assert_eq!(settings.cache_dir(), PathBuf::from(&quot;/some_dir&quot;));
+/// settings.set_cache_dir(Path::new("/some_dir"));
+/// assert_eq!(settings.cache_dir(), PathBuf::from("/some_dir"));
 ///
-/// settings.set_string_tuple((&quot;hi&quot;, &quot;hi2&quot;));
-/// assert_eq!(settings.string_tuple(), (&quot;hi&quot;.into(), &quot;hi2&quot;.into()));
+/// settings.set_string_tuple(("hi", "hi2"));
+/// assert_eq!(settings.string_tuple(), ("hi".into(), "hi2".into()));
 /// ```
 ///
 /// The type specified in `arg_type` and `ret_type` has to be on scope or
@@ -807,8 +807,8 @@
 /// use gsettings_macro::gen_settings;
 ///
 /// #[gen_settings(
-///     file = &quot;./tests/io.github.seadve.test.gschema.xml&quot;,
-///     id = &quot;io.github.seadve.test&quot;
+///     file = "./tests/io.github.seadve.test.gschema.xml",
+///     id = "io.github.seadve.test"
 /// )]
 /// pub struct ApplicationSettings;
 ///
@@ -840,19 +840,19 @@
 
     <span class="comment">// Parse schema list
     </span><span class="kw">let </span>schema_file = File::open(schema_file_path).unwrap_or_else(|err| {
-        <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;failed to open schema file: {}&quot;</span>, err);
+        <span class="macro">abort!</span>(file_attr_span, <span class="string">"failed to open schema file: {}"</span>, err);
     });
     <span class="kw">let </span>schema_list: SchemaList = quick_xml::de::from_reader(BufReader::new(schema_file))
-        .unwrap_or_else(|err| <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;failed to parse schema file: {}&quot;</span>, err));
+        .unwrap_or_else(|err| <span class="macro">abort!</span>(file_attr_span, <span class="string">"failed to parse schema file: {}"</span>, err));
 
     <span class="comment">// Get first schema
     </span><span class="kw">let </span><span class="kw-2">mut </span>schemas = schema_list.schemas;
     <span class="kw">if </span>schemas.len() &gt; <span class="number">1 </span>{
-        <span class="macro">emit_warning!</span>(file_attr_span, <span class="string">&quot;this macro only supports a single schema&quot;</span>);
+        <span class="macro">emit_warning!</span>(file_attr_span, <span class="string">"this macro only supports a single schema"</span>);
     }
     <span class="kw">let </span>schema = schemas
         .pop()
-        .unwrap_or_else(|| <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;schema file must have a single schema&quot;</span>));
+        .unwrap_or_else(|| <span class="macro">abort!</span>(file_attr_span, <span class="string">"schema file must have a single schema"</span>));
 
     <span class="comment">// Get schema id
     </span><span class="kw">let </span>schema_id = <span class="kw">if let </span><span class="prelude-val">Some</span>(id_attr) = id_attr {
@@ -862,7 +862,7 @@
         <span class="kw">if </span>schema.id != schema_id {
             <span class="macro">emit_error!</span>(
                 id_attr_span,
-                <span class="string">&quot;id does not match the one specified in the schema file&quot;
+                <span class="string">"id does not match the one specified in the schema file"
             </span>);
         }
 
@@ -879,7 +879,7 @@
         .iter()
         .map(|key| {
             key.signature().unwrap_or_else(|| {
-                <span class="macro">abort!</span>(file_attr_span, <span class="string">&quot;expected one of `type`, `enum` or `flags` specified attribute on key `{}` in the schema&quot;</span>, key.name);
+                <span class="macro">abort!</span>(file_attr_span, <span class="string">"expected one of `type`, `enum` or `flags` specified attribute on key `{}` in the schema"</span>, key.name);
             })
         })
         .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
@@ -891,7 +891,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>signature_overrides = HashMap::new();
     <span class="kw">let </span><span class="kw-2">mut </span>key_name_overrides = HashMap::new();
     <span class="kw">for </span>attr <span class="kw">in </span><span class="kw-2">&amp;</span>settings_struct.attrs {
-        <span class="kw">let </span>(signature, key_name, override_type) = <span class="kw">if </span>attr.path().is_ident(<span class="string">&quot;gen_settings_define&quot;</span>) {
+        <span class="kw">let </span>(signature, key_name, override_type) = <span class="kw">if </span>attr.path().is_ident(<span class="string">"gen_settings_define"</span>) {
             <span class="kw">let </span>GenSettingsDefine {
                 signature,
                 key_name,
@@ -913,7 +913,7 @@
                     ret_type: SpannedValue::into_inner(ret_type),
                 },
             )
-        } <span class="kw">else if </span>attr.path().is_ident(<span class="string">&quot;gen_settings_skip&quot;</span>) {
+        } <span class="kw">else if </span>attr.path().is_ident(<span class="string">"gen_settings_skip"</span>) {
             <span class="kw">let </span>GenSettingsSkip {
                 signature,
                 key_name,
@@ -929,7 +929,7 @@
         } <span class="kw">else </span>{
             <span class="macro">emit_error!</span>(
                 attr.span(),
-                <span class="string">&quot;expected `#[gen_settings_define( .. )]` or `#[gen_settings_skip( .. )]`&quot;
+                <span class="string">"expected `#[gen_settings_define( .. )]` or `#[gen_settings_skip( .. )]`"
             </span>);
             <span class="kw">continue</span>;
         };
@@ -938,11 +938,11 @@
             (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; {
                 <span class="macro">emit_error!</span>(
                     attr.span(),
-                    <span class="string">&quot;cannot specify both `signature` and `key_name`&quot;
+                    <span class="string">"cannot specify both `signature` and `key_name`"
                 </span>)
             }
             (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; {
-                <span class="macro">emit_error!</span>(attr.span(), <span class="string">&quot;must specify either `signature` or `key_name`&quot;</span>)
+                <span class="macro">emit_error!</span>(attr.span(), <span class="string">"must specify either `signature` or `key_name`"</span>)
             }
             (<span class="prelude-val">Some</span>(signature), <span class="prelude-val">None</span>) =&gt; {
                 <span class="kw">let </span>signature_span = signature.span();
@@ -950,11 +950,11 @@
                 <span class="kw">let </span>signature_type = SchemaKeySignature::Type(signature_str);
 
                 <span class="kw">if </span>!known_signatures.contains(<span class="kw-2">&amp;</span>signature_type) {
-                    <span class="macro">emit_error!</span>(signature_span, <span class="string">&quot;useless define for this signature&quot;</span>);
+                    <span class="macro">emit_error!</span>(signature_span, <span class="string">"useless define for this signature"</span>);
                 }
 
                 <span class="kw">if </span>signature_overrides.get(<span class="kw-2">&amp;</span>signature_type).is_some() {
-                    <span class="macro">emit_error!</span>(signature_span, <span class="string">&quot;duplicate override&quot;</span>);
+                    <span class="macro">emit_error!</span>(signature_span, <span class="string">"duplicate override"</span>);
                 }
 
                 signature_overrides.insert(signature_type, override_type);
@@ -964,11 +964,11 @@
                 <span class="kw">let </span>key_name_str = SpannedValue::into_inner(key_name);
 
                 <span class="kw">if </span>!known_key_names.contains(<span class="kw-2">&amp;</span>key_name_str.as_str()) {
-                    <span class="macro">emit_error!</span>(key_name_span, <span class="string">&quot;key_name not found in the schema&quot;</span>);
+                    <span class="macro">emit_error!</span>(key_name_span, <span class="string">"key_name not found in the schema"</span>);
                 }
 
                 <span class="kw">if </span>key_name_overrides.get(<span class="kw-2">&amp;</span>key_name_str).is_some() {
-                    <span class="macro">emit_error!</span>(key_name_span, <span class="string">&quot;duplicate override&quot;</span>);
+                    <span class="macro">emit_error!</span>(key_name_span, <span class="string">"duplicate override"</span>);
                 }
 
                 key_name_overrides.insert(key_name_str, override_type);
@@ -1010,7 +1010,7 @@
             }
             GetResult::Unknown =&gt; {
                 <span class="macro">emit_call_site_error!</span>(
-                    <span class="string">&quot;unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`&quot;</span>,
+                    <span class="string">"unsupported {} signature used by key `{}`; consider using `#[gen_settings_define( .. )]` or skip it with `#[gen_settings_skip( .. )]`"</span>,
                     <span class="kw-2">&amp;</span>key.signature().unwrap(),
                     <span class="kw-2">&amp;</span>key.name,
                 )
@@ -1019,13 +1019,13 @@
     }
 
     <span class="kw">let </span>constructor_token_stream = <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>schema_id) = schema_id {
-        <span class="macro">quote! </span>{
+        <span class="macro">quote!</span> {
             <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
                 <span class="self">Self</span>(gio::Settings::new(#schema_id))
             }
         }
     } <span class="kw">else </span>{
-        <span class="macro">quote! </span>{
+        <span class="macro">quote!</span> {
             <span class="kw">pub fn </span>new(schema_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
                 <span class="self">Self</span>(gio::Settings::new(schema_id))
             }
@@ -1034,7 +1034,7 @@
 
     <span class="kw">let </span>struct_ident = <span class="kw-2">&amp;</span>settings_struct.ident;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>expanded = <span class="macro">quote! </span>{
+    <span class="kw">let </span><span class="kw-2">mut </span>expanded = <span class="macro">quote!</span> {
         #aux_token_stream
 
         <span class="attr">#[derive(Clone, Hash, PartialEq, Eq, gio::glib::ValueDelegate)]
@@ -1069,7 +1069,7 @@
     };
 
     <span class="kw">if </span>schema_id.is_some() {
-        expanded.extend(<span class="macro">quote! </span>{
+        expanded.extend(<span class="macro">quote!</span> {
             <span class="kw">impl </span>Default <span class="kw">for </span>#struct_ident {
                 <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
                     <span class="self">Self</span>::new()

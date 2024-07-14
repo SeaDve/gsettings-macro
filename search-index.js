@@ -1,5 +1,5 @@
-var searchIndex = JSON.parse('{\
-"gsettings_macro":{"doc":"GSettings Macro","t":"X","n":["gen_settings"],"q":[[0,"gsettings_macro"]],"d":["Macro for typesafe <code>gio::Settings</code> key access."],"i":[0],"f":[0],"c":[],"p":[],"b":[]}\
-}');
-if (typeof window !== 'undefined' && window.initSearch) {window.initSearch(searchIndex)};
-if (typeof exports !== 'undefined') {exports.searchIndex = searchIndex};
+var searchIndex = new Map(JSON.parse('[\
+["gsettings_macro",{"t":"X","n":["gen_settings"],"q":[[0,"gsettings_macro"]],"i":[0],"f":"`","D":"d","p":[],"r":[],"b":[],"c":"OjAAAAAAAAA=","e":"OjAAAAAAAAA="}]\
+]'));
+if (typeof exports !== 'undefined') exports.searchIndex = searchIndex;
+else if (window.initSearch) window.initSearch(searchIndex);

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/generators/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-9ee3a5e31a2afa3e.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.75.0 (82e1608df 2023-12-21)" data-channel="1.75.0" data-search-js="search-8fbf244ebcf71464.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-9dd44ab47b99a0fb.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/generators/mod.rs`."><title>mod.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="gsettings_macro" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-e32f0c247825364d.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../../gsettings_macro/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -452,25 +452,25 @@
     Skip,
 }
 
-<span class="kw">pub enum </span>GetResult&lt;<span class="lifetime">&#39;a</span>&gt; {
-    <span class="prelude-val">Some</span>(KeyGenerator&lt;<span class="lifetime">&#39;a</span>&gt;),
+<span class="kw">pub enum </span>GetResult&lt;<span class="lifetime">'a</span>&gt; {
+    <span class="prelude-val">Some</span>(KeyGenerator&lt;<span class="lifetime">'a</span>&gt;),
     Skip,
     Unknown,
 }
 
-<span class="kw">pub struct </span>KeyGenerators&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">pub struct </span>KeyGenerators&lt;<span class="lifetime">'a</span>&gt; {
     signatures: HashMap&lt;SchemaKeySignature, Context&gt;,
     key_names: HashMap&lt;String, Context&gt;,
-    enums: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaEnum&gt;,
-    flags: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaFlag&gt;,
+    enums: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaEnum&gt;,
+    flags: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaFlag&gt;,
     signature_skips: HashSet&lt;SchemaKeySignature&gt;,
     key_name_skips: HashSet&lt;String&gt;,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; KeyGenerators&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; KeyGenerators&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">pub fn </span>with_defaults(
-        enums: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaEnum&gt;,
-        flags: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaFlag&gt;,
+        enums: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaEnum&gt;,
+        flags: HashMap&lt;String, <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaFlag&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>this = <span class="self">Self </span>{
             signatures: HashMap::new(),
@@ -482,14 +482,14 @@
         };
 
         <span class="comment">// Built ins
-        </span>this.insert_type(<span class="string">&quot;b&quot;</span>, Context::new(<span class="string">&quot;bool&quot;</span>));
-        this.insert_type(<span class="string">&quot;i&quot;</span>, Context::new(<span class="string">&quot;i32&quot;</span>));
-        this.insert_type(<span class="string">&quot;u&quot;</span>, Context::new(<span class="string">&quot;u32&quot;</span>));
-        this.insert_type(<span class="string">&quot;x&quot;</span>, Context::new(<span class="string">&quot;i64&quot;</span>));
-        this.insert_type(<span class="string">&quot;t&quot;</span>, Context::new(<span class="string">&quot;u64&quot;</span>));
-        this.insert_type(<span class="string">&quot;d&quot;</span>, Context::new(<span class="string">&quot;f64&quot;</span>));
-        this.insert_type(<span class="string">&quot;(ii)&quot;</span>, Context::new(<span class="string">&quot;(i32, i32)&quot;</span>));
-        this.insert_type(<span class="string">&quot;as&quot;</span>, Context::new_dissimilar(<span class="string">&quot;&amp;[&amp;str]&quot;</span>, <span class="string">&quot;Vec&lt;String&gt;&quot;</span>));
+        </span>this.insert_type(<span class="string">"b"</span>, Context::new(<span class="string">"bool"</span>));
+        this.insert_type(<span class="string">"i"</span>, Context::new(<span class="string">"i32"</span>));
+        this.insert_type(<span class="string">"u"</span>, Context::new(<span class="string">"u32"</span>));
+        this.insert_type(<span class="string">"x"</span>, Context::new(<span class="string">"i64"</span>));
+        this.insert_type(<span class="string">"t"</span>, Context::new(<span class="string">"u64"</span>));
+        this.insert_type(<span class="string">"d"</span>, Context::new(<span class="string">"f64"</span>));
+        this.insert_type(<span class="string">"(ii)"</span>, Context::new(<span class="string">"(i32, i32)"</span>));
+        this.insert_type(<span class="string">"as"</span>, Context::new_dissimilar(<span class="string">"&amp;[&amp;str]"</span>, <span class="string">"Vec&lt;String&gt;"</span>));
 
         this
     }
@@ -529,10 +529,10 @@
     }
 
     <span class="kw">pub fn </span>get(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-        key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaKey,
+        <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>,
+        key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaKey,
         aux_visibility: syn::Visibility,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;GetResult&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;GetResult&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">let </span>key_signature = key.signature()<span class="question-mark">?</span>;
 
         <span class="kw">if </span><span class="self">self</span>.key_name_skips.contains(<span class="kw-2">&amp;</span>key.name) {
@@ -553,20 +553,20 @@
 
         <span class="prelude-val">Some</span>(<span class="kw">match </span>key_signature {
             SchemaKeySignature::Type(type_) =&gt; <span class="kw">match </span>type_.as_str() {
-                <span class="string">&quot;s&quot; </span>=&gt; GetResult::Some(string::key_generator(key, aux_visibility)),
+                <span class="string">"s" </span>=&gt; GetResult::Some(string::key_generator(key, aux_visibility)),
                 <span class="kw">_ </span>=&gt; GetResult::Unknown,
             },
             SchemaKeySignature::Enum(<span class="kw-2">ref </span>enum_name) =&gt; GetResult::Some(enumeration::key_generator(
                 key,
                 <span class="self">self</span>.enums.get(enum_name).unwrap_or_else(|| {
-                    <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected an enum definition for `{}`&quot;</span>, enum_name)
+                    <span class="macro">abort_call_site!</span>(<span class="string">"expected an enum definition for `{}`"</span>, enum_name)
                 }),
                 aux_visibility,
             )),
             SchemaKeySignature::Flag(<span class="kw-2">ref </span>flag_name) =&gt; GetResult::Some(bitflag::key_generator(
                 key,
                 <span class="self">self</span>.flags.get(flag_name).unwrap_or_else(|| {
-                    <span class="macro">abort_call_site!</span>(<span class="string">&quot;expected a flag definition for `{}`&quot;</span>, flag_name)
+                    <span class="macro">abort_call_site!</span>(<span class="string">"expected a flag definition for `{}`"</span>, flag_name)
                 }),
                 aux_visibility,
             )),
@@ -579,17 +579,17 @@
     }
 }
 
-<span class="kw">pub struct </span>KeyGenerator&lt;<span class="lifetime">&#39;a</span>&gt; {
-    key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaKey,
+<span class="kw">pub struct </span>KeyGenerator&lt;<span class="lifetime">'a</span>&gt; {
+    key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaKey,
     context: Context,
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; KeyGenerator&lt;<span class="lifetime">&#39;a</span>&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">'a</span>&gt; KeyGenerator&lt;<span class="lifetime">'a</span>&gt; {
     <span class="kw">pub fn </span>auxiliary(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;proc_macro2::TokenStream&gt; {
         <span class="self">self</span>.context.auxiliary.clone()
     }
 
-    <span class="kw">fn </span>new(key: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>SchemaKey, context: Context) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(key: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>SchemaKey, context: Context) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ key, context }
     }
 
@@ -610,27 +610,27 @@
 
         <span class="kw">if </span>has_summary {
             <span class="kw">let </span>summary = <span class="self">self</span>.key.summary.as_ref().unwrap();
-            stream.extend(<span class="macro">quote! </span>{
+            stream.extend(<span class="macro">quote!</span> {
                 <span class="attr">#[doc = #summary]
             </span>});
         }
 
         <span class="kw">if </span>has_summary &amp;&amp; has_description {
-            stream.extend(<span class="macro">quote! </span>{
-                <span class="attr">#[doc = <span class="string">&quot;&quot;</span>]
+            stream.extend(<span class="macro">quote!</span> {
+                <span class="attr">#[doc = <span class="string">""</span>]
             </span>});
         }
 
         <span class="kw">if </span>has_description {
             <span class="kw">let </span>description = <span class="self">self</span>.key.description.as_ref().unwrap();
-            stream.extend(<span class="macro">quote! </span>{
+            stream.extend(<span class="macro">quote!</span> {
                 <span class="attr">#[doc = #description]
             </span>});
         }
 
-        <span class="kw">let </span>default_docs = <span class="macro">format!</span>(<span class="string">&quot;default: {}&quot;</span>, <span class="self">self</span>.key.default);
-        stream.extend(<span class="macro">quote! </span>{
-            <span class="attr">#[doc = <span class="string">&quot;&quot;</span>]
+        <span class="kw">let </span>default_docs = <span class="macro">format!</span>(<span class="string">"default: {}"</span>, <span class="self">self</span>.key.default);
+        stream.extend(<span class="macro">quote!</span> {
+            <span class="attr">#[doc = <span class="string">""</span>]
             #[doc = #default_docs]
         </span>});
 
@@ -640,22 +640,22 @@
             <span class="kw">let </span>has_max = range.max.as_ref().map_or(<span class="bool-val">false</span>, |max| !max.is_empty());
 
             <span class="kw">if </span>has_min || has_max {
-                stream.extend(<span class="macro">quote! </span>{
-                    <span class="attr">#[doc = <span class="string">&quot;&quot;</span>]
+                stream.extend(<span class="macro">quote!</span> {
+                    <span class="attr">#[doc = <span class="string">""</span>]
                 </span>});
             }
             <span class="kw">let </span><span class="kw-2">mut </span>range_docs = String::new();
             <span class="kw">if </span>has_min {
-                <span class="macro">write!</span>(range_docs, <span class="string">&quot;min: {}&quot;</span>, range.min.as_ref().unwrap()).unwrap();
+                <span class="macro">write!</span>(range_docs, <span class="string">"min: {}"</span>, range.min.as_ref().unwrap()).unwrap();
             }
             <span class="kw">if </span>has_min &amp;&amp; has_max {
-                range_docs.push(<span class="string">&#39;;&#39;</span>);
-                range_docs.push(<span class="string">&#39; &#39;</span>);
+                range_docs.push(<span class="string">';'</span>);
+                range_docs.push(<span class="string">' '</span>);
             }
             <span class="kw">if </span>has_max {
-                <span class="macro">write!</span>(range_docs, <span class="string">&quot;max: {}&quot;</span>, range.max.as_ref().unwrap()).unwrap();
+                <span class="macro">write!</span>(range_docs, <span class="string">"max: {}"</span>, range.max.as_ref().unwrap()).unwrap();
             }
-            stream.extend(<span class="macro">quote! </span>{
+            stream.extend(<span class="macro">quote!</span> {
                 <span class="attr">#[doc = #range_docs]
             </span>})
         }
@@ -664,29 +664,29 @@
     }
 }
 
-<span class="kw">impl </span>quote::ToTokens <span class="kw">for </span>KeyGenerator&lt;<span class="lifetime">&#39;_</span>&gt; {
+<span class="kw">impl </span>quote::ToTokens <span class="kw">for </span>KeyGenerator&lt;<span class="lifetime">'_</span>&gt; {
     <span class="kw">fn </span>to_tokens(<span class="kw-2">&amp;</span><span class="self">self</span>, tokens: <span class="kw-2">&amp;mut </span>proc_macro2::TokenStream) {
         <span class="kw">let </span>key_name = <span class="self">self</span>.key.name.as_str();
         <span class="kw">let </span>key_name_snake_case = key_name.to_snake_case();
         <span class="kw">let </span>getter_func_ident = Ident::new(<span class="kw-2">&amp;</span>key_name_snake_case, Span::call_site());
 
-        <span class="kw">let </span>connect_changed_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;connect_{}_changed&quot;</span>, getter_func_ident);
-        <span class="kw">let </span>bind_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;bind_{}&quot;</span>, getter_func_ident);
-        <span class="kw">let </span>create_action_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;create_{}_action&quot;</span>, getter_func_ident);
-        <span class="kw">let </span>reset_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;reset_{}&quot;</span>, getter_func_ident);
+        <span class="kw">let </span>connect_changed_func_ident = <span class="macro">format_ident!</span>(<span class="string">"connect_{}_changed"</span>, getter_func_ident);
+        <span class="kw">let </span>bind_func_ident = <span class="macro">format_ident!</span>(<span class="string">"bind_{}"</span>, getter_func_ident);
+        <span class="kw">let </span>create_action_func_ident = <span class="macro">format_ident!</span>(<span class="string">"create_{}_action"</span>, getter_func_ident);
+        <span class="kw">let </span>reset_func_ident = <span class="macro">format_ident!</span>(<span class="string">"reset_{}"</span>, getter_func_ident);
 
         <span class="kw">let </span>func_docs = <span class="self">self</span>.func_docs();
 
-        tokens.extend(<span class="macro">quote! </span>{
+        tokens.extend(<span class="macro">quote!</span> {
             #func_docs
-            <span class="kw">pub fn </span>#connect_changed_func_ident(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw">impl </span>Fn(<span class="kw-2">&amp;</span><span class="self">Self</span>) + <span class="lifetime">&#39;static</span>) -&gt; gio::glib::SignalHandlerId {
+            <span class="kw">pub fn </span>#connect_changed_func_ident(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw">impl </span>Fn(<span class="kw-2">&amp;</span><span class="self">Self</span>) + <span class="lifetime">'static</span>) -&gt; gio::glib::SignalHandlerId {
                 gio::prelude::SettingsExt::connect_changed(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, <span class="prelude-val">Some</span>(#key_name), <span class="kw">move </span>|settings, <span class="kw">_</span>| {
                     f(<span class="kw-2">&amp;</span><span class="self">Self</span>(gio::Settings::clone(settings)))
                 })
             }
 
             #func_docs
-            <span class="kw">pub fn </span>#bind_func_ident&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, object: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw">impl </span>gio::glib::object::IsA&lt;gio::glib::Object&gt;, property: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str) -&gt; gio::BindingBuilder&lt;<span class="lifetime">&#39;a</span>&gt; {
+            <span class="kw">pub fn </span>#bind_func_ident&lt;<span class="lifetime">'a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="self">self</span>, object: <span class="kw-2">&amp;</span><span class="lifetime">'a </span><span class="kw">impl </span>gio::glib::object::IsA&lt;gio::glib::Object&gt;, property: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>str) -&gt; gio::BindingBuilder&lt;<span class="lifetime">'a</span>&gt; {
                 gio::prelude::SettingsExtManual::bind(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, #key_name, object, property)
             }
 
@@ -701,19 +701,19 @@
             }
         });
 
-        <span class="kw">let </span>setter_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;set_{}&quot;</span>, getter_func_ident);
-        <span class="kw">let </span>try_setter_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;try_set_{}&quot;</span>, getter_func_ident);
-        <span class="kw">let </span>default_value_func_ident = <span class="macro">format_ident!</span>(<span class="string">&quot;{}_default_value&quot;</span>, getter_func_ident);
+        <span class="kw">let </span>setter_func_ident = <span class="macro">format_ident!</span>(<span class="string">"set_{}"</span>, getter_func_ident);
+        <span class="kw">let </span>try_setter_func_ident = <span class="macro">format_ident!</span>(<span class="string">"try_set_{}"</span>, getter_func_ident);
+        <span class="kw">let </span>default_value_func_ident = <span class="macro">format_ident!</span>(<span class="string">"{}_default_value"</span>, getter_func_ident);
 
         <span class="kw">let </span>get_type = syn::parse_str::&lt;syn::Type&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.context.ret_type)
-            .unwrap_or_else(|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.context.ret_type));
+            .unwrap_or_else(|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">"Invalid type `{}`"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.context.ret_type));
         <span class="kw">let </span>set_type = syn::parse_str::&lt;syn::Type&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.context.arg_type)
-            .unwrap_or_else(|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;Invalid type `{}`&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.context.arg_type));
+            .unwrap_or_else(|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">"Invalid type `{}`"</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.context.arg_type));
 
-        tokens.extend(<span class="macro">quote! </span>{
+        tokens.extend(<span class="macro">quote!</span> {
             #func_docs
             <span class="kw">pub fn </span>#setter_func_ident(<span class="kw-2">&amp;</span><span class="self">self</span>, value: #set_type) {
-                <span class="self">self</span>.#try_setter_func_ident(value).unwrap_or_else(|err| <span class="macro">panic!</span>(<span class="string">&quot;failed to set value for key `{}`: {:?}&quot;</span>, #key_name, err))
+                <span class="self">self</span>.#try_setter_func_ident(value).unwrap_or_else(|err| <span class="macro">panic!</span>(<span class="string">"failed to set value for key `{}`: {:?}"</span>, #key_name, err))
             }
 
             #func_docs
@@ -792,11 +792,11 @@
             .zip(variant_idents.iter())
             .map(|((<span class="kw">_</span>, variant_value), variant_ident)| {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(variant_value) = variant_value {
-                    <span class="macro">quote! </span>{
+                    <span class="macro">quote!</span> {
                         #variant_ident = #variant_value
                     }
                 } <span class="kw">else </span>{
-                    <span class="macro">quote! </span>{
+                    <span class="macro">quote!</span> {
                         #variant_ident
                     }
                 }
@@ -807,7 +807,7 @@
             .iter()
             .zip(variant_idents.iter())
             .map(|(variant_name, variant_ident)| {
-                <span class="macro">quote! </span>{
+                <span class="macro">quote!</span> {
                     #variant_name =&gt; <span class="prelude-val">Some</span>(<span class="self">Self</span>::#variant_ident)
                 }
             });
@@ -817,7 +817,7 @@
             .iter()
             .zip(variant_idents.iter())
             .map(|(variant_name, variant_ident)| {
-                <span class="macro">quote! </span>{
+                <span class="macro">quote!</span> {
                     <span class="self">Self</span>::#variant_ident =&gt; gio::glib::variant::ToVariant::to_variant(#variant_name)
                 }
             });
@@ -825,7 +825,7 @@
     <span class="kw">let </span>name_pascal_case = name.to_pascal_case();
     <span class="kw">let </span>ident = Ident::new(<span class="kw-2">&amp;</span>name_pascal_case, name_pascal_case.span());
 
-    <span class="macro">quote! </span>{
+    <span class="macro">quote!</span> {
         <span class="attr">#[derive(Clone, Copy, PartialEq, Eq, Debug)]
         #[repr(i32)]
         </span>#visibility <span class="kw">enum </span>#ident {
@@ -833,7 +833,7 @@
         }
 
         <span class="kw">impl </span>gio::glib::variant::StaticVariantType <span class="kw">for </span>#ident {
-            <span class="kw">fn </span>static_variant_type() -&gt; std::borrow::Cow&lt;<span class="lifetime">&#39;static</span>, gio::glib::VariantTy&gt; {
+            <span class="kw">fn </span>static_variant_type() -&gt; std::borrow::Cow&lt;<span class="lifetime">'static</span>, gio::glib::VariantTy&gt; {
                 std::borrow::Cow::Borrowed(gio::glib::VariantTy::STRING)
             }
         }
