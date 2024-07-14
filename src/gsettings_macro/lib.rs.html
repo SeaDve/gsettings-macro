@@ -953,7 +953,7 @@
                     <span class="macro">emit_error!</span>(signature_span, <span class="string">"useless define for this signature"</span>);
                 }
 
-                <span class="kw">if </span>signature_overrides.get(<span class="kw-2">&amp;</span>signature_type).is_some() {
+                <span class="kw">if </span>signature_overrides.contains_key(<span class="kw-2">&amp;</span>signature_type) {
                     <span class="macro">emit_error!</span>(signature_span, <span class="string">"duplicate override"</span>);
                 }
 
@@ -967,7 +967,7 @@
                     <span class="macro">emit_error!</span>(key_name_span, <span class="string">"key_name not found in the schema"</span>);
                 }
 
-                <span class="kw">if </span>key_name_overrides.get(<span class="kw-2">&amp;</span>key_name_str).is_some() {
+                <span class="kw">if </span>key_name_overrides.contains_key(<span class="kw-2">&amp;</span>key_name_str) {
                     <span class="macro">emit_error!</span>(key_name_span, <span class="string">"duplicate override"</span>);
                 }
 
