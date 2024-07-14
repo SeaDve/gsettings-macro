@@ -412,7 +412,7 @@ pub fn gen_settings(
                     emit_error!(signature_span, "useless define for this signature");
                 }
 
-                if signature_overrides.get(&signature_type).is_some() {
+                if signature_overrides.contains_key(&signature_type) {
                     emit_error!(signature_span, "duplicate override");
                 }
 
@@ -426,7 +426,7 @@ pub fn gen_settings(
                     emit_error!(key_name_span, "key_name not found in the schema");
                 }
 
-                if key_name_overrides.get(&key_name_str).is_some() {
+                if key_name_overrides.contains_key(&key_name_str) {
                     emit_error!(key_name_span, "duplicate override");
                 }
 
