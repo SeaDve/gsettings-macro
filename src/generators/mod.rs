@@ -168,13 +168,13 @@ impl<'a> KeyGenerator<'a> {
             .key
             .summary
             .as_ref()
-            .map_or(false, |summary| !summary.is_empty());
+            .is_some_and(|summary| !summary.is_empty());
 
         let has_description = self
             .key
             .description
             .as_ref()
-            .map_or(false, |description| !description.is_empty());
+            .is_some_and(|description| !description.is_empty());
 
         if has_summary {
             let summary = self.key.summary.as_ref().unwrap();
@@ -204,8 +204,8 @@ impl<'a> KeyGenerator<'a> {
 
         // only needed for numerical types
         if let Some(ref range) = self.key.range {
-            let has_min = range.min.as_ref().map_or(false, |min| !min.is_empty());
-            let has_max = range.max.as_ref().map_or(false, |max| !max.is_empty());
+            let has_min = range.min.as_ref().is_some_and(|min| !min.is_empty());
+            let has_max = range.max.as_ref().is_some_and(|max| !max.is_empty());
 
             if has_min || has_max {
                 stream.extend(quote! {

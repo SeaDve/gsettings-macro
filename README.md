@@ -68,7 +68,7 @@ The procedural macro generates the following [`gio::Settings`](https://docs.rs/g
 for each key in the schema:
 
 * `set` -> `set_${key}`, which panics when writing in a readonly
-key, and `try_set_${key}`, which behaves the same as the original method.
+  key, and `try_set_${key}`, which behaves the same as the original method.
 * `get` -> `${key}`
 * `connect_changed` -> `connect_${key}_changed`
 * `bind` -> `bind_${key}`
