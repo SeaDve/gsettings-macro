@@ -22,10 +22,10 @@ proc-macro2 = "1.0"
 proc-macro-error = "1.0"
 quote = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-quick-xml = { version = "0.36", features = ["serialize"] }
+quick-xml = { version = "0.37", features = ["serialize"] }
 syn = "2.0"
 deluxe = "0.5"
 
 [dev-dependencies]
 gio = "0.20"
-serial_test = "3.0"
+serial_test = "3.2"
