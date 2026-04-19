@@ -1,1 +1,0 @@
-searchState.loadedDescShard("gsettings_macro", 0, "GSettings Macro\nMacro for typesafe <code>gio::Settings</code> key access.")

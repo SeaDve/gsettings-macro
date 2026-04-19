@@ -1,0 +1,1 @@
+rd_("ogsettings_macro")

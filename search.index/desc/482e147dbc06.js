@@ -1,0 +1,1 @@
+rd_("CiMacro for typesafe <code>gio::Settings</code> key access.oGSettings Macro")

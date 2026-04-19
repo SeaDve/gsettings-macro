@@ -1,0 +1,1 @@
+rd_("lgen_settingsogsettings_macro")
